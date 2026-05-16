@@ -46,14 +46,14 @@ export function buildRichDescription(
 
   parts.push(
     '<h2>' + h2Prefix + rawName + ' for Australian Businesses</h2>' +
-    '<p>At ZEE Custom Boxes AU, we specialise in crafting ' + rawName + ' built to the highest standards of construction and print quality. Whether you are launching a new product line or scaling an existing brand, our packaging is engineered to make a lasting impression at every touchpoint — from the retail shelf to the unboxing moment.</p>' +
+    '<p>At ' + homeLink + ', we specialise in crafting ' + rawName + ' built to the highest standards of construction and print quality. Whether you are launching a new product line or scaling an existing brand, our packaging is engineered to make a lasting impression at every touchpoint — from the retail shelf to the unboxing moment.</p>' +
     '<p>Every order we produce is treated as a true partnership. From your first enquiry through to dispatch, our team is dedicated to getting every detail right. We work through material selection, structural engineering, print proofing, and quality control with the same level of care regardless of order size. We believe premium packaging should be accessible to every Australian business, not just the largest brands.</p>' +
     '<p>Our ' + rawName + ' are manufactured using advanced printing technology and premium substrates sourced from certified suppliers. Each batch undergoes rigorous quality inspection before leaving our facility, so what arrives at your door matches exactly what you approved in your digital proof.</p>'
   );
 
   parts.push(
     '<h2>Materials and Printing Options</h2>' +
-    '<p>Choosing the right combination of materials, printing method, and surface finish is what separates ordinary packaging from packaging that sells. For every ' + rawName + ' order, our team guides you through each decision so the final product perfectly matches your brand identity, product requirements, and budget.</p>' +
+    '<p>Choosing the right combination of materials, printing method, and surface finish is what separates ordinary packaging from packaging that sells. Our full ' + catLink + ' range covers every substrate and finish combination, and for every ' + rawName + ' order our team guides you through each decision so the final product perfectly matches your brand identity, product requirements, and budget.</p>' +
     '<h3>Material Choices</h3>' +
     '<p>Selecting the right material for your ' + rawName + ' is one of the most important decisions in the packaging process. It affects both the visual presentation and the structural performance of your finished box. We offer a comprehensive range of substrates to match every product category and budget level.</p>' +
     '<p>Our most popular materials include 300–400 GSM coated clay board for vibrant full-colour retail packaging, unbleached kraft paper for an eco-conscious and rustic look, rigid board for premium gift or luxury applications that demand a solid feel, and single or double-wall corrugated board when shipping protection is a priority. We can also source specialty stocks including textured papers, linen finishes, and cotton-feel substrates for high-end product lines.</p>' +
@@ -109,7 +109,7 @@ export function buildRichDescription(
     '<p>Our ' + rawName + ' are trusted by businesses across a wide range of Australian industries. The largest customer groups include cosmetics and beauty brands seeking elegant retail presentation; food and beverage companies requiring food-safe, shelf-ready packaging; e-commerce and subscription businesses that need durable mailer-style boxes that protect products in transit; and gift, luxury, and lifestyle brands that prioritise a premium unboxing experience.</p>' +
     '<p>We also supply ' + rawName + ' to pharmaceutical and health product companies, CBD and wellness brands, candle makers, jewellers, apparel labels, electronics retailers, and corporate gifting businesses. Regardless of your sector, our team has the experience to advise on materials, structures, and finishes that are appropriate for your specific product and regulatory requirements.' +
     (rel1Link ? ' You may also find our ' + rel1Link + ' a useful complement to your current order.' : '') + '</p>' +
-    '<p>Our full range of ' + catLink + ' covers many complementary product types, allowing you to establish a consistent packaging identity across your entire product range with a single supplier.</p>'
+    '<p>Our full range of ' + cat + ' products covers many complementary product types, allowing you to establish a consistent packaging identity across your entire product range with a single supplier.</p>'
   );
 
   parts.push(
@@ -122,7 +122,7 @@ export function buildRichDescription(
   parts.push(
     '<h2>Order Your ' + rawName + ' Today</h2>' +
     '<p>Getting started is straightforward. Use the quote form on this page to describe your ' + rawName + ' requirements — product dimensions, approximate quantity, material preferences, and any special finishing you have in mind. Our packaging team will respond with a detailed, obligation-free quote within 24 business hours.</p>' +
-    '<p>Visit the ' + homeLink + ' homepage to explore our full catalogue of custom packaging solutions, browse related products in our ' + cat + ' range, and learn more about the materials and finishes we offer. Our team is ready to help you create ' + rawName + ' that genuinely elevate your brand and delight your customers.</p>'
+    '<p>Visit the ZEE Custom Boxes AU homepage to explore our full catalogue of custom packaging solutions, browse related products in our ' + cat + ' range, and learn more about the materials and finishes we offer. Our team is ready to help you create ' + rawName + ' that genuinely elevate your brand and delight your customers.</p>'
   );
 
   return parts.join('\n');
