@@ -1,0 +1,222 @@
+---
+import Layout from '../layouts/Layout.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { SITE } from '../config/site';
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": SITE.name,
+  "description": "Australia's trusted partner for premium custom packaging with free design service, fast turnaround, and competitive wholesale pricing.",
+  "url": SITE.url,
+  "telephone": SITE.phone,
+  "email": SITE.email,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "903/50 Clarence St",
+    "addressLocality": "Sydney",
+    "addressRegion": "NSW",
+    "postalCode": "2000",
+    "addressCountry": "AU"
+  },
+  "areaServed": "AU",
+  "priceRange": "$$"
+};
+---
+
+<Layout
+  title="About ZEE Custom Boxes AU | Premium Custom Packaging Australia"
+  description="Learn about ZEE Custom Boxes AU — Australia's trusted supplier of premium custom packaging. Our story, values, and commitment to quality packaging solutions."
+  canonical={`${SITE.url}/about`}
+  schema={aboutSchema}
+>
+
+  <div class="breadcrumb-bar">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <span aria-current="page">About Us</span>
+      </nav>
+    </div>
+  </div>
+
+  <section class="about-hero">
+    <div class="container">
+      <div class="section-label">Our Story</div>
+      <h1>About ZEE Custom Boxes AU</h1>
+      <div class="gold-divider"></div>
+      <p>Australia's trusted partner for premium custom packaging — delivering quality, creativity, and value since day one.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="about-story">
+        <div class="about-story-content reveal">
+          <div class="section-label">Who We Are</div>
+          <h2>Crafting Packaging That Tells Your Story</h2>
+          <div class="gold-divider gold-divider-left"></div>
+          <div class="prose">
+            <p>ZEE Custom Boxes AU was founded with a singular mission: to provide Australian businesses with access to world-class custom packaging at honest, competitive prices. We believe that great packaging isn't a luxury reserved for large corporations — every brand deserves packaging that reflects its quality and values.</p>
+            <p>From our <a href="/category/custom-cosmetic-boxes-packaging">custom cosmetic packaging</a> for beauty startups to large-scale <a href="/category/custom-retail-boxes-packaging">retail packaging</a> solutions for established brands, we approach every order with the same dedication and attention to detail.</p>
+            <p>Our team of packaging specialists and in-house designers work closely with each client to understand their brand identity, product requirements, and budget — ensuring the final product not only looks stunning but also serves its functional purpose perfectly.</p>
+          </div>
+        </div>
+        <div class="about-values reveal">
+          <div class="values-card">
+            <div class="value-item">
+              <div class="value-icon">🎯</div>
+              <div>
+                <strong>Our Mission</strong>
+                <p>To empower Australian businesses with premium packaging that elevates their brand and drives customer loyalty.</p>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">👁️</div>
+              <div>
+                <strong>Our Vision</strong>
+                <p>To be Australia's most trusted and innovative custom packaging partner — known for quality, creativity, and exceptional service.</p>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">💎</div>
+              <div>
+                <strong>Our Promise</strong>
+                <p>Every order is treated with care. Free design, no hidden costs, quality guaranteed — or we make it right.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-light">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Why Choose Us</div>
+        <h2>The ZEE Difference</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="diff-grid">
+        {[
+          { icon: '🎨', title: 'Free Design Service', desc: 'Every order includes a free professional design. Our designers create your custom artwork and provide a 3D mockup for approval — at no charge.' },
+          { icon: '📐', title: 'Custom Sizes & Styles', desc: 'From standard sizes to completely bespoke dimensions — we manufacture packaging exactly to your specifications.' },
+          { icon: '🌱', title: 'Eco-Friendly Options', desc: 'We offer sustainable packaging options including recycled materials, biodegradable inks, and FSC-certified cardboard.' },
+          { icon: '⚡', title: 'Fast Production', desc: 'Standard 7–14 business day turnaround with express production options for urgent orders across Australia.' },
+          { icon: '💼', title: 'Wholesale Pricing', desc: 'Competitive pricing for all order sizes with significant volume discounts for wholesale and bulk orders.' },
+          { icon: '🤝', title: 'Dedicated Support', desc: 'A dedicated account manager guides you through every step — from concept to delivery.' },
+        ].map(item => (
+          <div class="diff-card reveal">
+            <div class="diff-icon">{item.icon}</div>
+            <h3>{item.title}</h3>
+            <p>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section stats-section">
+    <div class="container">
+      <div class="stats-row">
+        {[
+          { num: '10+', label: 'Years in Business' },
+          { num: '500+', label: 'Happy Clients' },
+          { num: '373+', label: 'Products Available' },
+          { num: '28', label: 'Product Categories' },
+          { num: '4.9★', label: 'Customer Rating' },
+          { num: 'AU', label: 'Nationwide Delivery' },
+        ].map(stat => (
+          <div class="stats-item reveal">
+            <div class="stats-num">{stat.num}</div>
+            <div class="stats-label">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <QuoteForm dark={true} />
+
+</Layout>
+
+<style>
+.breadcrumb-bar { background: var(--color-off-white); border-bottom: 1px solid var(--color-border); padding: 0.875rem 0; }
+
+.about-hero {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 4rem 0 3rem;
+  text-align: center;
+}
+.about-hero .section-label { color: rgba(255,255,255,0.6); }
+.about-hero h1 { color: #fff; font-size: clamp(1.8rem, 3.5vw, 3rem); margin-bottom: 0.5rem; }
+.about-hero p { color: rgba(255,255,255,0.75); max-width: 580px; margin: 1rem auto 0; }
+
+.about-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.values-card {
+  background: var(--color-navy-dark);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.value-item { display: flex; gap: 1rem; }
+.value-icon { font-size: 1.75rem; flex-shrink: 0; }
+.value-item strong { display: block; color: var(--color-gold); font-size: 1rem; margin-bottom: 0.35rem; }
+.value-item p { color: rgba(255,255,255,0.7); font-size: 0.875rem; margin: 0; }
+
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.diff-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+
+.diff-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-gold);
+}
+
+.diff-icon { font-size: 2.25rem; margin-bottom: 1rem; }
+.diff-card h3 { font-size: 1.05rem; color: var(--color-navy); margin-bottom: 0.75rem; font-family: var(--font-body); }
+.diff-card p { font-size: 0.875rem; margin: 0; }
+
+.stats-section { background: var(--color-navy); }
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.stats-item { text-align: center; }
+.stats-num { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; color: var(--color-gold); line-height: 1; }
+.stats-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.4rem; }
+
+@media (max-width: 900px) {
+  .about-story { grid-template-columns: 1fr; gap: 2.5rem; }
+  .diff-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-row { justify-content: center; gap: 1.5rem; }
+}
+@media (max-width: 640px) {
+  .diff-grid { grid-template-columns: 1fr; }
+}
+</style>

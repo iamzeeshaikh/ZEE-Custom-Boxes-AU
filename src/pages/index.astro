@@ -1,0 +1,1368 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { SITE } from '../config/site';
+import products from '../data/products.json';
+import categories from '../data/categories.json';
+
+const featuredProducts = products.filter(p => p.images.length > 0).slice(0, 8);
+
+const productMap: Record<string, typeof products[0]> = {};
+products.forEach(p => { productMap[p.slug] = p; });
+
+const topCategories = categories.slice(0, 12).map(cat => ({
+  ...cat,
+  thumb: productMap[cat.products[0]]?.images?.[0] || '/images/placeholder.webp',
+}));
+
+const heroImages = products.filter(p => p.images.length > 0).slice(0, 3).map(p => p.images[0]);
+
+const trustItems = [
+  'Free Design Service', 'No Minimum Order', '7–14 Day Turnaround',
+  'Australia-Wide Delivery', 'Premium Materials', '24hr Quote Response',
+  'Wholesale Pricing', '5-Star Quality', 'Eco-Friendly Options', 'Custom Sizes & Shapes',
+];
+
+const homeSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": SITE.name,
+  "description": SITE.description,
+  "url": SITE.url,
+  "telephone": SITE.phone,
+  "email": SITE.email,
+  "address": { "@type": "PostalAddress", "addressCountry": "AU" },
+  "priceRange": "$$"
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is the minimum order quantity?", "acceptedAnswer": { "@type": "Answer", "text": "We have no minimum order quantity at ZEE Custom Boxes AU. You can order as few or as many units as your business needs, making us perfect for startups and established brands alike." } },
+    { "@type": "Question", "name": "Is the design service really free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes! Our professional design service is completely free. Our expert designers will create your custom artwork, and you'll receive a 3D digital mockup for approval before we go to print." } },
+    { "@type": "Question", "name": "How long does production take?", "acceptedAnswer": { "@type": "Answer", "text": "Standard production typically takes 7–14 business days after artwork approval. We also offer express production options for urgent orders." } },
+    { "@type": "Question", "name": "Do you ship across Australia?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, we deliver to all states and territories across Australia, including NSW, VIC, QLD, WA, SA, TAS, ACT, and NT." } },
+    { "@type": "Question", "name": "What materials do you use?", "acceptedAnswer": { "@type": "Answer", "text": "We offer premium cardboard, kraft paper, rigid board, and corrugated cardboard. Finishing options include gloss lamination, matte lamination, spot UV, foil stamping, soft-touch coating, and embossing or debossing." } },
+    { "@type": "Question", "name": "Can I see a sample before ordering?", "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. We provide digital 3D mockups before production. Physical printed samples can also be arranged — contact our team for availability and pricing." } },
+    { "@type": "Question", "name": "Do you offer eco-friendly packaging?", "acceptedAnswer": { "@type": "Answer", "text": "Yes! We offer sustainable packaging options including recycled cardboard, FSC-certified kraft paper, and soy-based inks." } },
+    { "@type": "Question", "name": "What types of custom boxes can you produce?", "acceptedAnswer": { "@type": "Answer", "text": "We produce over 373 types of custom packaging including cosmetic boxes, food boxes, gift boxes, retail boxes, mailer boxes, tuck-end boxes, rigid boxes, sleeve boxes, display boxes, and more." } },
+    { "@type": "Question", "name": "How do I get a quote?", "acceptedAnswer": { "@type": "Answer", "text": "Fill out our free quote form with your packaging type, quantity, dimensions, and design requirements. Our team will respond within 24 business hours with a detailed quote at no obligation." } },
+    { "@type": "Question", "name": "Can you print my logo and branding on the boxes?", "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. All packaging is fully custom-printed with your logo, brand colours, and artwork. Our designers handle the artwork at no extra charge." } },
+    { "@type": "Question", "name": "Do you offer wholesale pricing?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, we offer competitive wholesale pricing with volume discounts on every order. The larger your order, the better the per-unit price." } },
+    { "@type": "Question", "name": "What if I'm not happy with my order?", "acceptedAnswer": { "@type": "Answer", "text": "If there is a quality issue or your order does not match the approved artwork, we will reprint or refund — no hassle. Contact our team within 7 days of receiving your order." } },
+  ]
+};
+---
+
+<Layout
+  title="Custom Packaging Boxes Australia | ZEE Custom Boxes AU"
+  description="Australia's premium custom packaging supplier. Order custom boxes for cosmetics, food, retail & gifts. Free design, fast turnaround, wholesale prices. Get your free quote today."
+  schema={[homeSchema, faqSchema]}
+>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-dots"></div>
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+    </div>
+    <div class="container">
+      <div class="hero-inner">
+
+        <div class="hero-content">
+          <div class="hero-eyebrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Australia's Premium Custom Packaging Partner
+          </div>
+          <h1 class="hero-title">
+            Premium Custom Packaging
+            <span class="hero-accent">That Elevates Your Brand</span>
+          </h1>
+          <p class="hero-desc">
+            From luxury cosmetic boxes to custom food packaging — ZEE Custom Boxes AU delivers bespoke packaging with <strong>free professional design</strong>, fast turnaround, and competitive wholesale pricing across Australia.
+          </p>
+          <div class="hero-actions">
+            <a href="/request-quote" class="btn btn-primary btn-lg">Get Your Free Quote →</a>
+            <a href="/products" class="btn btn-ghost-white btn-lg">Browse All Products</a>
+          </div>
+          <div class="hero-trust-row">
+            <div class="hero-rating">
+              <div class="hero-stars">★★★★★</div>
+              <div class="hero-rating-copy"><strong>4.9/5</strong> · 200+ reviews</div>
+            </div>
+            <span class="hero-trust-sep"></span>
+            <div class="hero-pillars">
+              <span class="hero-pillar">373+ Products</span>
+              <span class="hero-pillar">500+ Clients</span>
+              <span class="hero-pillar">Free Design</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-mosaic">
+            <div class="hm-card hm-main">
+              <img src={heroImages[0] || '/images/placeholder.webp'} alt="Custom Packaging Australia" loading="eager" />
+              <div class="hm-tag">Cosmetic Boxes</div>
+            </div>
+            <div class="hm-col-right">
+              <div class="hm-card hm-sm">
+                <img src={heroImages[1] || '/images/placeholder.webp'} alt="Gift Packaging" loading="eager" />
+                <div class="hm-tag">Gift Boxes</div>
+              </div>
+              <div class="hm-card hm-sm">
+                <img src={heroImages[2] || '/images/placeholder.webp'} alt="Food Packaging" loading="eager" />
+              </div>
+            </div>
+            <div class="hm-float hm-float-design">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Free Design
+            </div>
+            <div class="hm-float hm-float-ship">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              AU-Wide Shipping
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MARQUEE BAR ===================== -->
+  <div class="marquee-bar" aria-hidden="true">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        {[...trustItems, ...trustItems].map(item => (
+          <div class="marquee-item">
+            <span class="marquee-dot"></span>
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CATEGORIES ===================== -->
+  <section class="section section-lg">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Our Collections</div>
+        <h2>Premium Packaging Categories</h2>
+        <div class="gold-divider"></div>
+        <p>Explore our extensive range of custom packaging solutions crafted for every industry and occasion.</p>
+      </div>
+
+      <div class="cat-grid-prem">
+        {topCategories.map((cat, i) => (
+          <a href={`/category/${cat.slug}`} class="cat-card-prem reveal" style={`animation-delay: ${i * 0.04}s`}>
+            <div class="cat-img-wrap-prem">
+              <img src={cat.thumb} alt={`Custom ${cat.name} Australia`} loading={i < 4 ? 'eager' : 'lazy'} />
+              <div class="cat-grad"></div>
+              <div class="cat-overlay-content">
+                <h3>{cat.name}</h3>
+                <span class="cat-shop-btn">Shop Now →</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <div class="text-center" style="margin-top: 3rem;">
+        <a href="/products" class="btn btn-navy btn-lg">View All 373 Products →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== STATS ===================== -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-inner">
+        <div class="stat-block reveal">
+          <div class="stat-num" data-target="10" data-suffix="+">10+</div>
+          <div class="stat-name">Years in Business</div>
+          <div class="stat-note">Serving Australia since 2014</div>
+        </div>
+        <div class="stat-block reveal" style="animation-delay:0.1s">
+          <div class="stat-num" data-target="500" data-suffix="+">500+</div>
+          <div class="stat-name">Happy Clients</div>
+          <div class="stat-note">Across all industries nationwide</div>
+        </div>
+        <div class="stat-block reveal" style="animation-delay:0.2s">
+          <div class="stat-num">4.9★</div>
+          <div class="stat-name">Average Rating</div>
+          <div class="stat-note">Google &amp; verified reviews</div>
+        </div>
+        <div class="stat-block reveal" style="animation-delay:0.3s">
+          <div class="stat-num" data-target="373" data-suffix="+">373+</div>
+          <div class="stat-name">Product Types</div>
+          <div class="stat-note">28 packaging categories</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURED PRODUCTS ===================== -->
+  <section class="section bg-light">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Popular Products</div>
+        <h2>Featured Packaging Solutions</h2>
+        <div class="gold-divider"></div>
+        <p>Our most popular custom packaging products — trusted by hundreds of Australian businesses.</p>
+      </div>
+      <div class="grid-4">
+        {featuredProducts.map((product, i) => (
+          <div class="reveal" style={`animation-delay: ${i * 0.06}s`}>
+            <ProductCard product={product} eager={i < 4} />
+          </div>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top: 3rem;">
+        <a href="/products" class="btn btn-primary btn-lg">Browse All 373 Products →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY ZEE ===================== -->
+  <section class="section why-new-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Why ZEE Custom Boxes AU</div>
+        <h2>Everything You Need for Perfect Packaging</h2>
+        <div class="gold-divider"></div>
+        <p>We go beyond printing boxes — we craft premium packaging experiences that reflect your brand's quality and values.</p>
+      </div>
+      <div class="why-cards-grid">
+        {([
+          {
+            title: 'Free Professional Design',
+            desc: 'Expert designers craft your bespoke artwork at zero cost. Review and approve your 3D mockup before we print a single sheet.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+          },
+          {
+            title: 'Premium Materials',
+            desc: 'Cardboard, kraft, rigid, corrugated — with luxury finishing options including gloss, matte, foil stamping, spot UV, and embossing.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',
+          },
+          {
+            title: 'No Minimum Order',
+            desc: 'Order as few or as many as you need. Ideal for product launches, seasonal campaigns, and large wholesale runs alike.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"/></svg>',
+          },
+          {
+            title: 'Fast Turnaround',
+            desc: 'Standard production in 7–14 business days after artwork approval. Express options available for urgent orders.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+          },
+          {
+            title: 'Australia-Wide Delivery',
+            desc: 'We ship to Sydney, Melbourne, Brisbane, Perth, Adelaide, Darwin, Hobart — every state and territory, fast.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+          },
+          {
+            title: 'Wholesale Pricing',
+            desc: 'Volume discounts on every order. Transparent quotes with no hidden fees — the more you order, the better the price.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+          },
+        ] as const).map((feat, i) => (
+          <div class="why-card reveal" style={`animation-delay: ${i * 0.07}s`}>
+            <div class="why-card-icon" set:html={feat.icon} />
+            <h3>{feat.title}</h3>
+            <p>{feat.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top: 3rem;">
+        <a href="/about" class="btn btn-outline">Learn More About Us →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROCESS ===================== -->
+  <section class="section bg-light">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">How It Works</div>
+        <h2>Simple 4-Step Process</h2>
+        <div class="gold-divider"></div>
+        <p>From first contact to your door — we make custom packaging effortless.</p>
+      </div>
+      <div class="process-wrap">
+        {([
+          {
+            num: '01',
+            title: 'Request a Quote',
+            desc: 'Fill out our simple form with your packaging requirements — size, quantity, material, and design preferences.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
+          },
+          {
+            num: '02',
+            title: 'Free Design Proof',
+            desc: 'Our designers create your custom artwork for free. Review and approve your 3D digital mockup before production begins.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>',
+          },
+          {
+            num: '03',
+            title: 'Production',
+            desc: 'Premium materials, strict quality control at every stage. Your order is carefully crafted and tracked throughout.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>',
+          },
+          {
+            num: '04',
+            title: 'Fast Delivery',
+            desc: 'Your custom packaging arrives straight to your door anywhere in Australia — quickly, safely, and on time.',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+          },
+        ] as const).map((step, i) => (
+          <div class="process-step reveal" style={`animation-delay: ${i * 0.1}s`}>
+            <div class="process-step-circle">
+              <span>{step.num}</span>
+            </div>
+            {i < 3 && <div class="process-connector" aria-hidden="true"></div>}
+            <div class="process-icon" set:html={step.icon} />
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top: 3.5rem;">
+        <a href="/request-quote" class="btn btn-primary btn-lg">Start Your Order Today →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INDUSTRIES ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Industries We Serve</div>
+        <h2>Custom Packaging for Every Industry</h2>
+        <div class="gold-divider"></div>
+        <p>We partner with businesses across every sector in Australia to create packaging that wins customers.</p>
+      </div>
+      <div class="industries-grid">
+        {[
+          { name: 'Cosmetics & Beauty', slug: 'custom-cosmetic-boxes-packaging', emoji: '💄' },
+          { name: 'Food & Bakery', slug: 'custom-food-packaging-boxes', emoji: '🍰' },
+          { name: 'Retail & E-commerce', slug: 'custom-retail-boxes-packaging', emoji: '🛍️' },
+          { name: 'Gifts & Luxury', slug: 'custom-gift-packaging-boxes', emoji: '🎁' },
+          { name: 'CBD & Wellness', slug: 'custom-cbd-boxes-packaging', emoji: '🌿' },
+          { name: 'Pharmaceuticals', slug: 'pharmaceutical-packaging', emoji: '💊' },
+          { name: 'Candles & Home', slug: 'custom-candle-boxes', emoji: '🕯️' },
+          { name: 'Chocolate & Candy', slug: 'chocolate-boxes-packaging', emoji: '🍫' },
+        ].map((ind, i) => (
+          <a href={`/category/${ind.slug}`} class="industry-card-new reveal" style={`animation-delay: ${i * 0.06}s`}>
+            <div class="ind-emoji">{ind.emoji}</div>
+            <div class="ind-name">{ind.name}</div>
+            <div class="ind-arrow">→</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TESTIMONIALS ===================== -->
+  <section class="testimonials-new">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label testi-label">What Our Clients Say</div>
+        <h2 class="testi-heading">Trusted by Australian Businesses</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="testimonials-grid-new">
+        {[
+          {
+            text: "ZEE Custom Boxes AU absolutely nailed our cosmetic packaging. The quality is exceptional — our customers always comment on how premium the boxes feel. The free design service saved us thousands!",
+            name: "Sarah M.",
+            role: "Beauty Brand Owner, Sydney",
+            rating: 5,
+          },
+          {
+            text: "We ordered custom bakery boxes for our patisserie and couldn't be happier. Fast turnaround, perfect quality, and the team was incredibly helpful throughout the entire process. Will definitely reorder.",
+            name: "James T.",
+            role: "Patisserie Owner, Melbourne",
+            rating: 5,
+          },
+          {
+            text: "As a startup, I was worried about minimum orders. ZEE had no minimums, helped with design at no cost, and delivered faster than expected. Highly recommend for any business needing custom packaging.",
+            name: "Priya K.",
+            role: "Wellness Brand Founder, Brisbane",
+            rating: 5,
+          },
+        ].map((review, i) => (
+          <div class="testi-card reveal" style={`animation-delay: ${i * 0.1}s`}>
+            <div class="testi-quote-mark">"</div>
+            <div class="testi-stars">{'★'.repeat(review.rating)}</div>
+            <p class="testi-text">{review.text}</p>
+            <div class="testi-author">
+              <div class="testi-avatar">{review.name[0]}</div>
+              <div>
+                <div class="testi-name">{review.name}</div>
+                <div class="testi-role">{review.role}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="testi-bottom reveal">
+        <div class="testi-summary">
+          <div class="testi-big-stars">★★★★★</div>
+          <div>
+            <div class="testi-avg">4.9 out of 5</div>
+            <div class="testi-count">Based on 200+ verified reviews</div>
+          </div>
+        </div>
+        <a href="/request-quote" class="btn btn-primary btn-lg">Join Our Happy Clients →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUOTE FORM ===================== -->
+  <QuoteForm dark={true} />
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="section bg-light">
+    <div class="container container-sm">
+      <div class="section-header reveal">
+        <div class="section-label">FAQ</div>
+        <h2>Frequently Asked Questions</h2>
+        <div class="gold-divider"></div>
+        <p>Have a question? Chances are we've answered it below. If not, <a href="/contact" class="faq-contact-link">contact us</a>.</p>
+      </div>
+      <div class="faq-list">
+        {[
+          { q: "What is the minimum order quantity?", a: "We have no minimum order quantity at ZEE Custom Boxes AU. You can order as few or as many units as your business needs, making us perfect for startups and established brands alike." },
+          { q: "Is the design service really free?", a: "Yes! Our professional design service is completely free. Our expert designers will create your custom artwork, and you'll receive a 3D digital mockup for approval before we go to print — no design experience needed on your end." },
+          { q: "How long does production take?", a: "Standard production typically takes 7–14 business days after artwork approval. We also offer express production options for urgent orders — contact us for details and pricing." },
+          { q: "Do you ship across Australia?", a: "Yes, we deliver to all states and territories across Australia, including NSW, VIC, QLD, WA, SA, TAS, ACT, and NT. Fast, safe delivery is guaranteed to every location." },
+          { q: "What materials do you use?", a: "We offer premium cardboard, kraft paper, rigid board, and corrugated cardboard. Finishing options include gloss lamination, matte lamination, spot UV, foil stamping, soft-touch coating, and embossing or debossing." },
+          { q: "Can I see a sample before ordering?", a: "Absolutely. We provide digital 3D mockups before production so you can review every detail. Physical printed samples can also be arranged — contact our team for availability and pricing." },
+          { q: "Do you offer eco-friendly packaging?", a: "Yes! We offer sustainable packaging options including recycled cardboard, FSC-certified kraft paper, and soy-based inks. Ask our team about our eco-friendly range when requesting a quote." },
+          { q: "What types of custom boxes can you produce?", a: "We produce over 373 types of custom packaging including cosmetic boxes, food boxes, gift boxes, retail boxes, mailer boxes, tuck-end boxes, rigid boxes, sleeve boxes, display boxes, and much more. If you have something specific in mind, contact us — we'll make it happen." },
+          { q: "How do I get a quote?", a: "Simply fill out our free quote form with your packaging type, quantity, dimensions, and any design requirements. Our team will respond with a detailed quote within 24 business hours. There is no obligation and the quote is completely free." },
+          { q: "Can you print my logo and branding on the boxes?", a: "Absolutely. All of our packaging is fully custom-printed with your logo, brand colours, artwork, and any other design elements you require. You supply the brief — our designers handle the rest at no extra charge." },
+          { q: "Do you offer wholesale pricing?", a: "Yes, we offer competitive wholesale pricing with volume discounts on every order. The larger your order, the better the per-unit price. Contact us to discuss ongoing wholesale or bulk supply arrangements for your business." },
+          { q: "What if I'm not happy with my order?", a: "Customer satisfaction is our top priority. If there is a quality issue or your order does not match the approved artwork, we will reprint or refund — no hassle. Contact our team within 7 days of receiving your order and we will make it right." },
+        ].map(faq => (
+          <div class="faq-item reveal">
+            <button class="faq-question">{faq.q}<div class="faq-icon">+</div></button>
+            <div class="faq-answer"><p>{faq.a}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  // Animated stat counters
+  const counters = document.querySelectorAll<HTMLElement>('[data-target]');
+  if (counters.length > 0) {
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        const target = parseInt(el.dataset.target || '0');
+        const suffix = el.dataset.suffix || '';
+        const duration = 1600;
+        const startTime = performance.now();
+        function tick(now: number) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target) + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        counterObs.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    counters.forEach(el => counterObs.observe(el));
+  }
+</script>
+
+<style>
+
+/* ==============================
+   HERO
+============================== */
+.hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-navy-dark) 0%, var(--color-navy) 60%, #1e4976 100%);
+  padding: 7rem 0 6rem;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(201,168,76,0.12) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.6;
+}
+
+.hero-glow-1 {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 65%);
+  top: -100px;
+  left: -100px;
+}
+
+.hero-glow-2 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 65%);
+  bottom: -50px;
+  right: 20%;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--color-gold-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem 0.45rem 0.75rem;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-eyebrow svg {
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+
+.hero-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.75rem);
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.hero-accent {
+  display: block;
+  color: var(--color-gold);
+  font-size: 0.9em;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 2.25rem;
+  max-width: 510px;
+  line-height: 1.8;
+}
+
+.hero-desc strong {
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.75rem;
+}
+
+.btn-ghost-white {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.35);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.875rem 2rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-ghost-white:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.65);
+  transform: translateY(-2px);
+}
+
+.hero-trust-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hero-stars {
+  color: var(--color-gold);
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.hero-rating-copy {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.65);
+}
+
+.hero-rating-copy strong {
+  color: #fff;
+}
+
+.hero-trust-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+.hero-pillars {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.hero-pillar {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+}
+
+/* Hero Mosaic */
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-mosaic {
+  position: relative;
+  display: flex;
+  gap: 0.875rem;
+  width: 440px;
+  height: 420px;
+}
+
+.hm-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+  flex-shrink: 0;
+}
+
+.hm-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hm-main {
+  width: 58%;
+  border: 2px solid rgba(201,168,76,0.45);
+}
+
+.hm-col-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.hm-sm {
+  flex: 1;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.hm-tag {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  background: var(--color-gold);
+  color: var(--color-navy-dark);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 100px;
+}
+
+.hm-float {
+  position: absolute;
+  background: #fff;
+  border-radius: 100px;
+  padding: 0.45rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.hm-float svg {
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+
+.hm-float-design {
+  top: -0.75rem;
+  right: -0.5rem;
+}
+
+.hm-float-ship {
+  bottom: 1.25rem;
+  left: -1rem;
+}
+
+/* ==============================
+   MARQUEE BAR
+============================== */
+.marquee-bar {
+  background: var(--color-navy);
+  padding: 0.85rem 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.marquee-track {
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.marquee-bar:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.marquee-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--color-gold);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ==============================
+   CATEGORIES (PREMIUM)
+============================== */
+.cat-grid-prem {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.cat-card-prem {
+  display: block;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.cat-card-prem:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+}
+
+.cat-img-wrap-prem {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--color-off-white);
+}
+
+.cat-img-wrap-prem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.55s ease;
+}
+
+.cat-card-prem:hover .cat-img-wrap-prem img {
+  transform: scale(1.08);
+}
+
+.cat-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 30%,
+    rgba(13,32,53,0.7) 70%,
+    rgba(13,32,53,0.88) 100%
+  );
+  pointer-events: none;
+}
+
+.cat-overlay-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.1rem;
+}
+
+.cat-overlay-content h3 {
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  margin: 0 0 0.3rem;
+}
+
+.cat-shop-btn {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: all 0.3s ease;
+}
+
+.cat-card-prem:hover .cat-shop-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==============================
+   STATS SECTION
+============================== */
+.stats-section {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(201,168,76,0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.stats-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-block {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-block:last-child {
+  border-right: none;
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 700;
+  color: var(--color-gold);
+  line-height: 1;
+  margin-bottom: 0.6rem;
+}
+
+.stat-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+.stat-note {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ==============================
+   WHY ZEE — CARDS GRID
+============================== */
+.why-new-section {
+  background: #fff;
+}
+
+.why-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.why-card {
+  background: var(--color-off-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.75rem;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.why-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.why-card:hover {
+  border-color: rgba(201,168,76,0.4);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+  background: #fff;
+}
+
+.why-card:hover::before {
+  opacity: 1;
+}
+
+.why-card-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(26,58,92,0.07);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  color: var(--color-navy);
+  padding: 10px;
+}
+
+.why-card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.why-card h3 {
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.6rem;
+}
+
+.why-card p {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ==============================
+   PROCESS
+============================== */
+.process-wrap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.process-step {
+  text-align: center;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.process-step-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  border: 2px solid var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+.process-step-circle span {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-gold);
+}
+
+.process-connector {
+  position: absolute;
+  top: 30px;
+  left: calc(50% + 30px);
+  right: calc(-50% + 30px);
+  height: 2px;
+  background: linear-gradient(90deg, rgba(201,168,76,0.5), rgba(201,168,76,0.2));
+  border-top: 2px dashed rgba(201,168,76,0.35);
+  z-index: 1;
+}
+
+.process-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--color-gold);
+  margin: 0 auto 1rem;
+}
+
+.process-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.process-step h3 {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.6rem;
+}
+
+.process-step p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ==============================
+   INDUSTRIES
+============================== */
+.industries-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.industry-card-new {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--color-off-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.industry-card-new:hover {
+  border-color: var(--color-gold);
+  background: var(--color-gold-pale);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.ind-emoji {
+  font-size: 1.65rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ind-name {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  line-height: 1.3;
+}
+
+.ind-arrow {
+  font-size: 1rem;
+  color: var(--color-gold);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.industry-card-new:hover .ind-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ==============================
+   TESTIMONIALS
+============================== */
+.testimonials-new {
+  background: linear-gradient(135deg, var(--color-navy-dark), #0f2840);
+  padding: 6rem 0 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonials-new::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.testi-label {
+  color: rgba(201,168,76,0.85) !important;
+}
+
+.testi-heading {
+  color: #fff !important;
+}
+
+.testimonials-grid-new {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.testi-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 2.25rem 2rem;
+  transition: border-color var(--transition), background var(--transition);
+  position: relative;
+}
+
+.testi-card:hover {
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(255,255,255,0.08);
+}
+
+.testi-quote-mark {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 5rem;
+  line-height: 1;
+  color: rgba(201,168,76,0.15);
+  pointer-events: none;
+  user-select: none;
+}
+
+.testi-stars {
+  color: var(--color-gold);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+
+.testi-text {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.93rem;
+  line-height: 1.8;
+  margin-bottom: 1.75rem;
+  font-style: italic;
+}
+
+.testi-author {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.testi-avatar {
+  width: 44px;
+  height: 44px;
+  background: var(--color-gold);
+  color: var(--color-navy-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.testi-name {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.testi-role {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  margin-top: 0.15rem;
+}
+
+.testi-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.testi-summary {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.testi-big-stars {
+  font-size: 1.75rem;
+  color: var(--color-gold);
+  letter-spacing: 3px;
+}
+
+.testi-avg {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.testi-count {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  margin-top: 0.15rem;
+}
+
+/* ==============================
+   FAQ LINK
+============================== */
+.faq-contact-link {
+  color: var(--color-navy);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.faq-contact-link:hover {
+  color: var(--color-gold);
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+@media (max-width: 1100px) {
+  .cat-grid-prem { grid-template-columns: repeat(3, 1fr); }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .stat-block { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .stat-block:nth-child(3), .stat-block:last-child { border-bottom: none; }
+  .why-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .process-wrap { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .process-connector { display: none; }
+  .industries-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .hero { padding: 5rem 0 4rem; }
+  .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .hero-visual { display: none; }
+  .cat-grid-prem { grid-template-columns: repeat(2, 1fr); }
+  .testimonials-grid-new { grid-template-columns: 1fr; }
+  .testi-bottom { flex-direction: column; text-align: center; }
+  .testi-summary { justify-content: center; }
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 4rem 0 3rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-trust-row { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .hero-trust-sep { display: none; }
+  .cat-grid-prem { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .why-cards-grid { grid-template-columns: 1fr; }
+  .process-wrap { grid-template-columns: 1fr; gap: 2rem; }
+  .industries-grid { grid-template-columns: 1fr; }
+  .testi-bottom { flex-direction: column; }
+}
+
+@media (max-width: 420px) {
+  .cat-grid-prem { grid-template-columns: 1fr; }
+}
+
+</style>

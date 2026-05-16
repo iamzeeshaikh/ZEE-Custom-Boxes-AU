@@ -1,0 +1,272 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config/site';
+import categories from '../data/categories.json';
+
+const quoteSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE.url },
+    { "@type": "ListItem", "position": 2, "name": "Request a Quote", "item": `${SITE.url}/request-quote` },
+  ]
+};
+---
+
+<Layout
+  title="Request a Free Quote | ZEE Custom Boxes AU"
+  description="Get your free custom packaging quote from ZEE Custom Boxes AU. Fill out our quick form and receive a tailored quote within 24 hours. Free design included."
+  canonical={`${SITE.url}/request-quote`}
+  schema={quoteSchema}
+>
+
+  <div class="breadcrumb-bar">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <span aria-current="page">Request a Quote</span>
+      </nav>
+    </div>
+  </div>
+
+  <section class="quote-page-hero">
+    <div class="container">
+      <div class="section-label">No Obligation, Completely Free</div>
+      <h1>Request Your Free Custom Packaging Quote</h1>
+      <div class="gold-divider"></div>
+      <p>Fill out the form below and our packaging experts will provide you with a detailed quote within 24 hours. Includes free design service, material recommendations, and pricing options.</p>
+    </div>
+  </section>
+
+  <section class="section quote-page-section">
+    <div class="container">
+      <div class="quote-page-inner">
+        <div class="quote-page-form-wrap">
+          <form class="quote-form-full" name="quote-request" method="POST" data-netlify="true" action="/thank-you">
+            <input type="hidden" name="form-name" value="quote-request" />
+
+            <div class="form-section-title">Contact Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">First Name *</label>
+                <input type="text" id="fname" name="firstName" required placeholder="John" />
+              </div>
+              <div class="form-group">
+                <label for="lname">Last Name *</label>
+                <input type="text" id="lname" name="lastName" required placeholder="Smith" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="qemail">Email Address *</label>
+                <input type="email" id="qemail" name="email" required placeholder="john@company.com" />
+              </div>
+              <div class="form-group">
+                <label for="qphone">Phone Number</label>
+                <input type="tel" id="qphone" name="phone" placeholder="+61 4XX XXX XXX" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="company">Company / Business Name</label>
+              <input type="text" id="company" name="company" placeholder="Your Company Name" />
+            </div>
+
+            <div class="form-section-title">Packaging Requirements</div>
+            <div class="form-group">
+              <label for="category">Packaging Category *</label>
+              <select id="category" name="category" required>
+                <option value="">Select a category...</option>
+                {categories.map(cat => (
+                  <option value={cat.name}>{cat.name}</option>
+                ))}
+                <option value="Other">Other / Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="producttype">Specific Product / Box Type *</label>
+              <input type="text" id="producttype" name="productType" required placeholder="e.g. Custom Cosmetic Boxes, Gift Boxes..." />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="qquantity">Estimated Quantity *</label>
+                <select id="qquantity" name="quantity" required>
+                  <option value="">Select quantity...</option>
+                  <option>1–50 units</option>
+                  <option>51–100 units</option>
+                  <option>101–500 units</option>
+                  <option>501–1,000 units</option>
+                  <option>1,000–5,000 units</option>
+                  <option>5,000+ units</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="qsize">Box Dimensions (if known)</label>
+                <input type="text" id="qsize" name="size" placeholder="e.g. 10 x 5 x 5 cm" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="material">Preferred Material</label>
+              <select id="material" name="material">
+                <option value="">Not sure / Advise me</option>
+                <option>Cardboard (Standard)</option>
+                <option>Kraft Paper</option>
+                <option>Rigid Board</option>
+                <option>Corrugated</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="finishing">Finishing Options (select all that apply)</label>
+              <input type="text" id="finishing" name="finishing" placeholder="e.g. Gloss lamination, Gold foil, Spot UV..." />
+            </div>
+            <div class="form-group">
+              <label for="message">Additional Details / Special Requirements</label>
+              <textarea id="message" name="message" rows="5" placeholder="Tell us about your brand, product, design ideas, timeline, or any other requirements..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg form-submit-full">
+              Send My Free Quote Request →
+            </button>
+            <p class="form-note" style="text-align: center; margin-top: 0.75rem; font-size: 0.8rem; color: var(--color-text-muted);">
+              We respond within 24 business hours. Your information is kept 100% private.
+            </p>
+          </form>
+        </div>
+
+        <div class="quote-page-sidebar">
+          <div class="sidebar-card">
+            <h3>Why Request a Quote?</h3>
+            <div class="sidebar-features">
+              {[
+                { icon: '🎨', title: 'Free Design', desc: 'Get a free mockup created by our professional designers.' },
+                { icon: '⚡', title: '24hr Response', desc: 'Receive your detailed quote within one business day.' },
+                { icon: '💰', title: 'Best Price', desc: 'Competitive wholesale pricing with volume discounts.' },
+                { icon: '📦', title: 'No Minimum', desc: 'Order any quantity — no minimum order required.' },
+                { icon: '🚚', title: 'Fast Delivery', desc: 'Shipped across all of Australia, express options available.' },
+              ].map(f => (
+                <div class="sidebar-feature">
+                  <div class="sidebar-feature-icon">{f.icon}</div>
+                  <div>
+                    <strong>{f.title}</strong>
+                    <p>{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="sidebar-contact-card">
+            <h3>Prefer to Talk?</h3>
+            <p>Call us directly and speak with a packaging expert.</p>
+            <a href={`tel:${SITE.phone}`} class="btn btn-navy" style="width: 100%; justify-content: center;">
+              📞 {SITE.phone}
+            </a>
+            <a href={`mailto:${SITE.email}`} class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 0.75rem;">
+              ✉️ {SITE.email}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+.breadcrumb-bar { background: var(--color-off-white); border-bottom: 1px solid var(--color-border); padding: 0.875rem 0; }
+
+.quote-page-hero {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 4rem 0 3rem;
+  text-align: center;
+}
+.quote-page-hero .section-label { color: rgba(255,255,255,0.6); }
+.quote-page-hero h1 { color: #fff; font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 0.5rem; }
+.quote-page-hero p { color: rgba(255,255,255,0.75); max-width: 600px; margin: 1rem auto 0; }
+
+.quote-page-inner {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 3rem;
+  align-items: start;
+}
+
+.quote-form-full {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-section-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-navy);
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-gold);
+  margin-top: 0.5rem;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-navy); }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--color-navy);
+  box-shadow: 0 0 0 3px rgba(26,58,92,0.08);
+}
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit-full { width: 100%; justify-content: center; margin-top: 0.5rem; }
+
+.sidebar-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--color-border);
+}
+.sidebar-card h3 { font-size: 1.2rem; color: var(--color-navy); margin-bottom: 1.25rem; }
+
+.sidebar-features { display: flex; flex-direction: column; gap: 1.1rem; }
+.sidebar-feature { display: flex; align-items: flex-start; gap: 0.875rem; }
+.sidebar-feature-icon { font-size: 1.4rem; flex-shrink: 0; }
+.sidebar-feature strong { display: block; font-size: 0.9rem; color: var(--color-navy); margin-bottom: 0.15rem; }
+.sidebar-feature p { margin: 0; font-size: 0.8rem; color: var(--color-text-muted); }
+
+.sidebar-contact-card {
+  background: var(--color-navy);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  color: #fff;
+}
+.sidebar-contact-card h3 { color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; }
+.sidebar-contact-card p { color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 1.25rem; }
+.sidebar-contact-card .btn-outline { color: var(--color-gold); border-color: rgba(201,168,76,0.4); }
+.sidebar-contact-card .btn-outline:hover { background: rgba(201,168,76,0.1); }
+
+@media (max-width: 1024px) {
+  .quote-page-inner { grid-template-columns: 1fr; }
+  .quote-page-sidebar { order: -1; }
+  .sidebar-features { display: grid; grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+  .quote-form-full { padding: 1.75rem; }
+  .sidebar-features { grid-template-columns: 1fr; }
+}
+</style>

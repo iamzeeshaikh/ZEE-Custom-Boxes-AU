@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Thank You | ZEE Custom Boxes AU"
+  description="Thank you for your enquiry. Our team will respond within 24 hours."
+  noIndex={true}
+>
+  <section class="ty-section">
+    <div class="container text-center">
+      <div class="ty-icon">✓</div>
+      <h1>Thank You!</h1>
+      <div class="gold-divider"></div>
+      <p>Your enquiry has been received. Our packaging specialists will be in touch within <strong>24 business hours</strong> with a personalised response.</p>
+      <p style="margin-top: 0.5rem;">In the meantime, feel free to browse our full range of <a href="/products" style="color: var(--color-navy); font-weight: 600; border-bottom: 1px solid var(--color-gold);">custom packaging products</a>.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+        <a href="/" class="btn btn-navy">Back to Home</a>
+        <a href="/products" class="btn btn-primary">Browse Products</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+.ty-section {
+  padding: 8rem 0;
+  background: var(--color-off-white);
+}
+.ty-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--color-gold);
+  color: var(--color-navy-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 auto 1.5rem;
+}
+h1 { margin-bottom: 0.5rem; }
+p { max-width: 520px; margin-left: auto; margin-right: auto; }
+</style>

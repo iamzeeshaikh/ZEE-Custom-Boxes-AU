@@ -1,0 +1,125 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config/site';
+---
+
+<Layout
+  title="Privacy Policy | ZEE Custom Boxes AU"
+  description="Privacy Policy for ZEE Custom Boxes AU. Learn how we collect, use, and protect your personal information."
+  canonical={`${SITE.url}/privacy-policy`}
+>
+
+  <div class="breadcrumb-bar">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <span aria-current="page">Privacy Policy</span>
+      </nav>
+    </div>
+  </div>
+
+  <section class="policy-hero">
+    <div class="container">
+      <div class="section-label">Legal</div>
+      <h1>Privacy Policy</h1>
+      <div class="gold-divider"></div>
+      <p>Last updated: May 2026</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container-sm">
+      <div class="policy-body">
+
+        <h2>1. Introduction</h2>
+        <p>ZEE Custom Boxes AU ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website <strong>zeecustomboxes.com.au</strong> or contact us for our services.</p>
+        <p>By using our website, you agree to the collection and use of information in accordance with this policy.</p>
+
+        <h2>2. Information We Collect</h2>
+        <p>We collect information you voluntarily provide when you:</p>
+        <ul>
+          <li>Submit a quote request form</li>
+          <li>Contact us via our contact form or email</li>
+          <li>Call or email us directly</li>
+        </ul>
+        <p>This information may include your name, email address, phone number, business name, and details about your packaging requirements.</p>
+
+        <h2>3. How We Use Your Information</h2>
+        <p>We use the information we collect to:</p>
+        <ul>
+          <li>Respond to your enquiries and provide quotes</li>
+          <li>Process and fulfil orders</li>
+          <li>Communicate with you about your order or enquiry</li>
+          <li>Improve our website and services</li>
+          <li>Comply with legal obligations</li>
+        </ul>
+
+        <h2>4. Information Sharing</h2>
+        <p>We do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and conducting our business, subject to strict confidentiality obligations.</p>
+
+        <h2>5. Cookies</h2>
+        <p>Our website may use cookies to enhance your browsing experience. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. If you do not accept cookies, some features of our website may not function properly.</p>
+
+        <h2>6. Data Security</h2>
+        <p>We implement appropriate technical and organisational measures to protect your personal information against unauthorised access, alteration, disclosure, or destruction. However, no method of transmission over the internet or method of electronic storage is 100% secure.</p>
+
+        <h2>7. Data Retention</h2>
+        <p>We retain your personal information only for as long as necessary to fulfil the purposes outlined in this Privacy Policy, unless a longer retention period is required by law.</p>
+
+        <h2>8. Your Rights</h2>
+        <p>Under the Australian Privacy Act 1988 and applicable state legislation, you have the right to:</p>
+        <ul>
+          <li>Access the personal information we hold about you</li>
+          <li>Request correction of inaccurate information</li>
+          <li>Request deletion of your personal information (subject to legal obligations)</li>
+          <li>Opt out of marketing communications</li>
+        </ul>
+        <p>To exercise any of these rights, please contact us at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+
+        <h2>9. Third-Party Links</h2>
+        <p>Our website may contain links to third-party websites. We are not responsible for the privacy practices or content of those sites. We encourage you to read the privacy policies of any external sites you visit.</p>
+
+        <h2>10. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last updated" date at the top of this page. We encourage you to review this policy periodically.</p>
+
+        <h2>11. Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us:</p>
+        <ul>
+          <li><strong>Email:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><strong>Phone:</strong> <a href={`tel:${SITE.phone}`}>{SITE.phone}</a></li>
+          <li><strong>Address:</strong> {SITE.address}</li>
+        </ul>
+
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+.breadcrumb-bar { background: var(--color-off-white); border-bottom: 1px solid var(--color-border); padding: 0.875rem 0; }
+
+.policy-hero {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 3.5rem 0 2.5rem;
+  text-align: center;
+}
+.policy-hero .section-label { color: rgba(255,255,255,0.6); }
+.policy-hero h1 { color: #fff; font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem; }
+.policy-hero p { color: rgba(255,255,255,0.5); font-size: 0.875rem; margin-top: 0.5rem; }
+
+.policy-body { max-width: 760px; }
+.policy-body h2 {
+  font-size: 1.3rem;
+  color: var(--color-navy);
+  margin: 2.5rem 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.policy-body p { color: var(--color-text); line-height: 1.8; margin-bottom: 1rem; }
+.policy-body ul { padding-left: 1.5rem; color: var(--color-text); line-height: 1.8; margin-bottom: 1rem; }
+.policy-body li { margin-bottom: 0.35rem; }
+.policy-body a { color: var(--color-navy); font-weight: 600; }
+.policy-body a:hover { color: var(--color-gold); }
+</style>

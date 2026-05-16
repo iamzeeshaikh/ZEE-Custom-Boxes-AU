@@ -1,0 +1,636 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import { SITE } from '../../config/site';
+import products from '../../data/products.json';
+import categories from '../../data/categories.json';
+
+export async function getStaticPaths() {
+  return categories.map(cat => ({
+    params: { slug: cat.slug },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+
+const catProducts = products.filter(p => p.categories.includes(category.name));
+
+const linkProduct1 = catProducts[0] ?? null;
+const linkProduct2 = catProducts[2] ?? catProducts[1] ?? null;
+
+const productMap: Record<string, typeof products[0]> = {};
+products.forEach(p => { productMap[p.slug] = p; });
+
+const relatedCategories = categories
+  .filter(c => c.slug !== category.slug)
+  .slice(0, 6)
+  .map(cat => ({
+    ...cat,
+    thumb: productMap[cat.products[0]]?.images?.[0] || '/images/placeholder.webp',
+  }));
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE.url },
+    { "@type": "ListItem", "position": 2, "name": "Products", "item": `${SITE.url}/products` },
+    { "@type": "ListItem", "position": 3, "name": category.name, "item": `${SITE.url}/category/${category.slug}` },
+  ]
+};
+
+const collectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": category.name,
+  "description": `Custom ${category.name} in Australia. Premium quality, free design, fast turnaround. Order from ZEE Custom Boxes AU.`,
+  "url": `${SITE.url}/category/${category.slug}`,
+  "hasPart": catProducts.slice(0, 10).map(p => ({
+    "@type": "Product",
+    "name": p.name,
+    "url": `${SITE.url}/product/${p.slug}`,
+    "image": p.images[0] || ''
+  }))
+};
+
+const seoTitle = `${category.name} - Custom Packaging Australia | ${SITE.name}`;
+const seoDesc = `Order custom ${category.name} in Australia. Premium quality, free design service, fast turnaround, and wholesale pricing. Request your free quote from ZEE Custom Boxes AU today.`;
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonical={`${SITE.url}/category/${category.slug}`}
+  schema={[collectionSchema, breadcrumbSchema]}
+>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-bar">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <a href="/products">Products</a>
+        <span class="sep">›</span>
+        <span aria-current="page">{category.name}</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Category Hero -->
+  <section class="cat-hero">
+    <div class="container">
+      <div class="cat-hero-inner">
+        <div class="cat-hero-content">
+          <div class="section-label">Category</div>
+          <h1 class="cat-hero-title">{category.name}</h1>
+          <div class="gold-divider gold-divider-left"></div>
+          <p class="cat-hero-desc">
+            Discover our premium range of <strong>{category.name}</strong> at ZEE Custom Boxes AU.
+            All packaging comes with free design service, competitive wholesale pricing,
+            and fast delivery across Australia.
+          </p>
+          <div class="cat-hero-actions">
+            <a href="#products" class="btn btn-primary">
+              Browse Products
+            </a>
+            <a href="/request-quote" class="btn btn-outline">
+              Get Free Quote
+            </a>
+          </div>
+        </div>
+        <div class="cat-hero-stats">
+          <div class="cat-stat">
+            <div class="cat-stat-num">100+</div>
+            <div class="cat-stat-label">Happy Clients</div>
+          </div>
+          <div class="cat-stat">
+            <div class="cat-stat-num">Free</div>
+            <div class="cat-stat-label">Design Service</div>
+          </div>
+          <div class="cat-stat">
+            <div class="cat-stat-num">AU</div>
+            <div class="cat-stat-label">Nationwide Delivery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="section" id="products">
+    <div class="container">
+      <div class="products-toolbar">
+        <div class="products-count">
+          Custom packaging solutions in <em>{category.name}</em>
+        </div>
+      </div>
+      {catProducts.length > 0 ? (
+        <div class="grid-4">
+          {catProducts.map((product, i) => (
+            <div class="reveal" style={`animation-delay: ${(i % 8) * 0.05}s`}>
+              <ProductCard product={product} eager={i < 8} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <p>No products found in this category. <a href="/products">Browse all products</a>.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- SEO Content Section -->
+  <section class="section bg-light">
+    <div class="container container-sm">
+      <div class="seo-content reveal">
+        <div class="section-label">Your Complete Guide</div>
+        <h2>Custom {category.name} in Australia</h2>
+        <div class="gold-divider gold-divider-left"></div>
+
+        <div class="prose">
+
+          <p>ZEE Custom Boxes AU produces premium <strong>{category.name}</strong> for Australian businesses of every
+          size — from boutique brands ordering their first small run to established wholesalers managing large-volume
+          replenishment cycles. Every order is made entirely to specification: your dimensions, your brand colours,
+          your chosen substrate, your selected finish. Nothing is pre-made or off-the-shelf.</p>
+
+          <p>Packaging is often the first physical interaction a customer has with a brand. That opening moment —
+          lifting a lid, sliding a sleeve, unfolding a carton — communicates something about the product inside before
+          it is even seen. Well-designed custom {category.name} let you control that moment deliberately and precisely,
+          rather than leaving it to chance.</p>
+
+          <h3>Why Custom Packaging Has a Measurable Commercial Impact</h3>
+
+          <p>Consumer research consistently shows that over 70% of purchasing decisions are influenced by packaging
+          design alone. For e-commerce brands, premium packaging directly reduces return rates and drives repeat
+          purchases — customers associate the quality of the box with the quality of what is inside.</p>
+
+          <p>In product categories where multiple competitors sit side by side on shelf or arrive through the same
+          courier network, the packaging is often the only differentiating signal a buyer experiences first. Choosing
+          the right {category.name} is not a cosmetic decision — it is a commercial one with measurable effects on
+          conversion, retention, and word-of-mouth.</p>
+
+          <h3>Materials and Substrates: Choosing the Right Foundation</h3>
+
+          <p>The material you select determines the structural performance, print fidelity, tactile quality, and
+          sustainability profile of your finished packaging. The comparison below covers the four primary substrates
+          we work with and their most appropriate applications.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Material</th>
+                  <th>Best Suited For</th>
+                  <th>Typical Thickness</th>
+                  <th>Compatible Finishes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SBS Cardboard</td>
+                  <td>Retail, cosmetic, food, pharmaceutical</td>
+                  <td>250 – 450 gsm</td>
+                  <td>All print and surface finishes</td>
+                </tr>
+                <tr>
+                  <td>Kraft Board</td>
+                  <td>Artisan, eco-conscious, bakery, wellness</td>
+                  <td>300 – 400 gsm</td>
+                  <td>Natural finish, aqueous, limited UV</td>
+                </tr>
+                <tr>
+                  <td>Rigid Greyboard</td>
+                  <td>Luxury gift boxes, rigid mailers, premium retail</td>
+                  <td>1 – 3 mm</td>
+                  <td>All finishes including deep embossing</td>
+                </tr>
+                <tr>
+                  <td>Corrugated Board</td>
+                  <td>Shipping cartons, e-commerce mailers, fragile goods</td>
+                  <td>Single to triple wall</td>
+                  <td>Kraft liner to full-colour litho laminate</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>All substrates are available in FSC-certified and recycled-content variants for brands with environmental
+          commitments. Our team will recommend the most appropriate material grade for your product weight, storage
+          conditions, and shelf-life requirements during the quoting process.</p>
+
+          <h3>Our Range of {category.name}</h3>
+
+          <p>Our catalogue within this category covers a wide variety of structural formats — straight-tuck cartons,
+          reverse-tuck end mailers, rigid shoulder boxes, sleeve-and-tray sets, and fully bespoke die-cut structures
+          with windowing, foam inserts, and magnetic closures. Every format is available in any size, any material
+          grade, and any print specification.</p>
+
+          {linkProduct1 && (
+            <p>One of the most frequently ordered products in this range is our <a href={`/product/${linkProduct1.slug}`}>{linkProduct1.name}</a> —
+            a consistently popular choice for Australian brands seeking a balance of structural quality, precise colour
+            reproduction, and competitive per-unit pricing across medium to large production runs.</p>
+          )}
+
+          {linkProduct2 && (
+            <p>Businesses with more specialised structural or presentation requirements often select our <a href={`/product/${linkProduct2.slug}`}>{linkProduct2.name}</a>
+            for its additional configuration options, which suit both premium retail shelf applications and
+            direct-to-consumer fulfilment contexts equally well.</p>
+          )}
+
+          <p>Every product in this range is manufactured to your exact specified dimensions. There are no
+          predetermined standard sizes — if your product has an unusual footprint or needs a tight structural fit,
+          we engineer the box around it.</p>
+
+          <h3>The Design Process: From Brief to Approved Artwork</h3>
+
+          <p>Our free professional design service covers the entire artwork journey. You do not need existing design
+          files or prior experience to place an order — our in-house team manages everything from initial structural
+          dieline through to production-ready print files.</p>
+
+          <ol>
+            <li><strong>Submit your brief.</strong> Share your product type, approximate dimensions, quantity, preferred
+            materials, and any brand references, colour guides, or logo files you have available.</li>
+            <li><strong>Receive your 3D proof.</strong> Our designers produce a photorealistic 3D digital mockup of
+            your box, typically delivered within 3–5 business days of your brief being confirmed.</li>
+            <li><strong>Review and refine.</strong> Request adjustments to colour, layout, typography, or structure.
+            There is no cap on revision rounds and no charge at this stage, regardless of how many iterations
+            are required.</li>
+            <li><strong>Approve the final artwork.</strong> Once every detail is exactly right, you sign off and
+            we lock in your production run immediately.</li>
+            <li><strong>Production and dispatch.</strong> Your order is manufactured to the approved specification and
+            shipped directly to your address — anywhere across Australia, fully tracked from our facility to your door.</li>
+          </ol>
+
+          <h3>Surface Finishes That Elevate {category.name}</h3>
+
+          <p>The right surface treatment is what separates packaging that photographs well from packaging that genuinely
+          stops customers on shelf. We offer the full range of decorative and protective finishes, which can be layered
+          on a single box for multi-dimensional, premium results.</p>
+
+          <ul>
+            <li><strong>Gloss lamination</strong> — a high-shine surface that intensifies printed colour depth and provides durable, wipe-clean protection in high-contact retail environments</li>
+            <li><strong>Soft-touch matte lamination</strong> — a velvety, tactile surface strongly associated with high-end cosmetic, wellness, and lifestyle brands</li>
+            <li><strong>Spot UV coating</strong> — gloss applied selectively over a matte base, creating visual contrast that draws the eye to logos, brand marks, or key design elements</li>
+            <li><strong>Hot foil stamping</strong> — gold, silver, rose gold, or holographic metallic foil applied with precision heat and pressure for a luxury finish that cannot be replicated digitally</li>
+            <li><strong>Embossing and debossing</strong> — raised or recessed three-dimensional relief adding tactile quality to logos, borders, and typographic elements</li>
+            <li><strong>Aqueous eco-coating</strong> — a water-based protective surface treatment suitable for food-safe applications and brands reducing chemical use across their supply chain</li>
+          </ul>
+
+          <h3>Who Orders {category.name} From ZEE Custom Boxes AU</h3>
+
+          <p>Our clients span a broad cross-section of Australian industry. Cosmetics and personal care brands make up
+          a significant share of our production volume, alongside food and beverage producers, health supplement
+          companies, candle and home fragrance makers, and retail businesses investing in stronger shelf presentation.</p>
+
+          <p>E-commerce businesses order in volume because premium packaging reduces transit damage, cuts return rates,
+          and generates the kind of unboxing content that produces organic word-of-mouth. Corporate gifting companies
+          and businesses supplying the <a href="/about">health and pharmaceutical sectors</a> are also a consistent
+          part of our client base, drawn by precision in structural specification and compliance with relevant
+          packaging standards.</p>
+
+          <h3>Delivery and Production Timelines</h3>
+
+          <p>Standard production runs are completed in 7–14 business days from artwork approval. Express options are
+          available for time-critical requirements — exact lead times depend on order volume and specification
+          complexity, and are confirmed in your quote before any commitment is made.</p>
+
+          <p>We deliver to all Australian states and territories: New South Wales, Victoria, Queensland, Western
+          Australia, South Australia, Tasmania, the Northern Territory, and the Australian Capital Territory.
+          All shipments are tracked from dispatch to delivery.</p>
+
+          <h3>Requesting a Quote for Your {category.name}</h3>
+
+          <p>The most efficient way to receive accurate pricing is through our <a href="/request-quote">free custom
+          packaging quote form</a> — share your requirements and our team will respond with a detailed, itemised
+          proposal within 24 hours during business days. There are no obligations at any stage, no setup fees, and
+          no pressure to proceed.</p>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category FAQ -->
+  <section class="section">
+    <div class="container container-sm">
+      <div class="section-header reveal">
+        <div class="section-label">FAQ</div>
+        <h2>Frequently Asked Questions About {category.name}</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="faq-list">
+        {[
+          {
+            q: `What is the minimum order quantity for ${category.name}?`,
+            a: `There is no minimum order quantity. You can order as few units as your current requirements demand — whether that is a short sampling run of 50 boxes or a wholesale replenishment of 10,000. Our pricing scales with volume, and every quote includes a tiered breakdown across multiple quantities so you can make the most informed decision.`,
+          },
+          {
+            q: `How long does production take for custom ${category.name}?`,
+            a: `Standard production runs are completed in 7–14 business days from the date your artwork is formally approved. Express turnaround is available for time-sensitive orders — lead times vary by volume and specification complexity and are confirmed in your quote before any commitment is required from you.`,
+          },
+          {
+            q: `Is the design service really free of charge?`,
+            a: `Yes — entirely. Our in-house design team creates your structural dieline and full printed artwork at no cost. You receive a photorealistic 3D digital mockup for review, and you can request as many revision rounds as necessary before approving. There are no design fees, no setup charges, and no hidden costs at any stage of the process.`,
+          },
+          {
+            q: `What materials are available for ${category.name}?`,
+            a: `We produce ${category.name} in premium SBS cardboard (250–450 gsm), natural and bleached kraft board (300–400 gsm), rigid greyboard (1–3 mm), and single or double-wall corrugated board. All substrates are available in FSC-certified and recycled-content variants for sustainability-committed brands.`,
+          },
+          {
+            q: `What print finishes can be applied to ${category.name}?`,
+            a: `Our available surface treatments include gloss lamination, soft-touch matte lamination, aqueous eco-coating, spot UV, gold and silver hot foil stamping, holographic foil, embossing, debossing, and custom die-cutting with optional windowing. Multiple finishes can be combined on a single box for layered, premium results.`,
+          },
+          {
+            q: `Can I order ${category.name} in a non-standard custom size?`,
+            a: `All ${category.name} we manufacture are built to your exact specified dimensions. We do not use a fixed size catalogue — you provide the internal or external measurements your product requires, and our team engineers the structural dieline around those specifications precisely.`,
+          },
+          {
+            q: `Do you offer eco-friendly options for ${category.name}?`,
+            a: `Yes. We offer production using recycled board, FSC-certified virgin board, soy-based inks, and water-based aqueous coatings. These options are particularly well-suited to brands in the wellness, food, beauty, and personal care sectors where customers actively seek out sustainable packaging choices.`,
+          },
+          {
+            q: `Do you deliver ${category.name} to all Australian states and territories?`,
+            a: `Yes. We deliver to New South Wales, Victoria, Queensland, Western Australia, South Australia, Tasmania, the Northern Territory, and the Australian Capital Territory. All orders are dispatched fully tracked and can be delivered to commercial, retail, or residential addresses.`,
+          },
+          {
+            q: `Is there a limit on design revision rounds?`,
+            a: `No. You can request as many rounds of revision as you need — changes to colour, layout, typography, structural dimensions, or finish selection — at no additional charge, until every element of the artwork is exactly as you require before you sign off on production.`,
+          },
+          {
+            q: `What artwork file formats do you accept?`,
+            a: `We accept Adobe Illustrator (.ai), print-ready PDF, EPS, and high-resolution TIFF files at a minimum of 300 DPI at the intended print size, with bleed and crop marks included. If you are working with a brand designer or external agency, we can supply the correct structural dieline template for them to work within.`,
+          },
+          {
+            q: `Are volume discounts available on ${category.name}?`,
+            a: `Volume pricing applies to all orders. Our quotes include a tiered pricing breakdown — typically across quantity levels of 250, 500, 1,000, 2,500, and 5,000 units — so you can identify the run size that delivers the most cost-effective per-unit price for your current budget and demand forecast.`,
+          },
+        ].map(faq => (
+          <div class="faq-item reveal">
+            <button class="faq-question">{faq.q}<div class="faq-icon">+</div></button>
+            <div class="faq-answer"><p>{faq.a}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote Form -->
+  <QuoteForm productName={category.name} dark={false} />
+
+  <!-- Related Categories -->
+  {relatedCategories.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-label">Explore More</div>
+          <h2>Related Packaging Categories</h2>
+          <div class="gold-divider"></div>
+        </div>
+        <div class="related-cats-grid">
+          {relatedCategories.map((cat, i) => (
+            <a href={`/category/${cat.slug}`} class="related-cat-card reveal" style={`animation-delay:${i * 0.06}s`}>
+              <div class="related-cat-img">
+                <img src={cat.thumb} alt={`Custom ${cat.name} Australia`} loading="lazy" />
+                <div class="related-cat-overlay"></div>
+              </div>
+              <div class="related-cat-body">
+                <h3>{cat.name}</h3>
+                <span class="related-cat-arrow">Shop Now →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+</Layout>
+
+<style>
+.breadcrumb-bar {
+  background: var(--color-off-white);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.875rem 0;
+}
+
+.cat-hero {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 4rem 0 3rem;
+}
+
+.cat-hero-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  align-items: center;
+}
+
+.cat-hero .section-label { color: rgba(255,255,255,0.6); }
+
+.cat-hero-title {
+  color: #fff;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  margin-bottom: 0.5rem;
+}
+
+.cat-hero-desc {
+  color: rgba(255,255,255,0.75);
+  font-size: 1.05rem;
+  max-width: 560px;
+  margin: 1rem 0 1.75rem;
+}
+
+.cat-hero-desc strong { color: var(--color-gold); }
+
+.cat-hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cat-hero-actions .btn-outline {
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
+}
+
+.cat-hero-actions .btn-outline:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.7);
+}
+
+.cat-hero-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cat-stat {
+  text-align: center;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 2rem;
+}
+
+.cat-stat-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.cat-stat-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.products-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.products-count {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.products-count strong, .products-count em {
+  color: var(--color-navy);
+}
+
+.seo-content .prose {
+  margin-top: 1.5rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-sm);
+}
+
+.table-wrap table {
+  min-width: 560px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-text-muted);
+}
+
+.empty-state a {
+  color: var(--color-navy);
+  text-decoration: underline;
+}
+
+.related-cats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.related-cat-card {
+  display: block;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.related-cat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.related-cat-img {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-off-white);
+}
+
+.related-cat-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.related-cat-card:hover .related-cat-img img {
+  transform: scale(1.07);
+}
+
+.related-cat-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(13,32,53,0.55) 100%);
+  pointer-events: none;
+}
+
+.related-cat-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-top: none;
+}
+
+.related-cat-card:hover .related-cat-body {
+  border-color: var(--color-gold);
+}
+
+.related-cat-body h3 {
+  font-size: 0.88rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.related-cat-arrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all var(--transition);
+}
+
+.related-cat-card:hover .related-cat-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 900px) {
+  .cat-hero-inner { grid-template-columns: 1fr; }
+  .cat-hero-stats { flex-direction: row; }
+  .related-cats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .cat-hero-actions { flex-direction: column; }
+  .cat-hero-stats { flex-direction: column; }
+  .related-cats-grid { grid-template-columns: 1fr; }
+}
+</style>

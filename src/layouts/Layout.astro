@@ -1,0 +1,347 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../config/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  noIndex?: boolean;
+  schema?: object | object[];
+}
+
+const {
+  title,
+  description = SITE.description,
+  canonical,
+  image = '/images/og-default.svg',
+  noIndex = false,
+  schema,
+} = Astro.props;
+
+const canonicalUrl = canonical || Astro.url.href;
+const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const schemaArr = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+---
+
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+
+  {noIndex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow" />}
+
+  <link rel="canonical" href={canonicalUrl} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={SITE.name} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={new URL(image, SITE.url).href} />
+  <meta property="og:locale" content="en_AU" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={new URL(image, SITE.url).href} />
+
+  <!-- Favicon -->
+  <meta name="theme-color" content="#1a3a5c" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Zendesk Chat -->
+  <script type="text/javascript">
+    window.$zopim||(function(d,s){var z=$zopim=function(c){
+    z._.push(c)},$=z.s=
+    d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+    _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');
+    $.src='https://v2.zopim.com/?4h3lbyJihoT1mCOqDA0VoQOaVQE9qTOP';z.t=+new Date;$.
+    type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+  </script>
+
+  <!-- Schema markup -->
+  {schemaArr.length > 0 && schemaArr.map((s) => (
+    <script type="application/ld+json" set:html={JSON.stringify(s)} />
+  ))}
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": SITE.name,
+    "url": SITE.url,
+    "logo": new URL(SITE.logo, SITE.url).href,
+    "email": SITE.email,
+    "telephone": SITE.phone,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "903/50 Clarence St",
+      "addressLocality": "Sydney",
+      "addressRegion": "NSW",
+      "postalCode": "2000",
+      "addressCountry": "AU"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": SITE.phone,
+      "contactType": "customer service",
+      "areaServed": "AU",
+      "availableLanguage": "en"
+    },
+    "sameAs": [
+      "https://www.facebook.com/zeecustomboxesau",
+      "https://www.instagram.com/zeecustomboxesau"
+    ]
+  })} />
+
+  <!-- WebSite Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": SITE.name,
+    "url": SITE.url,
+    "description": SITE.description
+  })} />
+
+  <!-- Google Tag Manager (replace GTM-XXXXXXX with your container ID) -->
+  <!-- <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-XXXXXXX');</script> -->
+</head>
+<body>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+
+  <!-- WhatsApp Floating Widget -->
+  <div id="wa-widget">
+    <div id="wa-popup" aria-hidden="true">
+      <div class="wa-header">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.557 4.117 1.528 5.845L.057 23.5l5.797-1.528A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.369l-.359-.213-3.44.906.92-3.354-.234-.374A9.818 9.818 0 1 1 12 21.818z"/></svg>
+        <span>WhatsApp</span>
+        <button id="wa-close" aria-label="Close chat">&times;</button>
+      </div>
+      <div class="wa-body">
+        <div class="wa-bubble">
+          <p>Hi, Are you looking for <strong>Custom Printed Boxes / Sleeves / Trays / Cartons / Bags?</strong></p>
+          <p>Wholesale prices available. Get <strong>20% discount</strong> on your first order!</p>
+        </div>
+        <a
+          href="https://api.whatsapp.com/send/?phone=15033580443&text=Hi+ZEE+Custom+Boxes%21+I+need+more+info+about+ZEE+Custom+Boxes+https%3A%2F%2Fzeecustomboxes.com%2F&type=phone_number&app_absent=0"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="wa-cta"
+        >Open chat</a>
+      </div>
+    </div>
+    <button id="wa-btn" aria-label="Chat on WhatsApp">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.557 4.117 1.528 5.845L.057 23.5l5.797-1.528A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.369l-.359-.213-3.44.906.92-3.354-.234-.374A9.818 9.818 0 1 1 12 21.818z"/></svg>
+    </button>
+  </div>
+
+  <style>
+    #wa-widget {
+      position: fixed;
+      bottom: 24px;
+      left: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    #wa-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #25d366;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #wa-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 28px rgba(37,211,102,0.55);
+    }
+    #wa-popup {
+      width: 300px;
+      background: #f0f0f0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      transform: translateY(16px) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #wa-popup.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .wa-header {
+      background: #075e54;
+      color: #fff;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .wa-header span {
+      flex: 1;
+      font-weight: 700;
+      font-size: 1rem;
+      font-family: sans-serif;
+    }
+    #wa-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.8);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+    }
+    #wa-close:hover { color: #fff; }
+    .wa-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #e5ddd5;
+    }
+    .wa-bubble {
+      background: #fff;
+      border-radius: 0 8px 8px 8px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      color: #111;
+      line-height: 1.5;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .wa-bubble p { margin: 0 0 6px; }
+    .wa-bubble p:last-child { margin: 0; }
+    .wa-cta {
+      display: block;
+      text-align: center;
+      background: #25d366;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .wa-cta:hover { background: #1ebe5d; }
+    @media (max-width: 400px) {
+      #wa-widget { bottom: 16px; left: 0; }
+      #wa-popup { width: 270px; }
+    }
+  </style>
+
+  <script>
+    const waBtn = document.getElementById('wa-btn');
+    const waClose = document.getElementById('wa-close');
+    const waPopup = document.getElementById('wa-popup');
+    waBtn?.addEventListener('click', () => waPopup?.classList.toggle('open'));
+    waClose?.addEventListener('click', () => waPopup?.classList.remove('open'));
+  </script>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) {
+          el.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item?.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+        if (!isOpen) item?.classList.add('open');
+      });
+    });
+
+    // Email form submission handler
+    document.querySelectorAll<HTMLFormElement>('form[data-email-form]').forEach(form => {
+      form.addEventListener('submit', async (e: Event) => {
+        e.preventDefault();
+
+        const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+        if (!btn) return;
+
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = 'Sending…';
+        btn.disabled = true;
+
+        // Collect all named fields
+        const formData = new FormData(form);
+        const data: Record<string, string> = {};
+        formData.forEach((value, key) => {
+          if (typeof value === 'string') data[key] = value;
+        });
+
+        // Capture file name if present (artwork / file inputs)
+        form.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach(input => {
+          if (input.files && input.files[0]) {
+            data[input.name || 'attachment'] = input.files[0].name;
+          }
+        });
+
+        data._formName = form.dataset.emailForm || 'Website Enquiry';
+
+        try {
+          const res = await fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          if (res.ok) {
+            window.location.href = '/thank-you';
+          } else {
+            throw new Error('Server error');
+          }
+        } catch {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          const errMsg = form.querySelector('.form-error-msg');
+          if (errMsg) {
+            errMsg.textContent = 'Something went wrong. Please try again or call us on +61 2 9099 5643.';
+            (errMsg as HTMLElement).style.display = 'block';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

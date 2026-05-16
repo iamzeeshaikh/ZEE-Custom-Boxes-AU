@@ -1,0 +1,3689 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { SITE } from '../../config/site';
+import products from '../../data/products.json';
+
+export async function getStaticPaths() {
+  return products.map(product => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+
+function catSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+}
+
+const related = products
+  .filter(p => p.slug !== product.slug && p.categories.some((c: string) => product.categories.includes(c)))
+  .slice(0, 4);
+
+const primaryCat = product.primaryCategory || product.categories[0];
+const primaryCatSlug = primaryCat ? catSlug(primaryCat) : '';
+
+const hasDesc  = Boolean(product.description);
+const hasSpecs = Boolean(product.specifications);
+const hasFaqs  = Boolean(product.faqs);
+const images   = product.images as string[];
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE.url },
+    { "@type": "ListItem", "position": 2, "name": primaryCat, "item": `${SITE.url}/category/${primaryCatSlug}` },
+    { "@type": "ListItem", "position": 3, "name": product.name, "item": `${SITE.url}/product/${product.slug}` },
+  ]
+};
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.name,
+  "description": product.metaDescription,
+  "image": images,
+  "brand": { "@type": "Brand", "name": "ZEE Custom Boxes AU" },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "AUD",
+    "price": "0",
+    "priceSpecification": { "@type": "PriceSpecification", "description": "Quote-based pricing" },
+    "seller": { "@type": "Organization", "name": SITE.name },
+    "availability": "https://schema.org/InStock",
+    "areaServed": "AU"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "127",
+    "bestRating": "5"
+  }
+};
+---
+
+<Layout
+  title={product.seoTitle || `${product.name} | ${SITE.name}`}
+  description={product.metaDescription}
+  canonical={`${SITE.url}/product/${product.slug}`}
+  image={images[0] || '/images/og-default.jpg'}
+  schema={[productSchema, breadcrumbSchema]}
+>
+
+<!-- ═══════════════════════════════════════════════════════════
+     BREADCRUMB
+══════════════════════════════════════════════════════════════ -->
+<div class="breadcrumb-bar">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      {primaryCat && (
+        <>
+          <a href={`/category/${primaryCatSlug}`}>{primaryCat}</a>
+          <span class="sep">›</span>
+        </>
+      )}
+      <span aria-current="page">{product.name}</span>
+    </nav>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PRODUCT HERO — Gallery + Info
+══════════════════════════════════════════════════════════════ -->
+<section class="product-hero">
+  <div class="container">
+    <div class="product-layout">
+
+      <!-- ── Gallery ── -->
+      <div class="product-gallery">
+        <div class="gallery-main-wrap" id="gallery-main-wrap" data-images={JSON.stringify(images)}>
+          {images[0] ? (
+            <img
+              id="main-img"
+              src={images[0]}
+              alt={`${product.name} - ZEE Custom Boxes AU`}
+              width="700" height="580"
+              loading="eager" decoding="async"
+              class="gallery-main-img"
+              onerror="this.src='/images/placeholder.webp'"
+            />
+          ) : (
+            <div class="gallery-placeholder">
+              <svg width="80" height="80" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" opacity="0.2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21,15 16,10 5,21"/>
+              </svg>
+            </div>
+          )}
+          <!-- Zoom icon -->
+          {images[0] && (
+            <button class="gallery-zoom-btn" id="open-lightbox" aria-label="View full size">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/>
+              </svg>
+            </button>
+          )}
+          <!-- Image counter badge -->
+          {images.length > 1 && (
+            <div class="gallery-counter" id="gallery-counter">1 / {images.length}</div>
+          )}
+        </div>
+
+        {images.length > 1 && (
+          <div class="gallery-thumbs" id="gallery-thumbs">
+            {images.map((img, i) => (
+              <button
+                class={`gallery-thumb ${i === 0 ? 'active' : ''}`}
+                data-src={img}
+                data-index={i}
+                aria-label={`View image ${i + 1}`}
+              >
+                <img
+                  src={img}
+                  alt={`${product.name} view ${i + 1}`}
+                  width="120" height="90"
+                  loading="lazy" decoding="async"
+                  onerror="this.parentElement.style.display='none'"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- ── Info Panel ── -->
+      <div class="product-info">
+
+        <!-- Category badges -->
+        <div class="product-cats">
+          {product.categories.slice(0, 3).map((cat: string) => (
+            <a href={`/category/${catSlug(cat)}`} class="product-cat-badge">{cat}</a>
+          ))}
+        </div>
+
+        <h1 class="product-title">{product.name}</h1>
+
+        <!-- Rating row -->
+        <div class="product-rating-row">
+          <div class="stars">
+            {'★★★★★'.split('').map(() => <span class="star">★</span>)}
+          </div>
+          <span class="rating-score">4.9</span>
+          <span class="rating-sep">·</span>
+          <span class="rating-count">127 reviews</span>
+          <span class="rating-sep">·</span>
+          <span class="in-stock">✓ In Stock</span>
+        </div>
+
+        <div class="info-divider"></div>
+
+        <!-- Short description -->
+        {product.shortDescription && (
+          <div class="product-short-desc prose" set:html={product.shortDescription} />
+        )}
+
+        <!-- Trust badges grid -->
+        <div class="trust-grid">
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Free Design Service</strong>
+              <span>Expert artwork at no charge</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>No Minimum Order</strong>
+              <span>Any quantity, any size</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Fast Turnaround</strong>
+              <span>7–14 business days</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="1" y="3" width="15" height="13" rx="1"/>
+                <polygon points="16,8 20,8 23,11 23,16 16,16 16,8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Nationwide Delivery</strong>
+              <span>All cities across Australia</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Wholesale Pricing</strong>
+              <span>Better price as you scale</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div class="trust-text">
+              <strong>Quality Guaranteed</strong>
+              <span>Premium materials, certified</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="product-cta-wrap">
+          <a href="#request-quote" class="btn-cta-primary">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+            Request a Free Quote
+          </a>
+          <a href={`tel:${SITE.phone}`} class="btn-cta-secondary">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            {SITE.phone}
+          </a>
+        </div>
+
+        <!-- Assurance strip -->
+        <div class="assurance-strip">
+          <span class="assurance-dot"></span>
+          <span>Receive your detailed quote within <strong>24 hours</strong> — no obligation</span>
+        </div>
+
+        <!-- Quick Quote Mini Form -->
+        <div class="mini-form-wrap">
+          <div class="mini-form-header">
+            <div class="mini-form-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+              Quick Quote — 60 seconds
+            </div>
+            <span class="mini-form-badge">Free &amp; No Obligation</span>
+          </div>
+          <form
+            class="mini-form"
+            data-email-form="Quick Quote"
+          >
+            <input type="hidden" name="product" value={product.name} />
+            <div class="form-error-msg" style="display:none;background:#fef2f2;color:#dc2626;padding:0.6rem 0.9rem;border-radius:6px;font-size:0.82rem;margin-bottom:0.5rem;"></div>
+
+            <div class="mf-row">
+              <div class="mf-group">
+                <input type="text" name="name" required placeholder="Your Name *" />
+              </div>
+              <div class="mf-group">
+                <input type="email" name="email" required placeholder="Email Address *" />
+              </div>
+            </div>
+
+            <div class="mf-group">
+              <input type="tel" name="phone" placeholder="Phone Number" />
+            </div>
+
+            <div class="mf-group">
+              <textarea name="message" rows="3" placeholder="Your requirements (size, quantity, material, timeline…)"></textarea>
+            </div>
+
+            <div class="mf-group mf-file-group">
+              <label class="mf-file-label">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span id="mf-file-text">Upload Artwork (optional)</span>
+                <input type="file" name="artwork" accept=".pdf,.ai,.eps,.psd,.jpg,.jpeg,.png,.svg,.zip" id="mf-artwork" />
+              </label>
+            </div>
+
+            <button type="submit" class="mf-submit">
+              Send My Quote Request
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TRUST PILLARS STRIP
+══════════════════════════════════════════════════════════════ -->
+<div class="trust-strip">
+  <div class="container">
+    <div class="trust-pillars">
+      <div class="pillar">
+        <svg width="22" height="22" fill="none" stroke="var(--color-gold)" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        <span>Free Professional Design</span>
+      </div>
+      <div class="pillar-sep"></div>
+      <div class="pillar">
+        <svg width="22" height="22" fill="none" stroke="var(--color-gold)" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+        </svg>
+        <span>No Minimum Order Quantity</span>
+      </div>
+      <div class="pillar-sep"></div>
+      <div class="pillar">
+        <svg width="22" height="22" fill="none" stroke="var(--color-gold)" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>7–14 Day Production</span>
+      </div>
+      <div class="pillar-sep"></div>
+      <div class="pillar">
+        <svg width="22" height="22" fill="none" stroke="var(--color-gold)" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="1" y="3" width="15" height="13" rx="1"/>
+          <polygon points="16,8 20,8 23,11 23,16 16,16 16,8"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+        <span>Australia-Wide Shipping</span>
+      </div>
+      <div class="pillar-sep"></div>
+      <div class="pillar">
+        <svg width="22" height="22" fill="none" stroke="var(--color-gold)" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>Premium Quality Guaranteed</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONFIGURATOR
+══════════════════════════════════════════════════════════════ -->
+<section class="configurator-section" id="configurator">
+  <div class="container">
+
+    <div class="cfg-header reveal">
+      <div class="section-label">Interactive Configurator</div>
+      <h2>Customize Your {product.name}</h2>
+      <div class="gold-divider"></div>
+      <p>Choose your packaging options below and receive a live price estimate with your selections.</p>
+    </div>
+
+    <div class="cfg-layout">
+
+      <!-- ── LEFT: Options ── -->
+      <div class="cfg-options">
+
+        <!-- STEP 1: Size -->
+        <div class="cfg-step" id="cfg-step-size">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">1</span>
+            <h3>Select Size</h3>
+          </div>
+          <div class="cfg-cards" id="size-cards">
+            {[
+              { id:'xs',  label:'Extra Small', dims:'5 × 5 × 3 cm' },
+              { id:'sm',  label:'Small',        dims:'10 × 8 × 4 cm' },
+              { id:'md',  label:'Medium',       dims:'15 × 12 × 6 cm' },
+              { id:'lg',  label:'Large',        dims:'20 × 15 × 10 cm' },
+              { id:'xl',  label:'Extra Large',  dims:'30 × 25 × 15 cm' },
+              { id:'cus', label:'Custom Size',  dims:'Enter below ↓'  },
+            ].map(s => (
+              <button class="cfg-card" data-group="size" data-val={s.id} aria-pressed="false">
+                <span class="cfg-card-title">{s.label}</span>
+                <span class="cfg-card-sub">{s.dims}</span>
+              </button>
+            ))}
+          </div>
+          <div class="custom-dims" id="custom-dims">
+            <div class="dims-row">
+              <div class="dim-group">
+                <label>Length</label>
+                <input type="number" id="dim-l" placeholder="0" min="1" max="9999" />
+              </div>
+              <span class="dim-sep">×</span>
+              <div class="dim-group">
+                <label>Width</label>
+                <input type="number" id="dim-w" placeholder="0" min="1" max="9999" />
+              </div>
+              <span class="dim-sep">×</span>
+              <div class="dim-group">
+                <label>Height</label>
+                <input type="number" id="dim-h" placeholder="0" min="1" max="9999" />
+              </div>
+              <select id="dim-unit" class="dim-unit">
+                <option value="cm">cm</option>
+                <option value="mm">mm</option>
+                <option value="in">in</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Material -->
+        <div class="cfg-step">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">2</span>
+            <h3>Select Material</h3>
+          </div>
+          <div class="cfg-cards" id="material-cards">
+            {[
+              { id:'cardboard',   label:'Cardboard',   sub:'300–450gsm',         icon:'📦', color:'#e8dcc8' },
+              { id:'kraft',       label:'Kraft',        sub:'Natural brown paper', icon:'🌿', color:'#c9a87a' },
+              { id:'corrugated',  label:'Corrugated',   sub:'Heavy-duty shipping', icon:'🏗️', color:'#d4b896' },
+              { id:'rigid',       label:'Rigid Board',  sub:'Premium luxury feel', icon:'💎', color:'#8090a0' },
+              { id:'eco',         label:'Eco-Friendly', sub:'FSC certified',       icon:'♻️', color:'#a8c080' },
+            ].map(m => (
+              <button class="cfg-card cfg-card-mat" data-group="material" data-val={m.id} data-color={m.color} aria-pressed="false">
+                <span class="cfg-mat-icon">{m.icon}</span>
+                <span class="cfg-card-title">{m.label}</span>
+                <span class="cfg-card-sub">{m.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 3: Printing -->
+        <div class="cfg-step">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">3</span>
+            <h3>Printing Options <span class="cfg-multi-hint">Select all that apply</span></h3>
+          </div>
+          <div class="cfg-cards cfg-multi" id="printing-cards">
+            {[
+              { id:'none',     label:'No Printing',       sub:'Plain / unprinted' },
+              { id:'cmyk',     label:'Full Colour CMYK',  sub:'Standard 4-colour' },
+              { id:'pms',      label:'PMS Spot Colours',  sub:'Pantone matched' },
+              { id:'inside',   label:'Inside Printing',   sub:'Interior design' },
+              { id:'outside',  label:'Outside Printing',  sub:'Exterior design' },
+              { id:'both',     label:'Both Sides',        sub:'In & out printed' },
+            ].map(p => (
+              <button class="cfg-card" data-group="printing" data-val={p.id} aria-pressed="false">
+                <span class="cfg-card-title">{p.label}</span>
+                <span class="cfg-card-sub">{p.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 4: Finishes -->
+        <div class="cfg-step">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">4</span>
+            <h3>Select Finishes <span class="cfg-multi-hint">Select all that apply</span></h3>
+          </div>
+          <div class="cfg-cards cfg-multi" id="finish-cards">
+            {[
+              { id:'gloss',   label:'Gloss Lamination', sub:'High shine surface' },
+              { id:'matte',   label:'Matte Lamination', sub:'Smooth satin look' },
+              { id:'spotUV',  label:'Spot UV',           sub:'Selective high gloss' },
+              { id:'goldFoil',label:'Gold Foil',         sub:'Luxury metallic gold' },
+              { id:'silvFoil',label:'Silver Foil',       sub:'Metallic silver shine' },
+              { id:'emboss',  label:'Embossing',         sub:'Raised texture' },
+              { id:'deboss',  label:'Debossing',         sub:'Pressed-in texture' },
+              { id:'softTch', label:'Soft-Touch',        sub:'Velvet-like finish' },
+            ].map(f => (
+              <button class="cfg-card" data-group="finish" data-val={f.id} aria-pressed="false">
+                <span class="cfg-card-title">{f.label}</span>
+                <span class="cfg-card-sub">{f.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 5: Quantity -->
+        <div class="cfg-step">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">5</span>
+            <h3>Select Quantity</h3>
+          </div>
+          <div class="qty-presets" id="qty-cards">
+            {[100, 250, 500, 1000, 2500, 5000, 10000].map(q => (
+              <button class="qty-btn" data-group="qty" data-val={q} aria-pressed="false">
+                {q.toLocaleString()}{q === 10000 ? '+' : ''}
+              </button>
+            ))}
+          </div>
+          <div class="custom-qty-wrap">
+            <label class="custom-qty-label">Or enter custom quantity:</label>
+            <input type="number" id="custom-qty" placeholder="e.g. 750" min="1" max="999999" class="custom-qty-input" />
+          </div>
+        </div>
+
+        <!-- STEP 6: Add-Ons -->
+        <div class="cfg-step">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">6</span>
+            <h3>Optional Add-Ons <span class="cfg-multi-hint">Select all that apply</span></h3>
+          </div>
+          <div class="cfg-cards cfg-multi" id="addon-cards">
+            {[
+              { id:'insert',   label:'Inserts',          sub:'Custom tray or foam' },
+              { id:'window',   label:'Window Cut',        sub:'Transparent panel' },
+              { id:'ribbon',   label:'Ribbon Closure',   sub:'Silk ribbon & bow' },
+              { id:'magnetic', label:'Magnetic Closure', sub:'Premium snap close' },
+              { id:'handles',  label:'Handles',          sub:'Die-cut carry handles' },
+              { id:'sleeves',  label:'Sleeves',          sub:'Outer paper sleeve' },
+            ].map(a => (
+              <button class="cfg-card" data-group="addon" data-val={a.id} aria-pressed="false">
+                <span class="cfg-card-title">{a.label}</span>
+                <span class="cfg-card-sub">{a.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 7: Upload Artwork -->
+        <div class="cfg-step">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">7</span>
+            <h3>Upload Artwork <span class="cfg-optional">Optional</span></h3>
+          </div>
+          <label class="cfg-upload-zone" id="cfg-upload-zone">
+            <input type="file" id="cfg-artwork" accept=".pdf,.ai,.eps,.psd,.png,.jpg,.jpeg,.svg,.zip" multiple />
+            <div class="cfg-upload-icon">
+              <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <div class="cfg-upload-text">
+              <strong>Drop files here or click to browse</strong>
+              <span>PDF, AI, EPS, PSD, PNG, JPG — Max 50 MB</span>
+            </div>
+            <div class="cfg-upload-status" id="cfg-upload-status"></div>
+          </label>
+        </div>
+
+        <!-- STEP 8: Design Help -->
+        <div class="cfg-step cfg-step-design">
+          <div class="cfg-step-label">
+            <span class="cfg-step-num">8</span>
+            <h3>Design Support</h3>
+          </div>
+          <label class="cfg-design-toggle" id="cfg-design-toggle">
+            <input type="checkbox" id="cfg-design-help" />
+            <div class="toggle-track">
+              <div class="toggle-thumb"></div>
+            </div>
+            <div class="cfg-design-text">
+              <strong>I need free design support</strong>
+              <span>Our designers will create your artwork at no charge, with unlimited revisions.</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- CTAs -->
+        <div class="cfg-cta-bar">
+          <button class="cfg-cta-primary" id="cfg-add-quote">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+            Add to Quote Request
+          </button>
+          <a href={`tel:${SITE.phone}`} class="cfg-cta-secondary">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+            Talk to a Packaging Expert
+          </a>
+        </div>
+
+      </div>
+
+      <!-- ── RIGHT: Live Summary ── -->
+      <div class="cfg-summary-col">
+        <div class="cfg-summary" id="cfg-summary">
+
+          <!-- Box preview -->
+          <div class="preview-wrap">
+            <div class="preview-badge">
+              <span class="preview-dot"></span>
+              Live Preview
+            </div>
+            <div class="preview-stage" id="preview-stage">
+              <svg class="preview-box-svg" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Packaging preview">
+                <defs>
+                  <!-- Clip to front-left face -->
+                  <clipPath id="clip-front">
+                    <polygon points="25,62 110,106 110,166 25,122"/>
+                  </clipPath>
+                  <!-- Clip to right face -->
+                  <clipPath id="clip-right">
+                    <polygon points="110,106 195,62 195,122 110,166"/>
+                  </clipPath>
+                  <!-- Clip to top face -->
+                  <clipPath id="clip-top">
+                    <polygon points="110,18 195,62 110,106 25,62"/>
+                  </clipPath>
+                  <linearGradient id="foilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffd700" stop-opacity="0.6"/>
+                    <stop offset="50%" stop-color="#fff8dc" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#ffd700" stop-opacity="0.5"/>
+                  </linearGradient>
+                  <!-- Darken overlay for right/top faces so artwork reads correctly -->
+                  <filter id="darken-right">
+                    <feColorMatrix type="matrix" values="0.55 0 0 0 0  0 0.55 0 0 0  0 0 0.55 0 0  0 0 0 1 0"/>
+                  </filter>
+                </defs>
+
+                <!-- Base faces -->
+                <polygon id="box-top"   points="110,18 195,62 110,106 25,62"  fill="#c9a84c" opacity="0.92"/>
+                <polygon id="box-left"  points="25,62 110,106 110,166 25,122" fill="#1a3a5c" opacity="0.95"/>
+                <polygon id="box-right" points="110,106 195,62 195,122 110,166" fill="#0d2035" opacity="0.95"/>
+
+                <!-- Artwork image on front-left face (hidden until upload) -->
+                <image id="artwork-front" href="" x="25" y="62" width="85" height="104"
+                  clip-path="url(#clip-front)" preserveAspectRatio="xMidYMid slice"
+                  opacity="0" style="transition:opacity 0.4s"/>
+                <!-- Darker tinted copy on right face -->
+                <image id="artwork-right" href="" x="110" y="62" width="85" height="104"
+                  clip-path="url(#clip-right)" preserveAspectRatio="xMidYMid slice"
+                  filter="url(#darken-right)" opacity="0" style="transition:opacity 0.4s"/>
+
+                <!-- Edge highlights (rendered on top of artwork) -->
+                <polyline points="25,62 110,106 195,62" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                <line x1="110" y1="106" x2="110" y2="166" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+
+                <!-- Logo placeholder (hidden when artwork loaded) -->
+                <text id="logo-placeholder" x="67" y="140" fill="rgba(255,255,255,0.35)" font-size="9" font-family="Georgia,serif" text-anchor="middle">YOUR LOGO</text>
+
+                <!-- Foil shimmer overlay -->
+                <polygon id="box-foil" points="110,18 195,62 110,106 25,62" fill="url(#foilGrad)" opacity="0" style="pointer-events:none"/>
+              </svg>
+              <!-- Non-image file badge (PDF/AI/EPS etc.) -->
+              <div class="artwork-file-badge" id="artwork-file-badge" style="display:none">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <span id="artwork-file-name">file.pdf</span>
+              </div>
+              <div class="preview-finish-badges" id="preview-finish-badges"></div>
+            </div>
+            <div class="preview-caption" id="preview-caption">Select options to preview</div>
+          </div>
+
+          <!-- Summary list -->
+          <div class="summary-list" id="summary-list">
+            {[
+              { key:'size',     label:'Size',           val:'Not selected' },
+              { key:'material', label:'Material',       val:'Not selected' },
+              { key:'printing', label:'Printing',       val:'Not selected' },
+              { key:'finish',   label:'Finishes',       val:'None' },
+              { key:'qty',      label:'Quantity',       val:'Not selected' },
+              { key:'addon',    label:'Add-Ons',        val:'None' },
+              { key:'design',   label:'Design Support', val:'Not requested' },
+            ].map(row => (
+              <div class="summary-row" id={`sum-${row.key}`}>
+                <span class="sum-label">{row.label}</span>
+                <span class="sum-val" id={`sum-val-${row.key}`}>{row.val}</span>
+              </div>
+            ))}
+          </div>
+
+          <!-- Price estimate -->
+          <div class="price-estimate-box" id="price-estimate-box">
+            <div class="price-est-label">Estimated Price Range</div>
+            <div class="price-est-amount" id="price-est-amount">Select options above</div>
+            <div class="price-est-note">Pricing is indicative only. Final quote confirmed after review.</div>
+          </div>
+
+          <!-- Trust mini -->
+          <div class="cfg-trust-mini">
+            {[
+              'Free Design Included',
+              'No Minimum Order',
+              '7–14 Day Turnaround',
+              'Australia-Wide Delivery',
+            ].map(t => (
+              <div class="cfg-trust-row">
+                <span class="cfg-trust-check">✓</span>
+                <span>{t}</span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TABS — Description / Specifications / Artwork / FAQs
+══════════════════════════════════════════════════════════════ -->
+<section class="tabs-section">
+  <div class="container">
+    <div class="tabs-card">
+      <div class="tabs-nav" role="tablist" aria-label="Product information">
+        <button class="tab-pill active" role="tab" data-tab="0" aria-selected="true">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Description
+        </button>
+        {hasSpecs && (
+          <button class="tab-pill" role="tab" data-tab="1">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            Specifications
+          </button>
+        )}
+        <button class="tab-pill" role="tab" data-tab="2">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          Artwork Guide
+        </button>
+        <button class="tab-pill" role="tab" data-tab="3">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          FAQs
+        </button>
+      </div>
+
+      <!-- Description Panel -->
+      <div class="tab-panel active" id="panel-0">
+        {hasDesc ? (
+          <div class="prose tab-prose" set:html={product.description} />
+        ) : (
+          <div class="prose tab-prose" set:html={product.shortDescription} />
+        )}
+      </div>
+
+      <!-- Specifications Panel -->
+      {hasSpecs && (
+        <div class="tab-panel" id="panel-1">
+          <div class="specs-table-wrap" set:html={product.specifications} />
+        </div>
+      )}
+
+      <!-- Artwork Guidelines Panel -->
+      <div class="tab-panel" id="panel-2">
+        <div class="artwork-guide">
+          <div class="artwork-intro">
+            <h3>Artwork & File Requirements</h3>
+            <p>To ensure the best print quality for your {product.name}, please follow these artwork guidelines when preparing your design files.</p>
+          </div>
+          <div class="artwork-grid">
+            <div class="artwork-card">
+              <div class="artwork-card-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/>
+                  <polyline points="13 2 13 9 20 9"/>
+                </svg>
+              </div>
+              <h4>Accepted Formats</h4>
+              <ul>
+                <li>PDF (preferred)</li>
+                <li>AI (Adobe Illustrator)</li>
+                <li>EPS (Vector)</li>
+                <li>PSD (high res)</li>
+              </ul>
+            </div>
+            <div class="artwork-card">
+              <div class="artwork-card-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M3 9h18M9 21V9"/>
+                </svg>
+              </div>
+              <h4>Resolution & Bleed</h4>
+              <ul>
+                <li>Minimum 300 DPI</li>
+                <li>3mm bleed on all sides</li>
+                <li>Safe zone: 3mm from edge</li>
+                <li>CMYK colour mode</li>
+              </ul>
+            </div>
+            <div class="artwork-card">
+              <div class="artwork-card-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                  <line x1="9" y1="9" x2="9.01" y2="9"/>
+                  <line x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg>
+              </div>
+              <h4>Design Tips</h4>
+              <ul>
+                <li>Outline all fonts</li>
+                <li>Embed all linked images</li>
+                <li>Avoid thin strokes below 0.5pt</li>
+                <li>Rich black: C60 M40 Y40 K100</li>
+              </ul>
+            </div>
+            <div class="artwork-card">
+              <div class="artwork-card-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <h4>Free Design Help</h4>
+              <ul>
+                <li>No artwork? No problem!</li>
+                <li>Our designers create for free</li>
+                <li>Unlimited revisions included</li>
+                <li>Approve before print</li>
+              </ul>
+            </div>
+          </div>
+          <div class="artwork-cta">
+            <p>Not sure about your artwork? <a href="#request-quote">Send us your files</a> and our design team will review them for free.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQs Panel -->
+      <div class="tab-panel" id="panel-3">
+        {hasFaqs ? (
+          <div class="prose tab-prose" set:html={product.faqs} />
+        ) : (
+          <div class="faq-list">
+            {[
+              {
+                q: `What materials are used for ${product.name}?`,
+                a: `Our ${product.name} are crafted from premium materials including high-quality cardboard (300–450gsm), eco-friendly kraft paper, and rigid board. We offer multiple material grades to suit different budgets and use cases, ensuring your packaging is both sturdy and visually impressive. All materials are sourced from certified suppliers and tested for durability, print quality, and where applicable, food-safety compliance.`
+              },
+              {
+                q: 'Is there a minimum order quantity?',
+                a: 'No — we have absolutely no minimum order quantity. Whether you need a short run of 25 units for a product launch, a sample batch of 10, or 100,000 units for a major wholesale campaign, we accommodate all order sizes with the same level of care and quality. Larger quantities benefit from significant volume discounts, so the more you order, the better the per-unit price.'
+              },
+              {
+                q: 'How long does production take?',
+                a: 'Standard production is 7–14 business days from the date your artwork is approved. If you need your boxes faster, we offer express 4–7 business day turnaround options — please contact us before placing your order to confirm express availability. Sample or prototype orders can sometimes be turned around in as little as 3–5 business days. We understand deadlines are critical and work hard to meet every one.'
+              },
+              {
+                q: 'Do you offer custom sizes and shapes?',
+                a: `Yes — every order is made to your exact specifications. We manufacture ${product.name} in any custom dimension; simply provide your product measurements (length × width × height in centimetres or millimetres) and we will engineer a perfect-fit dieline. Custom structural shapes, inserts, and window cut-outs are also available. All custom dielines are prepared by our structural packaging engineers at no extra charge.`
+              },
+              {
+                q: 'What printing and finishing options are available?',
+                a: `We offer a comprehensive range of print and finish options for ${product.name}: full-colour CMYK offset printing, digital printing for short runs, gloss or matte lamination, soft-touch lamination, spot UV coating, flood UV, gold or silver foil stamping, embossing, debossing, aqueous coating, and pearlescent or metallic inks. Our team will help you choose the combination that best represents your brand and stays within your budget.`
+              },
+              {
+                q: 'Is a free design service really included?',
+                a: 'Yes — completely free. Our in-house graphic designers will create a full-colour, print-ready design based on your brand guidelines, logo, and any references you provide. You receive a digital proof before anything goes to print, and you can request unlimited revisions until you are 100% satisfied. There are no hidden design fees, set-up charges, or plate costs for standard orders.'
+              },
+              {
+                q: 'Can I see a physical sample before committing to a full order?',
+                a: 'Absolutely. We offer pre-production samples (also called proofs or dummies) so you can check the size, material, print, and finish before your full order is produced. Sample lead times and costs vary depending on complexity — contact our team for details. For many repeat or standard box styles, digital proofs alone are sufficient and preferred by most clients.'
+              },
+              {
+                q: 'Do you ship Australia-wide?',
+                a: 'Yes — we deliver to every state and territory across Australia, including Sydney, Melbourne, Brisbane, Perth, Adelaide, Canberra, Darwin, Hobart, and all regional areas. Orders are shipped fully tracked with a major carrier and you will receive tracking details as soon as your consignment is dispatched. Delivery times vary by location; your account manager will confirm the expected delivery window when your order is confirmed.'
+              },
+              {
+                q: 'Are your packaging materials eco-friendly?',
+                a: `We take sustainability seriously. Our ${product.name} are available in FSC-certified paperboard, recycled kraft, and post-consumer-waste board options. We use water-based inks as standard and offer soy-based ink alternatives. Biodegradable and compostable material upgrades are also available on request. If sustainability is a priority for your brand, let us know and we will recommend the most eco-responsible option for your product.`
+              },
+              {
+                q: 'What file formats do you accept for artwork?',
+                a: 'We accept PDF (preferred), Adobe Illustrator (AI), EPS, PSD (at least 300 DPI), and high-resolution JPG or PNG files. All artwork should be in CMYK colour mode with a minimum 3mm bleed on all sides and all fonts outlined. If you are unsure whether your files are print-ready, simply send them to us and our prepress team will check them for free and flag any issues before production begins.'
+              },
+              {
+                q: 'How do I get a quote and what information do I need?',
+                a: `Getting a quote is fast and completely free. Click the "Request a Free Quote" button on this page, or call us directly on ${SITE.phone}. To provide you with an accurate quote, it helps to have the following ready: box dimensions (L × W × H), the quantity you need, your preferred material and board weight, any specific printing or finishing requirements, and your required delivery date. We will respond with a detailed quote within 24 business hours.`
+              },
+            ].map((faq, i) => (
+              <div class="faq-item-premium" data-faq={i}>
+                <button class="faq-q-btn" aria-expanded="false">
+                  <span class="faq-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="faq-q-text">{faq.q}</span>
+                  <span class="faq-chevron">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </span>
+                </button>
+                <div class="faq-a-panel">
+                  <p class="faq-a-text">{faq.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     WHY CHOOSE US — alternating layout
+══════════════════════════════════════════════════════════════ -->
+<section class="why-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Our Advantage</div>
+      <h2>Why Brands Choose ZEE Custom Boxes AU</h2>
+      <div class="gold-divider"></div>
+      <p>We combine exceptional materials, expert craftsmanship, and personalised service to deliver packaging that elevates your brand.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <h3>Expert Design Team</h3>
+        <p>Our in-house designers craft bespoke artwork that perfectly represents your brand — completely free, with unlimited revisions until you're 100% satisfied.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Premium Materials</h3>
+        <p>We source only the finest cardboard, kraft, and rigid board. Every sheet is tested for durability, printability, and environmental compliance before use.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h3>On-Time Delivery</h3>
+        <p>We understand deadlines are critical. Our streamlined production process consistently delivers your order on schedule, whether standard or express.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+          </svg>
+        </div>
+        <h3>Competitive Pricing</h3>
+        <p>No hidden fees, no set-up charges, no design costs. Our transparent wholesale pricing means you get maximum value at every volume level.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <polygon points="16,8 20,8 23,11 23,16 16,16 16,8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <h3>Australia-Wide Reach</h3>
+        <p>We deliver to Sydney, Melbourne, Brisbane, Perth, Adelaide, and everywhere in between. Tracked shipping so you always know where your order is.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+            <path d="M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <h3>Dedicated Account Manager</h3>
+        <p>Every client receives a personal account manager who guides you through materials, timelines, and design — making the process effortless.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PROCESS STEPS
+══════════════════════════════════════════════════════════════ -->
+<section class="process-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">How It Works</div>
+      <h2>Your Packaging Journey</h2>
+      <div class="gold-divider"></div>
+    </div>
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="step-number">01</div>
+        <div class="step-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+        </div>
+        <h4>Request a Quote</h4>
+        <p>Share your product dimensions, quantity, and material preferences. We respond within 24 hours.</p>
+      </div>
+      <div class="process-connector"></div>
+      <div class="process-step reveal">
+        <div class="step-number">02</div>
+        <div class="step-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <h4>Design & Dieline</h4>
+        <p>Our design team creates your artwork and structural dieline — all included at zero cost.</p>
+      </div>
+      <div class="process-connector"></div>
+      <div class="process-step reveal">
+        <div class="step-number">03</div>
+        <div class="step-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+        </div>
+        <h4>Approve & Confirm</h4>
+        <p>Review your digital proof. Unlimited revisions until you're 100% satisfied, then confirm production.</p>
+      </div>
+      <div class="process-connector"></div>
+      <div class="process-step reveal">
+        <div class="step-number">04</div>
+        <div class="step-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <polygon points="16,8 20,8 23,11 23,16 16,16 16,8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <h4>Delivered to You</h4>
+        <p>Your premium custom boxes are manufactured and delivered anywhere in Australia, tracked and on time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════════════════════════════ -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Client Stories</div>
+      <h2>What Our Customers Say</h2>
+      <div class="gold-divider"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote-icon">
+          <svg width="32" height="32" fill="var(--color-gold)" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"ZEE Custom Boxes delivered beyond our expectations. The print quality on our cosmetic boxes was flawless, and the free design service saved us thousands. Highly recommended for any Australian brand serious about packaging."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SC</div>
+          <div>
+            <div class="testimonial-name">Sarah Chen</div>
+            <div class="testimonial-role">Founder, Lumière Skincare · Sydney</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote-icon">
+          <svg width="32" height="32" fill="var(--color-gold)" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"We've worked with several packaging companies and ZEE is by far the best. Fast turnaround, excellent quality, and their team was incredibly responsive. Our retail boxes look premium and our customers constantly compliment the unboxing experience."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div>
+            <div class="testimonial-name">Michael Robertson</div>
+            <div class="testimonial-role">Operations Manager, PureEarth Foods · Melbourne</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote-icon">
+          <svg width="32" height="32" fill="var(--color-gold)" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+          </svg>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"From quote to delivery in under two weeks. The kraft gift boxes we ordered were beautifully finished with foil stamping — exactly what we envisioned. Will absolutely be ordering again for our next product launch."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AL</div>
+          <div>
+            <div class="testimonial-name">Amelia Lawson</div>
+            <div class="testimonial-role">Brand Director, The Gift Collective · Brisbane</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aggregate rating display -->
+    <div class="aggregate-rating reveal">
+      <div class="agg-score">4.9</div>
+      <div class="agg-details">
+        <div class="agg-stars">★★★★★</div>
+        <div class="agg-label">Average rating from <strong>127 verified reviews</strong></div>
+        <div class="agg-bars">
+          <div class="agg-bar-row"><span>5★</span><div class="agg-bar"><div class="agg-bar-fill" style="width:89%"></div></div><span>89%</span></div>
+          <div class="agg-bar-row"><span>4★</span><div class="agg-bar"><div class="agg-bar-fill" style="width:8%"></div></div><span>8%</span></div>
+          <div class="agg-bar-row"><span>3★</span><div class="agg-bar"><div class="agg-bar-fill" style="width:3%"></div></div><span>3%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     QUOTE FORM — Premium inline version
+══════════════════════════════════════════════════════════════ -->
+<section class="quote-section-premium" id="request-quote">
+  <div class="container">
+    <div class="quote-layout">
+
+      <!-- Left: Content -->
+      <div class="quote-left reveal">
+        <div class="section-label" style="color:var(--color-gold)">Get Started Today</div>
+        <h2>Request Your Free Quote for {product.name}</h2>
+        <div class="gold-divider gold-divider-left"></div>
+        <p>Tell us about your packaging requirements and our team will respond with detailed pricing, material options, and design recommendations — all within 24 hours.</p>
+
+        <div class="quote-trust-list">
+          {[
+            'Free professional design included',
+            'No minimum order quantity',
+            'Detailed quote within 24 hours',
+            'No obligation whatsoever',
+            'Australia-wide delivery available',
+          ].map(item => (
+            <div class="quote-trust-item">
+              <span class="quote-check">✓</span>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="quote-contact-block">
+          <div class="qc-label">Prefer to speak with us?</div>
+          <a href={`tel:${SITE.phone}`} class="qc-phone">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            {SITE.phone}
+          </a>
+          <div class="qc-email-wrap">
+            <a href={`mailto:${SITE.email}`} class="qc-email">{SITE.email}</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div class="quote-right reveal">
+        <div class="quote-form-card">
+          <div class="qfc-header">
+            <div class="qfc-badge">Free &amp; No Obligation</div>
+            <h3>Request a Quote</h3>
+            <p>We'll respond within 24 business hours</p>
+          </div>
+          <form class="premium-form" data-email-form="Product Quote Request">
+            <input type="hidden" name="product" value={product.name} />
+            <div class="form-error-msg" style="display:none;background:#fef2f2;color:#dc2626;padding:0.75rem 1rem;border-radius:6px;font-size:0.875rem;margin-bottom:0.5rem;"></div>
+            <div class="pf-row">
+              <div class="pf-group">
+                <label>First Name <span class="req">*</span></label>
+                <input type="text" name="firstName" required placeholder="John" />
+              </div>
+              <div class="pf-group">
+                <label>Last Name <span class="req">*</span></label>
+                <input type="text" name="lastName" required placeholder="Smith" />
+              </div>
+            </div>
+            <div class="pf-group">
+              <label>Email Address <span class="req">*</span></label>
+              <input type="email" name="email" required placeholder="john@company.com" />
+            </div>
+            <div class="pf-group">
+              <label>Phone Number</label>
+              <input type="tel" name="phone" placeholder="+61 4XX XXX XXX" />
+            </div>
+            <div class="pf-row">
+              <div class="pf-group">
+                <label>Quantity <span class="req">*</span></label>
+                <input type="text" name="quantity" required placeholder="e.g. 500 units" />
+              </div>
+              <div class="pf-group">
+                <label>Dimensions</label>
+                <input type="text" name="size" placeholder="L × W × H cm" />
+              </div>
+            </div>
+            <div class="pf-group">
+              <label>Additional Requirements</label>
+              <textarea name="message" rows="4" placeholder="Material preference, printing/finishing, timeline, special requirements..."></textarea>
+            </div>
+            <button type="submit" class="pf-submit">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+              </svg>
+              Send My Free Quote Request
+            </button>
+            <p class="pf-note">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Your information is safe and never shared with third parties.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     RELATED PRODUCTS
+══════════════════════════════════════════════════════════════ -->
+{related.length > 0 && (
+  <section class="section related-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">You May Also Like</div>
+        <h2>Related Packaging Products</h2>
+        <div class="gold-divider"></div>
+      </div>
+      <div class="grid-4">
+        {related.map(p => (
+          <div class="reveal">
+            <ProductCard product={p} />
+          </div>
+        ))}
+      </div>
+      <div class="related-cta reveal">
+        <a href="/products" class="btn btn-outline">Browse All Products</a>
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- ═══════════════════════════════════════════════════════════
+     STICKY CTA BAR
+══════════════════════════════════════════════════════════════ -->
+<div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+  <div class="sticky-cta-inner">
+    <div class="sticky-product-name">{product.name}</div>
+    <div class="sticky-actions">
+      <a href={`tel:${SITE.phone}`} class="sticky-phone">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+        </svg>
+        {SITE.phone}
+      </a>
+      <a href="#request-quote" class="sticky-quote">
+        Get a Free Quote
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LIGHTBOX OVERLAY
+══════════════════════════════════════════════════════════════ -->
+{images.length > 0 && (
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery" aria-hidden="true">
+    <div class="lightbox-overlay" id="lb-overlay"></div>
+    <div class="lightbox-content">
+      <button class="lb-close" id="lb-close" aria-label="Close">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <button class="lb-prev" id="lb-prev" aria-label="Previous image">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <img id="lb-img" src={images[0]} alt={product.name} loading="lazy" onerror="this.src='/images/placeholder.webp'" />
+      <button class="lb-next" id="lb-next" aria-label="Next image">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+      <div class="lb-counter" id="lb-counter">1 / {images.length}</div>
+    </div>
+  </div>
+)}
+
+</Layout>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STYLES
+══════════════════════════════════════════════════════════════ -->
+<style>
+/* ── Breadcrumb ── */
+.breadcrumb-bar {
+  background: var(--color-off-white);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.875rem 0;
+}
+
+/* ── Hero ── */
+.product-hero {
+  padding: 3rem 0 3.5rem;
+  background: #fff;
+}
+
+.product-layout {
+  display: grid;
+  grid-template-columns: 58% 1fr;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+/* Gallery */
+.product-gallery { position: sticky; top: 1.5rem; }
+
+.gallery-main-wrap {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-off-white);
+  border: 1px solid var(--color-border);
+  aspect-ratio: 1 / 1;
+  cursor: zoom-in;
+}
+
+.gallery-main-wrap:hover .gallery-main-img { transform: scale(1.06); }
+
+.gallery-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+}
+
+.gallery-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-text-muted);
+}
+
+.gallery-zoom-btn {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--color-navy);
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+.gallery-zoom-btn:hover { background: var(--color-gold); color: #fff; border-color: var(--color-gold); }
+
+.gallery-counter {
+  position: absolute;
+  bottom: 1rem; right: 1rem;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.05em;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.gallery-thumbs {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.gallery-thumb {
+  width: 78px; height: 72px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2.5px solid var(--color-border);
+  cursor: pointer;
+  padding: 0; background: none;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.gallery-thumb:hover { border-color: var(--color-gold); box-shadow: 0 4px 12px rgba(201,168,76,0.3); }
+.gallery-thumb.active { border-color: var(--color-gold); box-shadow: 0 4px 12px rgba(201,168,76,0.4); }
+.gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Product Info */
+.product-info { padding-top: 0.25rem; }
+
+.product-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+}
+
+.product-cat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.875rem;
+  background: var(--color-gold-pale);
+  color: var(--color-gold);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid rgba(201,168,76,0.3);
+  white-space: nowrap;
+}
+.product-cat-badge:hover { background: var(--color-gold); color: #fff; border-color: var(--color-gold); }
+
+.product-title {
+  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+  color: var(--color-navy);
+  line-height: 1.2;
+  margin: 0.5rem 0 1rem;
+  font-weight: 700;
+}
+
+/* Rating row */
+.product-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.stars { display: flex; gap: 2px; }
+.star { color: var(--color-gold); font-size: 1rem; }
+
+.rating-score { font-weight: 700; font-size: 0.9rem; color: var(--color-navy); }
+.rating-sep { color: var(--color-border); }
+.rating-count { font-size: 0.85rem; color: var(--color-text-muted); text-decoration: underline; cursor: pointer; }
+.in-stock { font-size: 0.8rem; font-weight: 700; color: #22c55e; letter-spacing: 0.03em; }
+
+.info-divider { height: 1px; background: var(--color-border); margin: 1rem 0 1.25rem; }
+
+.product-short-desc { margin-bottom: 1.5rem; }
+.product-short-desc :global(p) { font-size: 0.95rem; line-height: 1.75; color: var(--color-text-muted); }
+
+/* Trust grid */
+.trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+  margin-bottom: 2rem;
+  background: var(--color-off-white);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  border: 1px solid var(--color-border-light);
+}
+
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.trust-icon {
+  width: 38px; height: 38px;
+  background: var(--color-gold-pale);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-gold);
+}
+
+.trust-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.trust-text strong {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  line-height: 1.3;
+}
+.trust-text span {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+/* CTAs */
+.product-cta-wrap {
+  display: flex;
+  gap: 0.875rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.btn-cta-primary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.75rem;
+  background: var(--color-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-red);
+  text-decoration: none;
+  transition: all var(--transition);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.btn-cta-primary:hover {
+  background: var(--color-red-dark);
+  border-color: var(--color-red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229,57,53,0.35);
+}
+
+.btn-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  color: var(--color-navy);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border);
+  text-decoration: none;
+  transition: all var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-cta-secondary:hover {
+  border-color: var(--color-navy);
+  background: var(--color-navy);
+  color: #fff;
+}
+
+.assurance-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  padding: 0.75rem 1rem;
+  background: #f0fdf4;
+  border-radius: var(--radius-sm);
+  border: 1px solid #bbf7d0;
+}
+
+.assurance-dot {
+  width: 8px; height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.85); }
+}
+
+.assurance-strip strong { color: var(--color-navy); }
+
+/* ── Mini Quote Form ── */
+.mini-form-wrap {
+  margin-top: 1.5rem;
+  background: var(--color-off-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.mini-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background: var(--color-navy);
+  gap: 0.75rem;
+}
+
+.mini-form-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.mini-form-title svg { color: var(--color-gold); flex-shrink: 0; }
+
+.mini-form-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-navy-dark);
+  background: var(--color-gold);
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mini-form {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.mf-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.mf-group input,
+.mf-group textarea {
+  padding: 0.65rem 0.875rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.mf-group input::placeholder,
+.mf-group textarea::placeholder { color: var(--color-text-muted); font-size: 0.82rem; }
+.mf-group input:focus,
+.mf-group textarea:focus {
+  border-color: var(--color-navy);
+  box-shadow: 0 0 0 3px rgba(26,58,92,0.08);
+}
+.mf-group textarea { resize: vertical; min-height: 80px; }
+
+/* File upload */
+.mf-file-group { }
+
+.mf-file-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.65rem 0.875rem;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  transition: all 0.2s;
+  width: 100%;
+}
+.mf-file-label:hover {
+  border-color: var(--color-gold);
+  color: var(--color-navy);
+  background: var(--color-gold-pale);
+}
+.mf-file-label svg { color: var(--color-gold); flex-shrink: 0; }
+.mf-file-label input[type="file"] { display: none; }
+
+#mf-file-text { flex: 1; }
+
+.mf-submit {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--color-red);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.mf-submit:hover {
+  background: var(--color-red-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(229,57,53,0.35);
+}
+
+/* ── Trust Strip ── */
+.trust-strip {
+  background: var(--color-navy-dark);
+  padding: 1.25rem 0;
+  border-top: 3px solid var(--color-red);
+}
+
+.trust-pillars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.pillar {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 1.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.pillar-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.12);
+  flex-shrink: 0;
+}
+
+/* ── Tabs Section ── */
+.tabs-section {
+  padding: 4.5rem 0;
+  background: var(--color-off-white);
+}
+
+.tabs-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.07);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.tabs-nav {
+  display: flex;
+  padding: 0 2rem;
+  border-bottom: 2px solid var(--color-border);
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+
+.tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.125rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: all 0.2s;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tab-pill svg { opacity: 0.6; transition: opacity 0.2s; }
+.tab-pill:hover { color: var(--color-navy); }
+.tab-pill:hover svg { opacity: 1; }
+.tab-pill.active { color: var(--color-navy); border-bottom-color: var(--color-gold); }
+.tab-pill.active svg { opacity: 1; color: var(--color-gold); }
+
+.tab-panel {
+  padding: 2.5rem 2.5rem 3rem;
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+.tab-panel.active { display: block; }
+
+.tab-prose :global(p) { font-size: 1rem; line-height: 1.85; color: var(--color-text-muted); margin-bottom: 1.1rem; }
+.tab-prose :global(h2), .tab-prose :global(h3) { color: var(--color-navy); margin-top: 2rem; margin-bottom: 0.75rem; }
+.tab-prose :global(ul), .tab-prose :global(ol) { margin: 1rem 0 1rem 1.5rem; }
+.tab-prose :global(li) { margin-bottom: 0.4rem; color: var(--color-text-muted); }
+
+/* Specifications table styling */
+.specs-table-wrap :global(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.specs-table-wrap :global(thead tr) { background: var(--color-navy); }
+.specs-table-wrap :global(th) {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-body);
+}
+.specs-table-wrap :global(td) {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-muted);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.specs-table-wrap :global(tr:nth-child(even) td) { background: var(--color-off-white); }
+.specs-table-wrap :global(tr:last-child td) { border-bottom: none; }
+.specs-table-wrap :global(td:first-child) { font-weight: 600; color: var(--color-navy); white-space: nowrap; }
+
+/* Artwork Guide */
+.artwork-guide { display: flex; flex-direction: column; gap: 2rem; }
+.artwork-intro h3 { margin-bottom: 0.5rem; }
+.artwork-intro p { color: var(--color-text-muted); }
+
+.artwork-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.artwork-card {
+  background: var(--color-off-white);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+}
+.artwork-card:hover { border-color: var(--color-gold); box-shadow: var(--shadow-md); }
+
+.artwork-card-icon {
+  width: 44px; height: 44px;
+  background: var(--color-navy);
+  color: var(--color-gold);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.artwork-card h4 {
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.75rem;
+}
+
+.artwork-card ul {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 0.35rem;
+}
+.artwork-card li {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  padding-left: 1rem;
+  position: relative;
+}
+.artwork-card li::before {
+  content: '→';
+  position: absolute; left: 0;
+  color: var(--color-gold);
+  font-size: 0.75rem;
+}
+
+.artwork-cta {
+  background: var(--color-gold-pale);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(201,168,76,0.3);
+}
+.artwork-cta p { margin: 0; color: var(--color-navy); font-weight: 500; }
+.artwork-cta a { color: var(--color-red); font-weight: 700; text-decoration: underline; }
+
+/* Premium FAQ accordion */
+.faq-list { display: flex; flex-direction: column; gap: 0; }
+
+.faq-item-premium {
+  border-bottom: 1px solid var(--color-border);
+}
+.faq-item-premium:first-child { border-top: 1px solid var(--color-border); }
+
+.faq-q-btn {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+.faq-q-btn:hover .faq-q-text { color: var(--color-gold); }
+
+.faq-num {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  opacity: 0.5;
+  flex-shrink: 0;
+  min-width: 2rem;
+  transition: opacity 0.2s;
+}
+.faq-q-btn:hover .faq-num, .faq-item-premium.open .faq-num { opacity: 1; }
+
+.faq-q-text {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+
+.faq-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform 0.3s ease;
+}
+.faq-item-premium.open .faq-chevron { transform: rotate(180deg); color: var(--color-gold); }
+
+.faq-a-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0 0 0 3.25rem;
+}
+.faq-item-premium.open .faq-a-panel { max-height: 300px; padding: 0 0 1.5rem 3.25rem; }
+
+.faq-a-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Why Section ── */
+.why-section { padding: 5rem 0; background: var(--color-off-white); }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.why-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+}
+.why-card:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.why-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  color: var(--color-gold);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.why-card h3 {
+  font-size: 1.05rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.625rem;
+}
+.why-card p { font-size: 0.9rem; line-height: 1.7; margin: 0; }
+
+/* ── Process Section ── */
+.process-section { padding: 5rem 0; background: #fff; }
+
+.process-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-top: 1rem;
+}
+
+.process-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.step-number {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: -0.5rem;
+}
+
+.step-icon {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  color: var(--color-gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 20px rgba(13,32,53,0.25);
+}
+
+.process-step h4 {
+  font-size: 1rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.5rem;
+}
+.process-step p { font-size: 0.85rem; line-height: 1.65; color: var(--color-text-muted); margin: 0; }
+
+.process-connector {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-gold) 0%, rgba(201,168,76,0.3) 100%);
+  margin-top: 3.75rem;
+}
+
+/* ── Testimonials ── */
+.testimonials-section { padding: 5rem 0; background: var(--color-navy-dark); }
+.testimonials-section .section-label { color: var(--color-gold); }
+.testimonials-section .section-header h2 { color: #fff; }
+.testimonials-section .section-header p { color: rgba(255,255,255,0.65); }
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.testimonial-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.testimonial-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(201,168,76,0.4);
+  transform: translateY(-4px);
+}
+
+.testimonial-quote-icon { opacity: 0.7; }
+.testimonial-stars { color: var(--color-gold); letter-spacing: 2px; font-size: 0.9rem; }
+
+.testimonial-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.8);
+  flex: 1;
+  margin: 0;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.testimonial-avatar {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-light) 100%);
+  color: var(--color-navy-dark);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #fff;
+  margin-bottom: 0.15rem;
+}
+.testimonial-role { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+
+/* Aggregate rating */
+.aggregate-rating {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.agg-score {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.agg-details { flex: 1; }
+.agg-stars { color: var(--color-gold); letter-spacing: 3px; margin-bottom: 0.25rem; }
+.agg-label { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; }
+.agg-label strong { color: rgba(255,255,255,0.9); }
+
+.agg-bars { display: flex; flex-direction: column; gap: 0.35rem; }
+.agg-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+}
+.agg-bar-row span:first-child { width: 2rem; text-align: right; flex-shrink: 0; }
+.agg-bar-row span:last-child { width: 2.5rem; flex-shrink: 0; }
+
+.agg-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.agg-bar-fill {
+  height: 100%;
+  background: var(--color-gold);
+  border-radius: 100px;
+}
+
+/* ── Premium Quote Form ── */
+.quote-section-premium {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, var(--color-navy-dark) 0%, var(--color-navy) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.quote-section-premium::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.quote-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.quote-left h2 { color: #fff; margin-bottom: 0.5rem; }
+.quote-left p { color: rgba(255,255,255,0.7); font-size: 1rem; margin-bottom: 0; }
+
+.quote-trust-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.75rem 0;
+}
+
+.quote-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.quote-check {
+  width: 22px; height: 22px;
+  background: var(--color-gold);
+  color: var(--color-navy-dark);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.quote-contact-block {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1.5rem;
+}
+.qc-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.qc-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.qc-phone:hover { color: var(--color-gold-light); }
+.qc-email-wrap { margin-top: 0.5rem; }
+.qc-email { font-size: 0.875rem; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+.qc-email:hover { color: rgba(255,255,255,0.9); }
+
+/* Form card */
+.quote-form-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.qfc-header { margin-bottom: 1.75rem; }
+
+.qfc-badge {
+  display: inline-block;
+  background: var(--color-gold-pale);
+  color: var(--color-gold);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.875rem;
+  border-radius: 100px;
+  margin-bottom: 0.75rem;
+}
+
+.qfc-header h3 {
+  font-size: 1.4rem;
+  font-family: var(--font-display);
+  color: var(--color-navy);
+  margin-bottom: 0.35rem;
+}
+.qfc-header p { font-size: 0.85rem; color: var(--color-text-muted); margin: 0; }
+
+.premium-form { display: flex; flex-direction: column; gap: 1.1rem; }
+.pf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.pf-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pf-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.req { color: var(--color-red); }
+
+.pf-group input,
+.pf-group textarea {
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: all 0.2s;
+  outline: none;
+  background: #fafafa;
+}
+.pf-group input:focus,
+.pf-group textarea:focus {
+  border-color: var(--color-navy);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(26,58,92,0.08);
+}
+.pf-group textarea { resize: vertical; min-height: 100px; }
+
+.pf-submit {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.05rem 2rem;
+  background: var(--color-red);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-top: 0.25rem;
+}
+.pf-submit:hover {
+  background: var(--color-red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229,57,53,0.35);
+}
+
+.pf-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  text-align: center;
+}
+.pf-note svg { color: var(--color-navy); flex-shrink: 0; }
+
+/* ── Related Products ── */
+.related-section { background: #fff; }
+.related-cta { text-align: center; margin-top: 2.5rem; }
+
+/* ── Sticky CTA ── */
+.sticky-cta {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--color-navy-dark);
+  border-top: 3px solid var(--color-red);
+  padding: 0.875rem 1.5rem;
+  z-index: 900;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.2);
+}
+.sticky-cta.visible { transform: translateY(0); }
+
+.sticky-cta-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sticky-product-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sticky-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex-shrink: 0;
+}
+
+.sticky-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+.sticky-phone:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+.sticky-quote {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-red);
+  text-decoration: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+.sticky-quote:hover { background: var(--color-red-dark); }
+
+/* ── Lightbox ── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.lightbox.open { opacity: 1; pointer-events: all; }
+
+.lightbox-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  cursor: zoom-out;
+}
+
+.lightbox-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: min(90vw, 1000px);
+  max-height: 90vh;
+  width: 100%;
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  user-select: none;
+}
+
+.lb-close {
+  position: absolute;
+  top: -3rem; right: 0;
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.lb-close:hover { background: rgba(255,255,255,0.2); }
+
+.lb-prev, .lb-next {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  z-index: 2;
+}
+.lb-prev { left: -4rem; }
+.lb-next { right: -4rem; }
+.lb-prev:hover, .lb-next:hover { background: rgba(255,255,255,0.2); }
+.lb-prev:disabled, .lb-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.lb-counter {
+  position: absolute;
+  bottom: -2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.08em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .product-layout { grid-template-columns: 55% 1fr; gap: 2.5rem; }
+  .artwork-grid { grid-template-columns: repeat(2, 1fr); }
+  .why-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .product-layout { grid-template-columns: 1fr; }
+  .product-gallery { position: static; }
+  .gallery-main-wrap { aspect-ratio: 4/3; }
+  .trust-pillars { gap: 0; }
+  .pillar { padding: 0.5rem 1rem; }
+  .pillar-sep { height: 20px; }
+  .quote-layout { grid-template-columns: 1fr; gap: 3rem; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .process-steps { flex-direction: column; align-items: center; gap: 1.5rem; }
+  .process-connector { width: 2px; height: 2.5rem; margin: 0; background: linear-gradient(180deg, var(--color-gold) 0%, rgba(201,168,76,0.3) 100%); }
+  .aggregate-rating { flex-direction: column; gap: 1.5rem; text-align: center; }
+  .sticky-product-name { display: none; }
+}
+
+@media (max-width: 640px) {
+  .tabs-nav { padding: 0 1rem; }
+  .tab-pill { padding: 0.875rem 0.875rem; font-size: 0.8rem; }
+  .tab-panel { padding: 1.75rem 1.25rem 2rem; }
+  .product-cta-wrap { flex-direction: column; }
+  .btn-cta-primary, .btn-cta-secondary { flex: auto; width: 100%; }
+  .mf-row { grid-template-columns: 1fr; }
+  .pf-row { grid-template-columns: 1fr; }
+  .quote-form-card { padding: 1.75rem; }
+  .trust-pillars { flex-direction: column; align-items: flex-start; padding: 0.5rem 0; }
+  .pillar-sep { display: none; }
+  .artwork-grid { grid-template-columns: 1fr; }
+  .lb-prev { left: -2rem; }
+  .lb-next { right: -2rem; }
+}
+
+/* ════════════════════════════════════════════════
+   CONFIGURATOR
+════════════════════════════════════════════════ */
+.configurator-section {
+  padding: 5rem 0;
+  background: linear-gradient(180deg, var(--color-off-white) 0%, #fff 100%);
+  border-top: 1px solid var(--color-border);
+}
+
+.cfg-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.cfg-header p { max-width: 560px; margin: 0.75rem auto 0; font-size: 1rem; }
+
+/* Two-column layout */
+.cfg-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* ── Steps ── */
+.cfg-options { display: flex; flex-direction: column; gap: 2rem; }
+
+.cfg-step {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+}
+.cfg-step:focus-within { box-shadow: var(--shadow-md); border-color: rgba(201,168,76,0.4); }
+
+.cfg-step-label {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+.cfg-step-num {
+  width: 32px; height: 32px;
+  background: var(--color-navy);
+  color: var(--color-gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.cfg-step-label h3 {
+  font-size: 1rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+.cfg-multi-hint {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-border-light);
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  letter-spacing: 0;
+  font-family: var(--font-body);
+}
+.cfg-optional {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+  font-family: var(--font-body);
+}
+
+/* Card grid */
+.cfg-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+.cfg-cards.cfg-multi .cfg-card[aria-pressed="true"] {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: #fff;
+}
+.cfg-cards.cfg-multi .cfg-card[aria-pressed="true"] .cfg-card-sub { color: rgba(255,255,255,0.65); }
+
+.cfg-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.875rem 0.75rem;
+  background: var(--color-off-white);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  gap: 0.25rem;
+}
+.cfg-card:hover {
+  border-color: var(--color-gold);
+  background: var(--color-gold-pale);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201,168,76,0.2);
+}
+.cfg-card[aria-pressed="true"] {
+  background: var(--color-gold-pale);
+  border-color: var(--color-gold);
+  box-shadow: 0 4px 12px rgba(201,168,76,0.25);
+}
+.cfg-card-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  line-height: 1.3;
+}
+.cfg-card[aria-pressed="true"] .cfg-card-title { color: var(--color-navy); }
+.cfg-card-sub {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+.cfg-card-mat { grid-template-rows: auto auto auto; }
+.cfg-mat-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 0.15rem; }
+
+/* Material swatch bar */
+.cfg-card-mat[aria-pressed="true"]::after {
+  content: '';
+  display: block;
+  width: 20px; height: 4px;
+  border-radius: 2px;
+  background: var(--color-gold);
+  margin-top: 0.35rem;
+}
+
+/* Custom size */
+.custom-dims {
+  margin-top: 1rem;
+  display: none;
+}
+.custom-dims.visible { display: block; }
+
+.dims-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+.dim-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 70px;
+}
+.dim-group label { font-size: 0.75rem; font-weight: 600; color: var(--color-navy); }
+.dim-group input {
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.dim-group input:focus { border-color: var(--color-navy); }
+.dim-sep { color: var(--color-text-muted); font-weight: 700; padding-bottom: 0.5rem; flex-shrink: 0; }
+.dim-unit {
+  padding: 0.6rem 0.5rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  color: var(--color-navy);
+  outline: none;
+  cursor: pointer;
+  align-self: flex-end;
+  background: #fff;
+}
+
+/* Quantity presets */
+.qty-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-bottom: 1rem;
+}
+.qty-btn {
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-off-white);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.qty-btn:hover { border-color: var(--color-gold); background: var(--color-gold-pale); }
+.qty-btn[aria-pressed="true"] { background: var(--color-navy); border-color: var(--color-navy); color: #fff; }
+
+.custom-qty-wrap { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.custom-qty-label { font-size: 0.8rem; color: var(--color-text-muted); white-space: nowrap; }
+.custom-qty-input {
+  padding: 0.6rem 0.875rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 140px;
+}
+.custom-qty-input:focus { border-color: var(--color-navy); }
+
+/* Upload zone */
+.cfg-upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-off-white);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.cfg-upload-zone:hover, .cfg-upload-zone.drag-over {
+  border-color: var(--color-gold);
+  background: var(--color-gold-pale);
+}
+.cfg-upload-zone input[type="file"] { display: none; }
+.cfg-upload-icon { color: var(--color-gold); }
+.cfg-upload-text strong { display: block; font-size: 0.9rem; color: var(--color-navy); margin-bottom: 0.2rem; }
+.cfg-upload-text span { font-size: 0.75rem; color: var(--color-text-muted); }
+.cfg-upload-status { font-size: 0.8rem; color: var(--color-navy); font-weight: 600; min-height: 1rem; }
+
+/* Design help toggle */
+.cfg-step-design { }
+.cfg-design-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-off-white);
+  transition: all 0.2s;
+  user-select: none;
+}
+.cfg-design-toggle:hover { border-color: var(--color-gold); background: var(--color-gold-pale); }
+.cfg-design-toggle input { display: none; }
+
+.toggle-track {
+  width: 44px; height: 24px;
+  background: var(--color-border);
+  border-radius: 100px;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+.cfg-design-toggle:has(input:checked) .toggle-track { background: var(--color-navy); }
+.cfg-design-toggle:has(input:checked) { border-color: var(--color-navy); }
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.25s;
+}
+.cfg-design-toggle:has(input:checked) .toggle-thumb { transform: translateX(20px); }
+
+.cfg-design-text strong { display: block; font-size: 0.9rem; color: var(--color-navy); margin-bottom: 0.2rem; }
+.cfg-design-text span { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.5; }
+
+/* CTAs */
+.cfg-cta-bar {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.cfg-cta-primary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.05rem 1.75rem;
+  background: var(--color-red);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.cfg-cta-primary:hover {
+  background: var(--color-red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229,57,53,0.35);
+}
+.cfg-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.05rem 1.5rem;
+  background: transparent;
+  color: var(--color-navy);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.cfg-cta-secondary:hover { border-color: var(--color-navy); background: var(--color-navy); color: #fff; }
+
+/* ── Summary Panel ── */
+.cfg-summary-col { position: relative; }
+
+.cfg-summary {
+  position: sticky;
+  top: 1.5rem;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Preview */
+.preview-wrap {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 1.5rem 1.5rem 1rem;
+  position: relative;
+}
+.preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 0.875rem;
+}
+.preview-dot {
+  width: 7px; height: 7px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+.preview-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 180px;
+}
+.preview-box-svg { width: 100%; max-width: 220px; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4)); }
+
+.preview-finish-badges {
+  position: absolute;
+  bottom: 0; right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.artwork-file-badge {
+  position: absolute;
+  top: 0.75rem; left: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.7rem;
+  font-weight: 600;
+  max-width: 140px;
+  overflow: hidden;
+}
+.artwork-file-badge span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.finish-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(201,168,76,0.9);
+  color: var(--color-navy-dark);
+}
+
+.preview-caption {
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.5rem;
+  min-height: 1.1rem;
+  font-style: italic;
+}
+
+/* Summary list */
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem 0;
+}
+.summary-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 0.82rem;
+}
+.summary-row:last-child { border-bottom: none; }
+.sum-label { color: var(--color-text-muted); font-weight: 500; flex-shrink: 0; }
+.sum-val {
+  color: var(--color-navy);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+.sum-val.selected { color: var(--color-navy); }
+.sum-val.empty { color: var(--color-text-muted); font-weight: 400; font-style: italic; }
+
+/* Price estimate */
+.price-estimate-box {
+  margin: 0.75rem 1.25rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+.price-est-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.375rem;
+}
+.price-est-amount {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  margin-bottom: 0.375rem;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+}
+.price-est-note {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.4;
+}
+
+/* Trust mini */
+.cfg-trust-mini {
+  padding: 0.875rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.cfg-trust-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+.cfg-trust-check {
+  width: 18px; height: 18px;
+  background: var(--color-gold);
+  color: var(--color-navy-dark);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .cfg-layout { grid-template-columns: 1fr 300px; }
+  .cfg-cards { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .cfg-layout { grid-template-columns: 1fr; }
+  .cfg-summary-col { order: -1; }
+  .cfg-summary { position: static; }
+  .preview-stage { min-height: 140px; }
+}
+@media (max-width: 600px) {
+  .cfg-cards { grid-template-columns: repeat(2, 1fr); }
+  .cfg-step { padding: 1.25rem; }
+  .cfg-cta-bar { flex-direction: column; }
+  .cfg-cta-primary, .cfg-cta-secondary { flex: auto; width: 100%; }
+}
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════════ -->
+<script>
+  // Read images from the data attribute (avoids define:vars / TypeScript cast issues)
+  const galleryWrap = document.getElementById('gallery-main-wrap');
+  const images: string[] = galleryWrap ? JSON.parse(galleryWrap.dataset.images || '[]') : [];
+
+  /* ── Gallery ── */
+  const mainImg = document.getElementById('main-img') as HTMLImageElement | null;
+  const counter = document.getElementById('gallery-counter');
+  const thumbs  = document.querySelectorAll<HTMLButtonElement>('.gallery-thumb');
+  let currentIdx = 0;
+
+  function setImage(idx: number) {
+    if (!mainImg || !images[idx]) return;
+    currentIdx = idx;
+    mainImg.style.opacity = '0';
+    setTimeout(() => {
+      mainImg!.src = images[idx];
+      mainImg!.style.opacity = '1';
+    }, 200);
+    thumbs.forEach((t, i) => t.classList.toggle('active', i === idx));
+    if (counter) counter.textContent = `${idx + 1} / ${images.length}`;
+  }
+
+  thumbs.forEach((thumb, i) => {
+    thumb.addEventListener('click', () => setImage(i));
+  });
+
+  /* ── Lightbox ── */
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lb-img') as HTMLImageElement | null;
+  const lbCounter = document.getElementById('lb-counter');
+  const lbOverlay = document.getElementById('lb-overlay');
+  const lbClose   = document.getElementById('lb-close');
+  const lbPrev    = document.getElementById('lb-prev') as HTMLButtonElement | null;
+  const lbNext    = document.getElementById('lb-next') as HTMLButtonElement | null;
+  let lbIdx = 0;
+
+  function openLightbox(idx: number) {
+    if (!lightbox || !lbImg) return;
+    lbIdx = idx;
+    lbImg.src = images[idx];
+    if (lbCounter) lbCounter.textContent = `${idx + 1} / ${images.length}`;
+    lightbox.classList.add('open');
+    lightbox.removeAttribute('aria-hidden');
+    document.body.style.overflow = 'hidden';
+    updateLbButtons();
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function lbNavigate(dir: number) {
+    lbIdx = (lbIdx + dir + images.length) % images.length;
+    if (lbImg) {
+      lbImg.style.opacity = '0';
+      setTimeout(() => {
+        lbImg!.src = images[lbIdx];
+        lbImg!.style.opacity = '1';
+      }, 150);
+    }
+    if (lbCounter) lbCounter.textContent = `${lbIdx + 1} / ${images.length}`;
+    updateLbButtons();
+  }
+
+  function updateLbButtons() {
+    if (images.length <= 1) {
+      lbPrev?.setAttribute('disabled', '');
+      lbNext?.setAttribute('disabled', '');
+    } else {
+      lbPrev?.removeAttribute('disabled');
+      lbNext?.removeAttribute('disabled');
+    }
+  }
+
+  document.getElementById('open-lightbox')?.addEventListener('click', () => openLightbox(currentIdx));
+  galleryWrap?.addEventListener('click', (e: MouseEvent) => {
+    if (!(e.target as HTMLElement).closest('#open-lightbox')) openLightbox(currentIdx);
+  });
+  lbClose?.addEventListener('click', closeLightbox);
+  lbOverlay?.addEventListener('click', closeLightbox);
+  lbPrev?.addEventListener('click', () => lbNavigate(-1));
+  lbNext?.addEventListener('click', () => lbNavigate(1));
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (!lightbox?.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft')  lbNavigate(-1);
+    if (e.key === 'ArrowRight') lbNavigate(1);
+  });
+
+  /* ── Tabs ── */
+  const tabPills  = document.querySelectorAll<HTMLButtonElement>('.tab-pill');
+  const tabPanels = document.querySelectorAll<HTMLElement>('.tab-panel');
+
+  tabPills.forEach((pill, i) => {
+    pill.addEventListener('click', () => {
+      tabPills.forEach(p => { p.classList.remove('active'); p.setAttribute('aria-selected', 'false'); });
+      tabPanels.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      pill.setAttribute('aria-selected', 'true');
+      tabPanels[i]?.classList.add('active');
+    });
+  });
+
+  /* ── FAQ Accordion ── */
+  document.querySelectorAll<HTMLButtonElement>('.faq-q-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item-premium');
+      const isOpen = item?.classList.contains('open');
+      document.querySelectorAll('.faq-item-premium.open').forEach(o => {
+        o.classList.remove('open');
+        o.querySelector('.faq-q-btn')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen && item) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  /* ── Sticky CTA ── */
+  const stickyCta = document.getElementById('sticky-cta');
+  const heroEl    = document.querySelector('.product-hero');
+
+  if (stickyCta && heroEl) {
+    const io = new IntersectionObserver(([entry]) => {
+      stickyCta.classList.toggle('visible', !entry.isIntersecting);
+      stickyCta.setAttribute('aria-hidden', String(entry.isIntersecting));
+    }, { threshold: 0.1 });
+    io.observe(heroEl);
+  }
+
+  /* ══════════════════════════════════════════
+     CONFIGURATOR
+  ══════════════════════════════════════════ */
+  (function() {
+
+    /* ── State ── */
+    interface CfgState {
+      size: string; customL: string; customW: string; customH: string; customUnit: string;
+      material: string; materialColor: string;
+      printing: Set<string>; finish: Set<string>;
+      qty: number; customQty: string;
+      addon: Set<string>;
+      artworkNames: string[];
+      designHelp: boolean;
+    }
+
+    const state: CfgState = {
+      size: '', customL: '', customW: '', customH: '', customUnit: 'cm',
+      material: '', materialColor: '#1a3a5c',
+      printing: new Set(), finish: new Set(),
+      qty: 0, customQty: '',
+      addon: new Set(),
+      artworkNames: [],
+      designHelp: false,
+    };
+
+    /* ── Price tables ── */
+    const matBase: Record<string,number> = {
+      cardboard: 1.20, kraft: 0.95, corrugated: 1.45, rigid: 2.80, eco: 1.35
+    };
+    const qtyScale: [number,number][] = [
+      [10000,0.82],[5000,1.0],[2500,1.28],[1000,1.65],[500,2.10],[250,2.75],[100,3.40],[1,4.20]
+    ];
+    const printAdd: Record<string,number> = {
+      none:-0.18, cmyk:0, pms:0.28, inside:0.18, outside:0.10, both:0.32
+    };
+    const finishAdd: Record<string,number> = {
+      gloss:0.14, matte:0.14, spotUV:0.24, goldFoil:0.34, silvFoil:0.28, emboss:0.28, deboss:0.24, softTch:0.20
+    };
+    const addonAdd: Record<string,number> = {
+      insert:0.22, window:0.18, ribbon:0.26, magnetic:0.44, handles:0.20, sleeves:0.28
+    };
+
+    /* ── Box SVG color palette by material ── */
+    const matColors: Record<string,[string,string,string]> = {
+      cardboard:  ['#d4c5a9','#6b7f94','#4a5a6a'],
+      kraft:      ['#c9a87a','#7a5c3a','#5a3c20'],
+      corrugated: ['#c4a882','#8b6b4a','#6b4b2a'],
+      rigid:      ['#8090a0','#2a3a4a','#1a2a3a'],
+      eco:        ['#9dba78','#4a7a3a','#2a5a1a'],
+    };
+
+    /* ── DOM refs ── */
+    const boxTop   = document.getElementById('box-top') as SVGPolygonElement | null;
+    const boxLeft  = document.getElementById('box-left') as SVGPolygonElement | null;
+    const boxRight = document.getElementById('box-right') as SVGPolygonElement | null;
+    const boxFoil  = document.getElementById('box-foil') as SVGPolygonElement | null;
+    const finishBadges  = document.getElementById('preview-finish-badges');
+    const previewCaption = document.getElementById('preview-caption');
+    const priceAmount    = document.getElementById('price-est-amount');
+    const customDims     = document.getElementById('custom-dims');
+
+    /* ── Utility ── */
+    function calcPrice(): { low: number; high: number } | null {
+      if (!state.material || !state.qty) return null;
+      const base = matBase[state.material] ?? 1.2;
+      const scale = qtyScale.find(([q]) => state.qty >= q)?.[1] ?? 4.2;
+      let add = 0;
+      state.printing.forEach(p => { add += printAdd[p] ?? 0; });
+      state.finish.forEach(f  => { add += finishAdd[f] ?? 0; });
+      state.addon.forEach(a   => { add += addonAdd[a] ?? 0; });
+      const unit = (base + add) * scale;
+      const total = unit * state.qty;
+      return { low: Math.round(total * 0.88), high: Math.round(total * 1.14) };
+    }
+
+    function getSizeLabel(): string {
+      const sizeMap: Record<string,string> = {
+        xs:'Extra Small (5×5×3cm)', sm:'Small (10×8×4cm)',
+        md:'Medium (15×12×6cm)',    lg:'Large (20×15×10cm)',
+        xl:'Extra Large (30×25×15cm)',
+      };
+      if (state.size === 'cus' && (state.customL || state.customW || state.customH)) {
+        return `Custom: ${state.customL||'?'}×${state.customW||'?'}×${state.customH||'?'} ${state.customUnit}`;
+      }
+      return sizeMap[state.size] || '';
+    }
+
+    function getSetLabel(s: Set<string>, map: Record<string,string>): string {
+      if (s.size === 0) return '';
+      return [...s].map(k => map[k] || k).join(', ');
+    }
+
+    const printLabels: Record<string,string> = {
+      none:'No Printing', cmyk:'Full Colour CMYK', pms:'PMS Spot',
+      inside:'Inside Print', outside:'Outside Print', both:'Both Sides'
+    };
+    const finishLabels: Record<string,string> = {
+      gloss:'Gloss Lam', matte:'Matte Lam', spotUV:'Spot UV',
+      goldFoil:'Gold Foil', silvFoil:'Silver Foil',
+      emboss:'Embossing', deboss:'Debossing', softTch:'Soft-Touch'
+    };
+    const addonLabels: Record<string,string> = {
+      insert:'Inserts', window:'Window Cut', ribbon:'Ribbon',
+      magnetic:'Magnetic Closure', handles:'Handles', sleeves:'Sleeves'
+    };
+    const matLabels: Record<string,string> = {
+      cardboard:'Cardboard', kraft:'Kraft', corrugated:'Corrugated', rigid:'Rigid Board', eco:'Eco-Friendly'
+    };
+    const qtyLabels: Record<number,string> = {
+      100:'100',250:'250',500:'500',1000:'1,000',2500:'2,500',5000:'5,000',10000:'10,000+'
+    };
+
+    /* ── Update summary panel ── */
+    function updateSummary() {
+      const pairs: [string, string][] = [
+        ['size',     getSizeLabel()],
+        ['material', matLabels[state.material] || ''],
+        ['printing', getSetLabel(state.printing, printLabels)],
+        ['finish',   getSetLabel(state.finish, finishLabels)],
+        ['qty',      state.qty ? (qtyLabels[state.qty] || state.qty.toLocaleString()) : (state.customQty ? state.customQty + ' units' : '')],
+        ['addon',    getSetLabel(state.addon, addonLabels)],
+        ['design',   state.designHelp ? 'Yes — free design requested' : ''],
+      ];
+
+      pairs.forEach(([key, val]) => {
+        const el = document.getElementById(`sum-val-${key}`);
+        if (!el) return;
+        if (val) {
+          el.textContent = val;
+          el.className = 'sum-val selected';
+        } else {
+          el.textContent = key === 'finish' || key === 'addon' ? 'None' : key === 'design' ? 'Not requested' : 'Not selected';
+          el.className = 'sum-val empty';
+        }
+      });
+
+      /* Price */
+      const price = calcPrice();
+      if (priceAmount) {
+        if (price) {
+          priceAmount.textContent = `AUD $${price.low.toLocaleString()} – $${price.high.toLocaleString()}`;
+        } else {
+          priceAmount.textContent = 'Select material & quantity';
+        }
+      }
+
+      /* Box SVG */
+      const colors = matColors[state.material] ?? ['#c9a84c','#1a3a5c','#0d2035'];
+      if (boxTop)   boxTop.setAttribute('fill', colors[0]);
+      if (boxLeft)  boxLeft.setAttribute('fill', colors[1]);
+      if (boxRight) boxRight.setAttribute('fill', colors[2]);
+
+      /* Foil shimmer */
+      if (boxFoil) {
+        boxFoil.setAttribute('opacity', (state.finish.has('goldFoil') || state.finish.has('silvFoil')) ? '0.6' : '0');
+      }
+
+      /* Finish badges */
+      if (finishBadges) {
+        finishBadges.innerHTML = '';
+        state.finish.forEach(f => {
+          const b = document.createElement('span');
+          b.className = 'finish-badge';
+          b.textContent = finishLabels[f] || f;
+          finishBadges.appendChild(b);
+        });
+      }
+
+      /* Caption */
+      if (previewCaption) {
+        const parts = [matLabels[state.material], getSizeLabel()].filter(Boolean);
+        previewCaption.textContent = parts.length ? parts.join(' · ') : 'Select options to preview';
+      }
+    }
+
+    /* ── Single-select handler ── */
+    function bindSingle(groupId: string, stateKey: keyof CfgState, onChange?: (val: string) => void) {
+      document.querySelectorAll<HTMLButtonElement>(`[data-group="${groupId}"]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll(`[data-group="${groupId}"]`).forEach(b => b.setAttribute('aria-pressed','false'));
+          btn.setAttribute('aria-pressed','true');
+          (state as any)[stateKey] = btn.dataset.val || '';
+          onChange && onChange(btn.dataset.val || '');
+          updateSummary();
+        });
+      });
+    }
+
+    /* ── Multi-select handler ── */
+    function bindMulti(groupId: string, stateSet: Set<string>) {
+      document.querySelectorAll<HTMLButtonElement>(`[data-group="${groupId}"]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.dataset.val || '';
+          if (stateSet.has(val)) { stateSet.delete(val); btn.setAttribute('aria-pressed','false'); }
+          else                   { stateSet.add(val);    btn.setAttribute('aria-pressed','true');  }
+          updateSummary();
+        });
+      });
+    }
+
+    /* ── Bind all groups ── */
+    bindSingle('size', 'size', val => {
+      if (customDims) customDims.classList.toggle('visible', val === 'cus');
+    });
+
+    bindSingle('material', 'material');
+
+    bindMulti('printing', state.printing);
+    bindMulti('finish',   state.finish);
+    bindMulti('addon',    state.addon);
+
+    /* Quantity single-select */
+    document.querySelectorAll<HTMLButtonElement>('[data-group="qty"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-group="qty"]').forEach(b => b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        state.qty = Number(btn.dataset.val) || 0;
+        state.customQty = '';
+        const cqi = document.getElementById('custom-qty') as HTMLInputElement | null;
+        if (cqi) cqi.value = '';
+        updateSummary();
+      });
+    });
+
+    /* Custom quantity */
+    const customQtyInput = document.getElementById('custom-qty') as HTMLInputElement | null;
+    customQtyInput?.addEventListener('input', () => {
+      state.customQty = customQtyInput.value;
+      state.qty = Number(customQtyInput.value) || 0;
+      document.querySelectorAll('[data-group="qty"]').forEach(b => b.setAttribute('aria-pressed','false'));
+      updateSummary();
+    });
+
+    /* Custom dimensions */
+    ['dim-l','dim-w','dim-h'].forEach(id => {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      el?.addEventListener('input', () => {
+        state.customL = (document.getElementById('dim-l') as HTMLInputElement)?.value || '';
+        state.customW = (document.getElementById('dim-w') as HTMLInputElement)?.value || '';
+        state.customH = (document.getElementById('dim-h') as HTMLInputElement)?.value || '';
+        updateSummary();
+      });
+    });
+    const dimUnit = document.getElementById('dim-unit') as HTMLSelectElement | null;
+    dimUnit?.addEventListener('change', () => { state.customUnit = dimUnit.value; updateSummary(); });
+
+    /* Design help toggle */
+    const designCheck = document.getElementById('cfg-design-help') as HTMLInputElement | null;
+    designCheck?.addEventListener('change', () => { state.designHelp = designCheck.checked; updateSummary(); });
+
+    /* Artwork upload */
+    const artworkInput2   = document.getElementById('cfg-artwork') as HTMLInputElement | null;
+    const uploadStatus    = document.getElementById('cfg-upload-status');
+    const uploadZone      = document.getElementById('cfg-upload-zone');
+    const artworkFront    = document.getElementById('artwork-front') as SVGImageElement | null;
+    const artworkRight    = document.getElementById('artwork-right') as SVGImageElement | null;
+    const logoPlaceholder = document.getElementById('logo-placeholder');
+    const fileBadge       = document.getElementById('artwork-file-badge');
+    const fileBadgeName   = document.getElementById('artwork-file-name');
+
+    const IMAGE_TYPES = ['image/jpeg','image/png','image/webp','image/gif','image/svg+xml'];
+
+    function applyArtwork(file: File) {
+      state.artworkNames = [file.name];
+      if (uploadStatus) uploadStatus.textContent = `✓ ${file.name}`;
+
+      if (IMAGE_TYPES.includes(file.type)) {
+        /* Show image on box faces */
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const src = e.target?.result as string;
+          if (artworkFront) { artworkFront.setAttribute('href', src); artworkFront.style.opacity = '1'; }
+          if (artworkRight) { artworkRight.setAttribute('href', src); artworkRight.style.opacity = '0.75'; }
+          if (logoPlaceholder) logoPlaceholder.setAttribute('opacity', '0');
+          if (fileBadge) fileBadge.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        /* Non-image: show file badge, clear image faces */
+        if (artworkFront) artworkFront.style.opacity = '0';
+        if (artworkRight) artworkRight.style.opacity = '0';
+        if (logoPlaceholder) logoPlaceholder.setAttribute('opacity', '0.35');
+        if (fileBadge) { fileBadge.style.display = 'flex'; }
+        if (fileBadgeName) fileBadgeName.textContent = file.name;
+        if (uploadStatus) uploadStatus.textContent = `✓ ${file.name} (ready for upload)`;
+      }
+    }
+
+    function clearArtwork() {
+      state.artworkNames = [];
+      if (artworkFront) { artworkFront.setAttribute('href',''); artworkFront.style.opacity = '0'; }
+      if (artworkRight) { artworkRight.setAttribute('href',''); artworkRight.style.opacity = '0'; }
+      if (logoPlaceholder) logoPlaceholder.setAttribute('opacity', '0.35');
+      if (fileBadge) fileBadge.style.display = 'none';
+      if (uploadStatus) uploadStatus.textContent = '';
+    }
+
+    artworkInput2?.addEventListener('change', () => {
+      const files = artworkInput2.files;
+      if (files && files.length > 0) applyArtwork(files[0]);
+      else clearArtwork();
+    });
+
+    /* Drag and drop */
+    uploadZone?.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+    uploadZone?.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+    uploadZone?.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) applyArtwork(files[0]);
+    });
+
+    /* ── "Add to Quote" → pre-fill form ── */
+    document.getElementById('cfg-add-quote')?.addEventListener('click', () => {
+      const price = calcPrice();
+      const lines = [
+        `Product: ${document.querySelector('.product-title')?.textContent || ''}`,
+        getSizeLabel() ? `Size: ${getSizeLabel()}` : '',
+        state.material ? `Material: ${matLabels[state.material]}` : '',
+        state.printing.size ? `Printing: ${getSetLabel(state.printing, printLabels)}` : '',
+        state.finish.size   ? `Finishes: ${getSetLabel(state.finish, finishLabels)}` : '',
+        state.qty           ? `Quantity: ${state.qty.toLocaleString()} units` : '',
+        state.addon.size    ? `Add-Ons: ${getSetLabel(state.addon, addonLabels)}` : '',
+        state.designHelp    ? 'Design Support: Yes (free)' : '',
+        state.artworkNames.length ? `Artwork files: ${state.artworkNames.join(', ')}` : '',
+        price ? `Estimated budget: AUD $${price.low.toLocaleString()}–$${price.high.toLocaleString()}` : '',
+      ].filter(Boolean).join('\n');
+
+      /* Populate mini form textarea */
+      const msgArea = document.querySelector('.mini-form textarea[name="message"]') as HTMLTextAreaElement | null;
+      if (msgArea) msgArea.value = lines;
+
+      /* Smooth scroll to mini form */
+      const mfWrap = document.querySelector('.mini-form-wrap');
+      if (mfWrap) mfWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      /* Visual feedback */
+      const btn = document.getElementById('cfg-add-quote');
+      if (btn) {
+        btn.textContent = '✓ Added to Quote Form — Scroll Down';
+        btn.style.background = '#16a34a';
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg> Add to Quote Request`;
+          btn.style.background = '';
+        }, 3000);
+      }
+    });
+
+    /* Initial render */
+    updateSummary();
+
+  })();
+
+  /* ── Mini form file name ── */
+  const artworkInput = document.getElementById('mf-artwork') as HTMLInputElement | null;
+  artworkInput?.addEventListener('change', () => {
+    const label = document.getElementById('mf-file-text');
+    if (label) {
+      label.textContent = artworkInput.files?.length
+        ? artworkInput.files[0].name
+        : 'Upload Artwork (optional)';
+    }
+  });
+
+  /* ── Scroll Reveal ── */
+  const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+  if ('IntersectionObserver' in window) {
+    const revIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); revIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => revIO.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('visible'));
+  }
+</script>

@@ -1,0 +1,110 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config/site';
+---
+
+<Layout
+  title="Terms of Service | ZEE Custom Boxes AU"
+  description="Terms of Service for ZEE Custom Boxes AU. Read our terms and conditions governing the use of our website and custom packaging services."
+  canonical={`${SITE.url}/terms-of-service`}
+>
+
+  <div class="breadcrumb-bar">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <span aria-current="page">Terms of Service</span>
+      </nav>
+    </div>
+  </div>
+
+  <section class="policy-hero">
+    <div class="container">
+      <div class="section-label">Legal</div>
+      <h1>Terms of Service</h1>
+      <div class="gold-divider"></div>
+      <p>Last updated: May 2026</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container-sm">
+      <div class="policy-body">
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using the ZEE Custom Boxes AU website (<strong>zeecustomboxes.com.au</strong>) and our services, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website or services.</p>
+
+        <h2>2. Our Services</h2>
+        <p>ZEE Custom Boxes AU provides custom packaging products and solutions to businesses and individuals across Australia. Our services include design, production, and delivery of custom-printed boxes, bags, sleeves, trays, and other packaging materials.</p>
+
+        <h2>3. Quotes and Orders</h2>
+        <p>All quotes provided are valid for 30 days from the date of issue unless otherwise stated. Prices quoted are in Australian Dollars (AUD) and exclusive of GST unless specified. Orders are confirmed only upon receipt of written acceptance and a deposit payment as agreed.</p>
+
+        <h2>4. Design and Artwork</h2>
+        <p>We provide a free design service. You are responsible for ensuring all content, logos, and trademarks provided to us are accurate, and that you own or have permission to use them. We reserve the right to refuse designs that are unlawful, defamatory, or infringe intellectual property rights. We will provide a digital proof for approval before commencing production. Production will not begin until you have provided written approval of the proof.</p>
+
+        <h2>5. Production and Turnaround</h2>
+        <p>Standard production time is 7–14 business days from proof approval. Express production may be available at an additional cost. We make every effort to meet agreed timelines but are not liable for delays caused by circumstances beyond our reasonable control.</p>
+
+        <h2>6. Payment Terms</h2>
+        <p>A deposit may be required to commence production. The balance is due prior to dispatch unless otherwise agreed in writing. Overdue payments may incur interest charges. We reserve the right to withhold delivery until payment is received in full.</p>
+
+        <h2>7. Delivery</h2>
+        <p>We deliver to all states and territories across Australia. Delivery timeframes are estimates and are not guaranteed. Risk of loss or damage passes to you upon delivery. We are not liable for delays caused by third-party carriers.</p>
+
+        <h2>8. Quality and Returns</h2>
+        <p>We take pride in the quality of our products. If your order contains a defect or does not match the approved proof, please contact us within 7 business days of receiving your order. We will investigate and, where the fault is ours, we will reprint or refund at our discretion. We do not accept returns for orders that match the approved artwork.</p>
+
+        <h2>9. Intellectual Property</h2>
+        <p>All designs, content, and materials on our website are the property of ZEE Custom Boxes AU and are protected by Australian copyright law. You may not reproduce or use our materials without prior written permission. You retain ownership of artwork and designs you provide to us.</p>
+
+        <h2>10. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by Australian law, ZEE Custom Boxes AU shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our services. Our total liability to you shall not exceed the amount paid for the specific order giving rise to the claim.</p>
+
+        <h2>11. Governing Law</h2>
+        <p>These Terms of Service are governed by the laws of New South Wales, Australia. Any disputes shall be subject to the exclusive jurisdiction of the courts of New South Wales.</p>
+
+        <h2>12. Changes to Terms</h2>
+        <p>We reserve the right to update these Terms of Service at any time. Changes will be effective upon posting to our website. Continued use of our services after changes are posted constitutes acceptance of the updated terms.</p>
+
+        <h2>13. Contact Us</h2>
+        <p>If you have any questions about these Terms of Service, please contact us:</p>
+        <ul>
+          <li><strong>Email:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><strong>Phone:</strong> <a href={`tel:${SITE.phone}`}>{SITE.phone}</a></li>
+          <li><strong>Address:</strong> {SITE.address}</li>
+        </ul>
+
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+.breadcrumb-bar { background: var(--color-off-white); border-bottom: 1px solid var(--color-border); padding: 0.875rem 0; }
+
+.policy-hero {
+  background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+  padding: 3.5rem 0 2.5rem;
+  text-align: center;
+}
+.policy-hero .section-label { color: rgba(255,255,255,0.6); }
+.policy-hero h1 { color: #fff; font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem; }
+.policy-hero p { color: rgba(255,255,255,0.5); font-size: 0.875rem; margin-top: 0.5rem; }
+
+.policy-body { max-width: 760px; }
+.policy-body h2 {
+  font-size: 1.3rem;
+  color: var(--color-navy);
+  margin: 2.5rem 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.policy-body p { color: var(--color-text); line-height: 1.8; margin-bottom: 1rem; }
+.policy-body ul { padding-left: 1.5rem; color: var(--color-text); line-height: 1.8; margin-bottom: 1rem; }
+.policy-body li { margin-bottom: 0.35rem; }
+.policy-body a { color: var(--color-navy); font-weight: 600; }
+.policy-body a:hover { color: var(--color-gold); }
+</style>

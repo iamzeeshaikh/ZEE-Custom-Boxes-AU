@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" fill="#f8f9fa"/>
+  <rect x="1" y="1" width="398" height="298" stroke="#e5e7eb" stroke-width="2"/>
+  <rect x="160" y="100" width="80" height="80" rx="8" fill="#e5e7eb"/>
+  <path d="M180 130 l20 20 10-10 20 20H170z" fill="#d1d5db"/>
+  <circle cx="195" cy="120" r="8" fill="#d1d5db"/>
+  <text x="200" y="220" font-family="sans-serif" font-size="14" fill="#9ca3af" text-anchor="middle">Custom Packaging</text>
+  <text x="200" y="240" font-family="sans-serif" font-size="12" fill="#d1d5db" text-anchor="middle">ZEE Custom Boxes AU</text>
+</svg>
