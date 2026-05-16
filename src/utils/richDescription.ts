@@ -45,17 +45,18 @@ export function buildRichDescription(
 
   parts.push(
     '<h2>Custom ' + rawName + ' for Australian Businesses</h2>' +
-    '<p>At ' + homeLink + ', we specialise in crafting ' + rawName + ' built to the highest standards of construction and print quality. Whether you are launching a new product line or scaling an existing brand, our packaging is engineered to make a lasting impression at every touchpoint — from the retail shelf to the unboxing moment.</p>' +
+    '<p>At ZEE Custom Boxes AU, we specialise in crafting ' + rawName + ' built to the highest standards of construction and print quality. Whether you are launching a new product line or scaling an existing brand, our packaging is engineered to make a lasting impression at every touchpoint — from the retail shelf to the unboxing moment.</p>' +
     '<p>Every order we produce is treated as a true partnership. From your first enquiry through to dispatch, our team is dedicated to getting every detail right. We work through material selection, structural engineering, print proofing, and quality control with the same level of care regardless of order size. We believe premium packaging should be accessible to every Australian business, not just the largest brands.</p>' +
     '<p>Our ' + rawName + ' are manufactured using advanced printing technology and premium substrates sourced from certified suppliers. Each batch undergoes rigorous quality inspection before leaving our facility, so what arrives at your door matches exactly what you approved in your digital proof.</p>'
   );
 
   parts.push(
     '<h2>Materials and Printing Options</h2>' +
+    '<p>Choosing the right combination of materials, printing method, and surface finish is what separates ordinary packaging from packaging that sells. For every ' + rawName + ' order, our team guides you through each decision so the final product perfectly matches your brand identity, product requirements, and budget.</p>' +
     '<h3>Material Choices</h3>' +
     '<p>Selecting the right material for your ' + rawName + ' is one of the most important decisions in the packaging process. It affects both the visual presentation and the structural performance of your finished box. We offer a comprehensive range of substrates to match every product category and budget level.</p>' +
     '<p>Our most popular materials include 300–400 GSM coated clay board for vibrant full-colour retail packaging, unbleached kraft paper for an eco-conscious and rustic look, rigid board for premium gift or luxury applications that demand a solid feel, and single or double-wall corrugated board when shipping protection is a priority. We can also source specialty stocks including textured papers, linen finishes, and cotton-feel substrates for high-end product lines.</p>' +
-    '<h3>Printing Methods</h3>' +
+    '<h3>Printing Methods for ' + rawName + '</h3>' +
     '<p>We offer both offset lithography and digital printing for ' + rawName + ', with the most appropriate method determined by your order volume, artwork complexity, and colour requirements. Offset printing delivers consistent, highly accurate colour reproduction and is the preferred choice for large production runs. Digital printing provides outstanding flexibility for short runs, prototypes, and variable-data packaging where personalisation is required.</p>' +
     '<p>All printing is performed in CMYK with optional Pantone spot colour matching available for brands that require strict colour consistency across multiple print batches. Full-bleed printing is standard on all orders, and we support white ink printing on kraft and dark substrates.</p>' +
     '<h3>Finishing Options</h3>' +
@@ -120,7 +121,7 @@ export function buildRichDescription(
   parts.push(
     '<h2>Order Your ' + rawName + ' Today</h2>' +
     '<p>Getting started is straightforward. Use the quote form on this page to describe your ' + rawName + ' requirements — product dimensions, approximate quantity, material preferences, and any special finishing you have in mind. Our packaging team will respond with a detailed, obligation-free quote within 24 business hours.</p>' +
-    '<p>Visit the ' + homeLink + ' homepage to explore our full catalogue of custom packaging solutions, browse related products in our ' + catLink + ' range, and learn more about the materials and finishes we offer. Our team is ready to help you create ' + rawName + ' that genuinely elevate your brand and delight your customers.</p>'
+    '<p>Visit the ' + homeLink + ' homepage to explore our full catalogue of custom packaging solutions, browse related products in our ' + cat + ' range, and learn more about the materials and finishes we offer. Our team is ready to help you create ' + rawName + ' that genuinely elevate your brand and delight your customers.</p>'
   );
 
   return parts.join('\n');
