@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { SITE } from '../../config/site';
 import products from '../../data/products.json';
+import { buildRichDescription } from '../../utils/richDescription';
 
 export async function getStaticPaths() {
   return products.map(product => ({
@@ -28,6 +29,8 @@ const hasDesc  = Boolean(product.description);
 const hasSpecs = Boolean(product.specifications);
 const hasFaqs  = Boolean(product.faqs);
 const images   = product.images as string[];
+
+const richDescription = buildRichDescription(product, primaryCat, primaryCatSlug, related);
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -793,11 +796,7 @@ const productSchema = {
 
       <!-- Description Panel -->
       <div class="tab-panel active" id="panel-0">
-        {hasDesc ? (
-          <div class="prose tab-prose" set:html={product.description} />
-        ) : (
-          <div class="prose tab-prose" set:html={product.shortDescription} />
-        )}
+        <div class="prose tab-prose rich-desc" set:html={richDescription} />
       </div>
 
       <!-- Specifications Panel -->
@@ -1874,6 +1873,90 @@ const productSchema = {
 .tab-prose :global(h2), .tab-prose :global(h3) { color: var(--color-navy); margin-top: 2rem; margin-bottom: 0.75rem; }
 .tab-prose :global(ul), .tab-prose :global(ol) { margin: 1rem 0 1rem 1.5rem; }
 .tab-prose :global(li) { margin-bottom: 0.4rem; color: var(--color-text-muted); }
+
+/* Rich description styles */
+.rich-desc :global(h2) {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-border);
+}
+.rich-desc :global(h3) {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.rich-desc :global(ol) {
+  margin: 1rem 0 1.5rem 1.5rem;
+  counter-reset: none;
+}
+.rich-desc :global(ol li) {
+  margin-bottom: 0.75rem;
+  line-height: 1.75;
+  color: var(--color-text-muted);
+}
+.rich-desc :global(ul li) {
+  margin-bottom: 0.6rem;
+  line-height: 1.75;
+  list-style: none;
+  padding-left: 0;
+}
+.rich-desc :global(ul) { list-style: none; margin-left: 0; padding: 0; }
+.rich-desc :global(ul li)::before {
+  content: '✓';
+  color: var(--color-gold);
+  font-weight: 700;
+  margin-right: 0.6rem;
+}
+.rich-desc :global(strong) { color: var(--color-navy); font-weight: 700; }
+
+/* Brand-red internal links */
+:global(.desc-link) {
+  color: var(--color-red);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(229,57,53,0.3);
+  transition: color 0.2s, border-color 0.2s;
+}
+:global(.desc-link:hover) {
+  color: #b71c1c;
+  border-bottom-color: #b71c1c;
+}
+
+/* Rich specs table */
+.rich-desc :global(.rich-table-wrap) { overflow-x: auto; margin: 1.5rem 0 2rem; }
+.rich-desc :global(.rich-specs-table),
+.rich-desc :global(.rich-table-wrap table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.rich-desc :global(.rich-specs-table th),
+.rich-desc :global(.rich-table-wrap th) {
+  background: var(--color-navy);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.85rem;
+  width: 32%;
+}
+.rich-desc :global(.rich-specs-table td),
+.rich-desc :global(.rich-table-wrap td) {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  line-height: 1.6;
+  vertical-align: top;
+}
+.rich-desc :global(.rich-table-wrap tr:nth-child(even) td) {
+  background: var(--color-off-white);
+}
 
 /* Specifications table styling */
 .specs-table-wrap :global(table) {
