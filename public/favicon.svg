@@ -1,5 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#1a3a5c"/>
-  <rect x="2" y="2" width="60" height="60" rx="10" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
-  <text x="32" y="46" font-family="Georgia, serif" font-size="38" font-weight="700" fill="#c9a84c" text-anchor="middle">Z</text>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a3a5c"/>
+      <stop offset="100%" stop-color="#0d2035"/>
+    </linearGradient>
+  </defs>
+  <!-- Background square with rounded corners -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Gold inner border -->
+  <rect x="3" y="3" width="58" height="58" rx="11" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.6"/>
+  <!-- Gold Z letter -->
+  <text x="32" y="47" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="700" fill="#c9a84c" text-anchor="middle">Z</text>
 </svg>
