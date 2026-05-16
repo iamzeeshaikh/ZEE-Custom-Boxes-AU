@@ -1,6 +1,9 @@
 ---
 import { SITE, CTA } from '../config/site';
 import categories from '../data/categories.json';
+import products from '../data/products.json';
+
+const topProducts = products.filter(p => p.images.length > 0).slice(0, 10);
 ---
 
 <footer class="site-footer">
@@ -48,7 +51,7 @@ import categories from '../data/categories.json';
         </div>
 
         <div class="footer-col">
-          <h3 class="footer-heading">Product Categories</h3>
+          <h3 class="footer-heading">Top Categories</h3>
           <ul class="footer-links">
             {categories.slice(0, 10).map(cat => (
               <li><a href={`/category/${cat.slug}`}>{cat.name}</a></li>
@@ -57,10 +60,10 @@ import categories from '../data/categories.json';
         </div>
 
         <div class="footer-col">
-          <h3 class="footer-heading">More Categories</h3>
+          <h3 class="footer-heading">Top Products</h3>
           <ul class="footer-links">
-            {categories.slice(10, 20).map(cat => (
-              <li><a href={`/category/${cat.slug}`}>{cat.name}</a></li>
+            {topProducts.map(product => (
+              <li><a href={`/product/${product.slug}`}>{product.name}</a></li>
             ))}
           </ul>
         </div>
