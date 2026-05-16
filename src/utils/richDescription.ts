@@ -4,7 +4,8 @@ export function buildRichDescription(
   primaryCatSlug: string,
   related: any[]
 ): string {
-  const rawName = product.name.replace(/^Order\s+/i, '').replace(/\s+Wholesale\s*$/i, '').trim();
+  const rawName   = product.name.replace(/^Order\s+/i, '').replace(/\s+Wholesale\s*$/i, '').trim();
+  const h2Prefix  = /^custom\s/i.test(rawName) ? '' : 'Custom ';
   const cat     = primaryCat || 'Custom Packaging';
   const catUrl  = `/category/${primaryCatSlug}`;
   const rel0    = related[0] || null;
@@ -44,7 +45,7 @@ export function buildRichDescription(
   if (intro2) parts.push('<p>' + intro2 + '</p>');
 
   parts.push(
-    '<h2>Custom ' + rawName + ' for Australian Businesses</h2>' +
+    '<h2>' + h2Prefix + rawName + ' for Australian Businesses</h2>' +
     '<p>At ZEE Custom Boxes AU, we specialise in crafting ' + rawName + ' built to the highest standards of construction and print quality. Whether you are launching a new product line or scaling an existing brand, our packaging is engineered to make a lasting impression at every touchpoint — from the retail shelf to the unboxing moment.</p>' +
     '<p>Every order we produce is treated as a true partnership. From your first enquiry through to dispatch, our team is dedicated to getting every detail right. We work through material selection, structural engineering, print proofing, and quality control with the same level of care regardless of order size. We believe premium packaging should be accessible to every Australian business, not just the largest brands.</p>' +
     '<p>Our ' + rawName + ' are manufactured using advanced printing technology and premium substrates sourced from certified suppliers. Each batch undergoes rigorous quality inspection before leaving our facility, so what arrives at your door matches exactly what you approved in your digital proof.</p>'
