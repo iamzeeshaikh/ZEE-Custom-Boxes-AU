@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import products from '../data/products.json';
 import categories from '../data/categories.json';
+import locations from '../data/locations';
 
 const SITE_URL = 'https://zeecustomboxes.com.au';
 const TODAY = new Date().toISOString().split('T')[0];
@@ -19,12 +20,17 @@ export const GET: APIRoute = () => {
   const staticPages = [
     url('/', '1.0', 'weekly'),
     url('/products', '0.9', 'weekly'),
+    url('/locations', '0.8', 'monthly'),
     url('/about', '0.6', 'monthly'),
     url('/contact', '0.6', 'monthly'),
     url('/request-quote', '0.8', 'monthly'),
     url('/privacy-policy', '0.3', 'yearly'),
     url('/terms-of-service', '0.3', 'yearly'),
   ];
+
+  const locationPages = locations.map(loc =>
+    url(`/${loc.slug}`, loc.type === 'national' ? '0.85' : loc.type === 'state' ? '0.8' : '0.75', 'monthly')
+  );
 
   const categoryPages = categories.map(cat =>
     url(`/category/${cat.slug}`, '0.85', 'weekly')
@@ -37,6 +43,7 @@ export const GET: APIRoute = () => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages.join('')}
+${locationPages.join('')}
 ${categoryPages.join('')}
 ${productPages.join('')}
 </urlset>`;

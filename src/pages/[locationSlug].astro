@@ -1,0 +1,586 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE, CTA } from '../config/site';
+import locations from '../data/locations';
+import categories from '../data/categories.json';
+
+export async function getStaticPaths() {
+  return locations.map(loc => ({
+    params: { locationSlug: loc.slug },
+    props: { loc },
+  }));
+}
+
+const { loc } = Astro.props;
+
+// Featured categories for cards (show 6)
+const featuredCats = categories.slice(0, 6);
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE.url },
+    { "@type": "ListItem", "position": 2, "name": "Locations", "item": `${SITE.url}/locations` },
+    { "@type": "ListItem", "position": 3, "name": loc.name, "item": `${SITE.url}/${loc.slug}` },
+  ]
+};
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": `Custom Packaging ${loc.name}`,
+  "description": loc.metaDescription,
+  "provider": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "url": SITE.url,
+    "telephone": SITE.phone,
+    "email": SITE.email,
+  },
+  "areaServed": {
+    "@type": loc.type === 'city' ? 'City' : 'State',
+    "name": loc.name,
+    "containedInPlace": { "@type": "Country", "name": "Australia" }
+  },
+  "serviceType": "Custom Packaging",
+  "url": `${SITE.url}/${loc.slug}`
+};
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": SITE.name,
+  "url": SITE.url,
+  "telephone": SITE.phone,
+  "email": SITE.email,
+  "description": `Premium custom packaging supplier serving ${loc.name}, Australia.`,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "903/50 Clarence St",
+    "addressLocality": "Sydney",
+    "addressRegion": "NSW",
+    "postalCode": "2000",
+    "addressCountry": "AU"
+  },
+  "areaServed": loc.name,
+  "priceRange": "$$",
+  "openingHours": "Mo-Fr 09:00-17:00",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": `Custom Packaging Solutions for ${loc.name}`
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": loc.faqs.map(f => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a }
+  }))
+};
+---
+
+<Layout
+  title={loc.metaTitle}
+  description={loc.metaDescription}
+  canonical={`${SITE.url}/${loc.slug}`}
+  schema={[breadcrumbSchema, serviceSchema, localBusinessSchema, faqSchema]}
+>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/locations">Locations</a>
+      <span class="sep">›</span>
+      <span aria-current="page">{loc.name}</span>
+    </nav>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="loc-hero">
+  <div class="loc-hero-bg"></div>
+  <div class="container loc-hero-inner">
+    <div class="section-label">Custom Packaging · {loc.state} · Australia</div>
+    <h1>{loc.headline}</h1>
+    <div class="gold-divider"></div>
+    <p class="loc-hero-sub">Premium custom packaging delivered to {loc.name}. Free design service, no minimum order, 7–14 day production, and tracked delivery across Australia.</p>
+    <div class="loc-hero-ctas">
+      <a href={CTA.quoteUrl} class="btn btn-primary btn-lg">Get a Free Quote →</a>
+      <a href={`tel:${SITE.phone}`} class="btn btn-outline-light btn-lg">📞 {SITE.phone}</a>
+    </div>
+    <div class="loc-trust-strip">
+      <div class="loc-trust-item"><span class="loc-trust-check">✓</span> Free Design Service</div>
+      <div class="loc-trust-item"><span class="loc-trust-check">✓</span> No Minimum Order</div>
+      <div class="loc-trust-item"><span class="loc-trust-check">✓</span> 7–14 Day Production</div>
+      <div class="loc-trust-item"><span class="loc-trust-check">✓</span> Australia-Wide Delivery</div>
+      <div class="loc-trust-item"><span class="loc-trust-check">✓</span> 4.9★ Rated</div>
+    </div>
+  </div>
+</section>
+
+<!-- Introduction -->
+<section class="section loc-intro-section">
+  <div class="container">
+    <div class="loc-intro-grid">
+      <div class="loc-intro-content">
+        <div class="section-label">About Our {loc.name} Service</div>
+        <h2>Custom Packaging Solutions for {loc.name} Businesses</h2>
+        <p class="loc-intro-lead">{loc.intro}</p>
+        <p>{loc.intro2}</p>
+        <div class="loc-intro-stats">
+          <div class="loc-stat">
+            <div class="loc-stat-num">409+</div>
+            <div class="loc-stat-label">Products Available</div>
+          </div>
+          <div class="loc-stat">
+            <div class="loc-stat-num">7–14</div>
+            <div class="loc-stat-label">Day Production</div>
+          </div>
+          <div class="loc-stat">
+            <div class="loc-stat-num">4.9★</div>
+            <div class="loc-stat-label">Customer Rating</div>
+          </div>
+          <div class="loc-stat">
+            <div class="loc-stat-num">Free</div>
+            <div class="loc-stat-label">Design Service</div>
+          </div>
+        </div>
+      </div>
+      <div class="loc-intro-aside">
+        <div class="loc-quote-card">
+          <h3>Get a Free Quote for {loc.name}</h3>
+          <p>Tell us your packaging requirements and we'll respond within 24 business hours with a detailed, obligation-free quote.</p>
+          <ul class="loc-quote-list">
+            <li>✓ Free professional design included</li>
+            <li>✓ No minimum order quantity</li>
+            <li>✓ Tracked delivery to {loc.name}</li>
+            <li>✓ 3D proof before production</li>
+          </ul>
+          <a href={CTA.quoteUrl} class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1rem;">Request Free Quote →</a>
+          <a href={`tel:${SITE.phone}`} class="btn btn-outline" style="width:100%;justify-content:center;margin-top:0.75rem;">📞 Call Us: {SITE.phone}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Packaging Solutions Overview -->
+<section class="section loc-solutions-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">What We Offer in {loc.name}</div>
+      <h2>Our Custom Packaging Solutions</h2>
+      <p>From retail cartons and luxury gift boxes to eco kraft mailers and food-safe packaging, we produce every type of custom box your {loc.name} business needs.</p>
+    </div>
+    <div class="loc-solutions-grid">
+      <div class="loc-solution-card">
+        <div class="loc-solution-icon">📦</div>
+        <h3>Retail & Shelf Packaging</h3>
+        <p>Premium custom retail boxes in any size, material, and finish — designed to stand out on shelf and reinforce your brand identity at the point of purchase.</p>
+      </div>
+      <div class="loc-solution-card">
+        <div class="loc-solution-icon">✉️</div>
+        <h3>E-Commerce & Mailer Boxes</h3>
+        <p>Durable, branded mailer boxes and shipping cartons that protect your products in transit and create an unboxing experience your customers will share.</p>
+      </div>
+      <div class="loc-solution-card">
+        <div class="loc-solution-icon">🎁</div>
+        <h3>Luxury Gift Boxes</h3>
+        <p>Rigid gift boxes, sleeve boxes, and presentation cartons with premium finishes — gold foil, soft-touch, embossing — for gifting, hospitality, and corporate use.</p>
+      </div>
+      <div class="loc-solution-card">
+        <div class="loc-solution-icon">🥗</div>
+        <h3>Food-Safe Packaging</h3>
+        <p>Food-safe custom printed boxes, bakery cartons, takeaway packaging, and gourmet food containers — all produced with compliant materials and inks.</p>
+      </div>
+      <div class="loc-solution-card">
+        <div class="loc-solution-icon">🌿</div>
+        <h3>Eco & Kraft Packaging</h3>
+        <p>FSC-certified kraft, recycled cardboard, and soy ink options for {loc.name} businesses with sustainability goals and eco-conscious customers.</p>
+      </div>
+      <div class="loc-solution-card">
+        <div class="loc-solution-icon">🏆</div>
+        <h3>Custom Printed Cartons</h3>
+        <p>CMYK and Pantone-matched full-colour printing on every substrate — delivering pixel-perfect brand reproduction on every box we produce.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Popular Categories -->
+<section class="section loc-cats-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Browse by Category</div>
+      <h2>Popular Packaging Categories for {loc.name} Businesses</h2>
+    </div>
+    <div class="loc-cats-grid">
+      {featuredCats.map(cat => (
+        <a href={`/category/${cat.slug}`} class="loc-cat-card">
+          <div class="loc-cat-name">{cat.name}</div>
+          <div class="loc-cat-arrow">→</div>
+        </a>
+      ))}
+    </div>
+    <div style="text-align:center;margin-top:2rem;">
+      <a href="/products" class="btn btn-outline">View All 409+ Products →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Industries -->
+<section class="section loc-industries-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Industries We Serve in {loc.name}</div>
+      <h2>Packaging for Every {loc.name} Industry</h2>
+      <p>We supply custom packaging to businesses across {loc.name}'s key industries — designing solutions that meet the specific requirements of each sector.</p>
+    </div>
+    <div class="loc-industries-grid">
+      {loc.industries.map(ind => (
+        <div class="loc-industry-card">
+          <div class="loc-industry-icon">{ind.icon}</div>
+          <h3>{ind.name}</h3>
+          <p>{ind.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Why ZEE -->
+<section class="section loc-why-section">
+  <div class="container">
+    <div class="loc-why-grid">
+      <div>
+        <div class="section-label">Why {loc.name} Businesses Choose Us</div>
+        <h2>Why ZEE Custom Boxes AU?</h2>
+        <p>ZEE Custom Boxes AU has built a strong reputation across Australia by delivering on three core promises: premium quality, reliable turnaround, and honest pricing. For {loc.name} businesses, we bring those same standards directly to your door.</p>
+        <p>Our free design service is genuine — not a marketing claim. Our designers work with you through as many revision rounds as it takes to produce artwork you are proud of, at no extra charge. Your order includes a full 3D digital proof for approval before any printing begins.</p>
+        <p>We back every order with a quality guarantee. If your packaging contains a defect or does not match your approved artwork, we will reprint or refund with no disputes and no bureaucracy.</p>
+        <a href={CTA.quoteUrl} class="btn btn-primary" style="margin-top:1.5rem;">Get a Free Quote for {loc.name} →</a>
+      </div>
+      <div class="loc-why-features">
+        {[
+          { icon: '🎨', title: 'Free Design Service', desc: 'Professional design at no cost, with unlimited revisions until you are satisfied.' },
+          { icon: '📦', title: 'No Minimum Order', desc: 'Order any quantity — one prototype or 50,000 units — at the same competitive pricing.' },
+          { icon: '⚡', title: '7–14 Day Production', desc: 'Fast turnaround without compromising on quality or detail.' },
+          { icon: '🚚', title: 'Delivery to ' + loc.name, desc: 'Tracked courier delivery to all ' + loc.name + ' addresses, every time.' },
+          { icon: '🌿', title: 'Eco-Friendly Options', desc: 'Recycled board, FSC kraft, and soy inks for sustainability-focused brands.' },
+          { icon: '⭐', title: '4.9-Star Rated', desc: 'Consistently rated by Australian businesses for quality, speed, and service.' },
+        ].map(f => (
+          <div class="loc-why-feature">
+            <div class="loc-why-icon">{f.icon}</div>
+            <div>
+              <strong>{f.title}</strong>
+              <p>{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Delivery & Turnaround -->
+<section class="section loc-delivery-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Delivery & Production</div>
+      <h2>Delivery to {loc.name} — What to Expect</h2>
+    </div>
+    <div class="loc-delivery-grid">
+      <div class="loc-delivery-step">
+        <div class="loc-delivery-num">1</div>
+        <h3>Request a Quote</h3>
+        <p>Submit your quote request with box type, dimensions, quantity, and design brief. We respond within 24 business hours.</p>
+      </div>
+      <div class="loc-delivery-step">
+        <div class="loc-delivery-num">2</div>
+        <h3>Design & Proof</h3>
+        <p>Our team creates your artwork for free and sends a 3D digital proof for your written approval before production begins.</p>
+      </div>
+      <div class="loc-delivery-step">
+        <div class="loc-delivery-num">3</div>
+        <h3>Production (7–14 Days)</h3>
+        <p>Your order enters production immediately after proof approval. Standard turnaround is 7–14 business days. Express options available.</p>
+      </div>
+      <div class="loc-delivery-step">
+        <div class="loc-delivery-num">4</div>
+        <h3>Delivered to {loc.name}</h3>
+        <p>Your packaging is securely packed and shipped via tracked courier directly to your {loc.name} address, with delivery notifications.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonial -->
+<section class="loc-testimonial-section">
+  <div class="container">
+    <div class="loc-testimonial-card">
+      <div class="loc-testimonial-stars">★★★★★</div>
+      <blockquote>"{loc.testimonial.text}"</blockquote>
+      <div class="loc-testimonial-author">
+        <strong>{loc.testimonial.author}</strong>
+        <span>{loc.testimonial.company}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quote CTA Banner -->
+<section class="loc-cta-section">
+  <div class="container">
+    <div class="loc-cta-inner">
+      <div>
+        <h2>Ready to Order Custom Packaging in {loc.name}?</h2>
+        <p>Get a free, obligation-free quote within 24 business hours. Free design, no minimums, tracked delivery to {loc.name}.</p>
+      </div>
+      <div class="loc-cta-btns">
+        <a href={CTA.quoteUrl} class="btn btn-primary btn-lg">Get Your Free Quote →</a>
+        <a href={`tel:${SITE.phone}`} class="btn btn-outline-light btn-lg">📞 {SITE.phone}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQs -->
+<section class="section loc-faq-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Frequently Asked Questions</div>
+      <h2>Custom Packaging {loc.name} — FAQs</h2>
+    </div>
+    <div class="faq-list">
+      {loc.faqs.map((faq, i) => (
+        <div class={`faq-item${i === 0 ? ' open' : ''}`}>
+          <button class="faq-question" aria-expanded={i === 0 ? 'true' : 'false'}>
+            <span>{faq.q}</span>
+            <svg class="faq-chevron" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer"><p>{faq.a}</p></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Nearby Locations -->
+{loc.nearbyCities.length > 0 && (
+  <section class="section loc-nearby-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Nearby Locations</div>
+        <h2>We Also Serve Businesses Near {loc.name}</h2>
+      </div>
+      <div class="loc-nearby-grid">
+        {loc.nearbyCities.map(city => (
+          <a href={`/${city.slug}`} class="loc-nearby-card">
+            <span>Custom Packaging {city.name}</span>
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        ))}
+        <a href="/locations" class="loc-nearby-card loc-nearby-all">
+          <span>View All Locations</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+)}
+
+</Layout>
+
+<style>
+/* Hero */
+.loc-hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-navy-dark) 0%, #0f2744 60%, #1a3a5c 100%);
+  padding: 5rem 0 4rem;
+  overflow: hidden;
+  text-align: center;
+}
+.loc-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.loc-hero-inner { position: relative; }
+.loc-hero h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: #fff;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.loc-hero-sub {
+  color: rgba(255,255,255,0.75);
+  max-width: 600px;
+  margin: 1rem auto 2rem;
+  font-size: 1.05rem;
+}
+.loc-hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.btn-outline-light {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-outline-light:hover { border-color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.08); }
+.loc-trust-strip {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.loc-trust-item { color: rgba(255,255,255,0.75); font-size: 0.875rem; display: flex; align-items: center; gap: 0.4rem; }
+.loc-trust-check { color: var(--color-gold); font-weight: 700; }
+
+/* Intro */
+.loc-intro-section { background: var(--color-off-white); }
+.loc-intro-grid { display: grid; grid-template-columns: 1fr 380px; gap: 3rem; align-items: start; }
+.loc-intro-content h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); margin-bottom: 1rem; }
+.loc-intro-lead { font-size: 1.05rem; color: var(--color-text); line-height: 1.75; margin-bottom: 1rem; }
+.loc-intro-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-top: 2rem; }
+.loc-stat { background: #fff; border-radius: var(--radius-sm); padding: 1.25rem; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); }
+.loc-stat-num { font-size: 1.6rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-display); }
+.loc-stat-label { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem; }
+.loc-quote-card { background: #fff; border-radius: var(--radius-md); padding: 2rem; box-shadow: var(--shadow-xl); border: 1px solid var(--color-border); position: sticky; top: 100px; }
+.loc-quote-card h3 { font-size: 1.1rem; color: var(--color-navy); margin-bottom: 0.75rem; }
+.loc-quote-card p { font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 1rem; }
+.loc-quote-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.5rem; }
+.loc-quote-list li { font-size: 0.85rem; color: var(--color-text); }
+
+/* Solutions */
+.loc-solutions-section { background: #fff; }
+.loc-solutions-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.loc-solution-card { background: var(--color-off-white); border-radius: var(--radius-md); padding: 1.75rem; border: 1px solid var(--color-border); transition: box-shadow 0.2s, transform 0.2s; }
+.loc-solution-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.loc-solution-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+.loc-solution-card h3 { font-size: 1rem; color: var(--color-navy); margin-bottom: 0.5rem; }
+.loc-solution-card p { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6; margin: 0; }
+
+/* Categories */
+.loc-cats-section { background: var(--color-off-white); }
+.loc-cats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+.loc-cat-card {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  padding: 1.1rem 1.25rem; text-decoration: none; color: var(--color-navy);
+  font-size: 0.9rem; font-weight: 600; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.loc-cat-card:hover { border-color: var(--color-gold); box-shadow: var(--shadow-sm); }
+.loc-cat-arrow { color: var(--color-gold); }
+
+/* Industries */
+.loc-industries-section { background: #fff; }
+.loc-industries-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
+.loc-industry-card { background: var(--color-off-white); border-radius: var(--radius-md); padding: 1.75rem; border: 1px solid var(--color-border); }
+.loc-industry-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+.loc-industry-card h3 { font-size: 1rem; color: var(--color-navy); margin-bottom: 0.5rem; }
+.loc-industry-card p { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6; margin: 0; }
+
+/* Why */
+.loc-why-section { background: var(--color-off-white); }
+.loc-why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.loc-why-grid > div:first-child h2 { font-size: clamp(1.4rem,2.5vw,2rem); margin-bottom: 1rem; }
+.loc-why-grid > div:first-child p { color: var(--color-text-muted); line-height: 1.7; margin-bottom: 1rem; }
+.loc-why-features { display: flex; flex-direction: column; gap: 1.25rem; }
+.loc-why-feature { display: flex; align-items: flex-start; gap: 1rem; background: #fff; border-radius: var(--radius-sm); padding: 1.1rem; border: 1px solid var(--color-border); }
+.loc-why-icon { font-size: 1.5rem; flex-shrink: 0; }
+.loc-why-feature strong { display: block; font-size: 0.9rem; color: var(--color-navy); margin-bottom: 0.2rem; }
+.loc-why-feature p { font-size: 0.8rem; color: var(--color-text-muted); margin: 0; }
+
+/* Delivery */
+.loc-delivery-section { background: #fff; }
+.loc-delivery-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
+.loc-delivery-step { text-align: center; padding: 1.5rem; }
+.loc-delivery-num {
+  width: 52px; height: 52px; background: var(--color-gold); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 800; color: var(--color-navy-dark);
+  margin: 0 auto 1rem;
+}
+.loc-delivery-step h3 { font-size: 0.95rem; color: var(--color-navy); margin-bottom: 0.5rem; }
+.loc-delivery-step p { font-size: 0.85rem; color: var(--color-text-muted); margin: 0; }
+
+/* Testimonial */
+.loc-testimonial-section { background: var(--color-navy-dark); padding: 4rem 0; }
+.loc-testimonial-card { max-width: 720px; margin: 0 auto; text-align: center; }
+.loc-testimonial-stars { font-size: 1.4rem; color: var(--color-gold); margin-bottom: 1rem; }
+.loc-testimonial-card blockquote { font-size: 1.15rem; color: rgba(255,255,255,0.9); font-style: italic; line-height: 1.7; margin: 0 0 1.5rem; }
+.loc-testimonial-author strong { display: block; color: #fff; font-size: 0.95rem; }
+.loc-testimonial-author span { color: var(--color-gold); font-size: 0.85rem; }
+
+/* CTA */
+.loc-cta-section { background: linear-gradient(135deg, var(--color-navy), var(--color-navy-dark)); padding: 4rem 0; }
+.loc-cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+.loc-cta-inner h2 { color: #fff; font-size: clamp(1.4rem, 2.5vw, 2rem); margin-bottom: 0.5rem; }
+.loc-cta-inner p { color: rgba(255,255,255,0.7); margin: 0; }
+.loc-cta-btns { display: flex; gap: 1rem; flex-wrap: wrap; flex-shrink: 0; }
+
+/* FAQ */
+.loc-faq-section { background: var(--color-off-white); }
+
+/* Nearby */
+.loc-nearby-section { background: #fff; }
+.loc-nearby-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+.loc-nearby-card {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem; text-decoration: none; color: var(--color-navy);
+  font-size: 0.875rem; font-weight: 600; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.loc-nearby-card:hover { border-color: var(--color-gold); box-shadow: var(--shadow-sm); }
+.loc-nearby-all { background: var(--color-navy); color: #fff; border-color: var(--color-navy); }
+.loc-nearby-all:hover { background: var(--color-navy-dark); border-color: var(--color-navy-dark); }
+.loc-nearby-all svg { stroke: #fff; }
+
+/* Shared */
+.section-header { text-align: center; max-width: 680px; margin: 0 auto 2.5rem; }
+.section-header h2 { font-size: clamp(1.5rem,2.5vw,2rem); margin-bottom: 0.75rem; }
+.section-header p { color: var(--color-text-muted); }
+.breadcrumb-bar { background: var(--color-off-white); border-bottom: 1px solid var(--color-border); padding: 0.875rem 0; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .loc-intro-grid { grid-template-columns: 1fr; }
+  .loc-intro-aside { order: -1; }
+  .loc-intro-stats { grid-template-columns: repeat(2,1fr); }
+  .loc-solutions-grid { grid-template-columns: repeat(2,1fr); }
+  .loc-why-grid { grid-template-columns: 1fr; }
+  .loc-delivery-grid { grid-template-columns: repeat(2,1fr); }
+  .loc-nearby-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 768px) {
+  .loc-cats-grid { grid-template-columns: repeat(2,1fr); }
+  .loc-industries-grid { grid-template-columns: 1fr; }
+  .loc-cta-inner { flex-direction: column; text-align: center; }
+}
+@media (max-width: 640px) {
+  .loc-trust-strip { gap: 0.75rem; }
+  .loc-solutions-grid { grid-template-columns: 1fr; }
+  .loc-cats-grid { grid-template-columns: 1fr; }
+  .loc-intro-stats { grid-template-columns: repeat(2,1fr); }
+  .loc-delivery-grid { grid-template-columns: 1fr; }
+  .loc-nearby-grid { grid-template-columns: 1fr; }
+  .loc-hero-ctas { flex-direction: column; align-items: center; }
+  .loc-cta-btns { flex-direction: column; width: 100%; }
+}
+</style>
