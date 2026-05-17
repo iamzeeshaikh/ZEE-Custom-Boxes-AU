@@ -477,16 +477,28 @@ const faqSchema = {
 .loc-quote-list li { font-size: 0.85rem; color: var(--color-text); }
 
 /* Internal link style */
-.loc-text-link { color: var(--color-red); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(229,57,53,0.3); transition: color 0.2s, border-color 0.2s; }
-.loc-text-link:hover { color: #b71c1c; border-bottom-color: #b71c1c; }
+.loc-text-link {
+  color: var(--color-red);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(229,57,53,0.5);
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+.loc-text-link:hover {
+  color: #b71c1c;
+  text-decoration-color: #b71c1c;
+}
 
 /* Solutions */
 .loc-solutions-section { background: #fff; }
 .loc-solutions-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 .loc-solution-card { background: var(--color-off-white); border-radius: var(--radius-md); padding: 1.75rem; border: 1px solid var(--color-border); transition: box-shadow 0.2s, transform 0.2s; text-decoration: none; color: inherit; display: block; }
 .loc-solution-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--color-gold); }
+.loc-solution-card:hover h3 { color: var(--color-red); }
 .loc-solution-icon { font-size: 2rem; margin-bottom: 0.75rem; }
-.loc-solution-card h3 { font-size: 1rem; color: var(--color-navy); margin-bottom: 0.5rem; }
+.loc-solution-card h3 { font-size: 1rem; color: var(--color-navy); margin-bottom: 0.5rem; transition: color 0.2s; }
 .loc-solution-card p { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6; margin: 0; }
 
 /* Categories */
