@@ -146,6 +146,8 @@ const currentPath = Astro.url.pathname;
               </div>
             </div>
 
+            <a href="/locations" class={`nav-link ${currentPath.startsWith('/locations') || currentPath.includes('custom-packaging-') || currentPath.includes('custom-boxes-') || currentPath.includes('kraft-boxes-') || currentPath.includes('food-packaging-') ? 'active' : ''}`}>Locations</a>
+
           </div><!-- /nav-links -->
 
           <!-- CTA + hamburger -->
