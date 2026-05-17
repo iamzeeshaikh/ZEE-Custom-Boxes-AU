@@ -2,8 +2,11 @@
 import { SITE, CTA } from '../config/site';
 import categories from '../data/categories.json';
 import products from '../data/products.json';
+import locations from '../data/locations';
 
 const topProducts = products.filter(p => p.images.length > 0).slice(0, 10);
+const statePages  = locations.filter(l => l.type === 'state');
+const cityPages   = locations.filter(l => l.type === 'city').slice(0, 10);
 ---
 
 <footer class="site-footer">
@@ -67,6 +70,21 @@ const topProducts = products.filter(p => p.images.length > 0).slice(0, 10);
             ))}
           </ul>
         </div>
+
+        <div class="footer-col">
+          <h3 class="footer-heading">Locations</h3>
+          <ul class="footer-links">
+            <li><a href="/locations">All Locations</a></li>
+            <li><a href="/custom-packaging-australia">Australia-Wide</a></li>
+            {statePages.map(s => (
+              <li><a href={`/${s.slug}`}>{s.name}</a></li>
+            ))}
+            <li class="footer-links-subhead">Cities</li>
+            {cityPages.map(c => (
+              <li><a href={`/${c.slug}`}>{c.name}</a></li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div class="footer-cta-banner">
@@ -106,8 +124,8 @@ const topProducts = products.filter(p => p.images.length > 0).slice(0, 10);
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.6fr repeat(3, 1fr);
-  gap: 3rem;
+  grid-template-columns: 1.4fr repeat(4, 1fr);
+  gap: 2rem;
   margin-bottom: 3rem;
 }
 
@@ -200,6 +218,15 @@ const topProducts = products.filter(p => p.images.length > 0).slice(0, 10);
 
 .footer-links a:hover { color: var(--color-gold); }
 
+.footer-links-subhead {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  margin-top: 0.5rem;
+}
+
 .footer-cta-banner {
   display: flex;
   align-items: center;
@@ -250,7 +277,11 @@ const topProducts = products.filter(p => p.images.length > 0).slice(0, 10);
 
 .footer-bottom-links a:hover { color: var(--color-gold); }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
+  .footer-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 768px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: 1 / -1; }
 }
