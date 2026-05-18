@@ -9,7 +9,7 @@
       "maxDuration": 10
     },
     "api/gone.js": {
-      "memory": 64,
+      "memory": 128,
       "maxDuration": 5
     }
   },
