@@ -37,7 +37,7 @@ const breadcrumbSchema = {
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE.url },
-    { "@type": "ListItem", "position": 2, "name": primaryCat, "item": `${SITE.url}/category/${primaryCatSlug}` },
+    { "@type": "ListItem", "position": 2, "name": primaryCat, "item": `${SITE.url}/product-category/${primaryCatSlug}/` },
     { "@type": "ListItem", "position": 3, "name": product.name, "item": `${SITE.url}/product/${product.slug}` },
   ]
 };
@@ -85,7 +85,7 @@ const productSchema = {
       <span class="sep">›</span>
       {primaryCat && (
         <>
-          <a href={`/category/${primaryCatSlug}`}>{primaryCat}</a>
+          <a href={`/product-category/${primaryCatSlug}/`}>{primaryCat}</a>
           <span class="sep">›</span>
         </>
       )}
@@ -165,7 +165,7 @@ const productSchema = {
         <!-- Category badges -->
         <div class="product-cats">
           {product.categories.slice(0, 3).map((cat: string) => (
-            <a href={`/category/${catSlug(cat)}`} class="product-cat-badge">{cat}</a>
+            <a href={`/product-category/${catSlug(cat)}/`} class="product-cat-badge">{cat}</a>
           ))}
         </div>
 

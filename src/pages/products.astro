@@ -49,7 +49,7 @@ const breadcrumbSchema = {
       <div class="cat-filters">
         <a href="/products" class="cat-filter active">All Products ({products.length})</a>
         {categories.map(cat => (
-          <a href={`/category/${cat.slug}`} class="cat-filter">{cat.name} ({cat.products.length})</a>
+          <a href={`/product-category/${cat.slug}/`} class="cat-filter">{cat.name} ({cat.products.length})</a>
         ))}
       </div>
     </div>

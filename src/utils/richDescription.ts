@@ -7,7 +7,7 @@ export function buildRichDescription(
   const rawName   = product.name.replace(/^Order\s+/i, '').replace(/\s+Wholesale\s*$/i, '').trim();
   const h2Prefix  = /^custom\s/i.test(rawName) ? '' : 'Custom ';
   const cat     = primaryCat || 'Custom Packaging';
-  const catUrl  = `/category/${primaryCatSlug}`;
+  const catUrl  = `/product-category/${primaryCatSlug}/`;
   const rel0    = related[0] || null;
   const rel1    = related[1] || null;
 

@@ -33,7 +33,7 @@ export const GET: APIRoute = () => {
   );
 
   const categoryPages = categories.map(cat =>
-    url(`/category/${cat.slug}`, '0.85', 'weekly')
+    url(`/product-category/${cat.slug}/`, '0.85', 'weekly')
   );
 
   const productPages = products.map(p =>

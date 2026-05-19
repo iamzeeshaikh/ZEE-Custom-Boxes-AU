@@ -57,7 +57,7 @@ const cityPages   = locations.filter(l => l.type === 'city').slice(0, 10);
           <h3 class="footer-heading">Top Categories</h3>
           <ul class="footer-links">
             {categories.slice(0, 10).map(cat => (
-              <li><a href={`/category/${cat.slug}`}>{cat.name}</a></li>
+              <li><a href={`/product-category/${cat.slug}/`}>{cat.name}</a></li>
             ))}
           </ul>
         </div>

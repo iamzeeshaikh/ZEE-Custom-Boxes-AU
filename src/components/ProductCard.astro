@@ -44,7 +44,7 @@ const excerpt = stripHtml(product.shortDescription || product.metaDescription ||
     </div>
     <div class="product-card-body">
       {product.primaryCategory && (
-        <a href={`/category/${catSlug(product.primaryCategory)}`} class="product-card-cat" onclick="event.stopPropagation()">
+        <a href={`/product-category/${catSlug(product.primaryCategory)}/`} class="product-card-cat" onclick="event.stopPropagation()">
           {product.primaryCategory}
         </a>
       )}

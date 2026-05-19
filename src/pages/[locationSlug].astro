@@ -189,32 +189,32 @@ const faqSchema = {
       <p>From retail cartons and luxury gift boxes to eco kraft mailers and food-safe packaging, we produce every type of custom box your {loc.name} business needs.</p>
     </div>
     <div class="loc-solutions-grid">
-      <a href="/category/custom-retail-boxes-packaging" class="loc-solution-card">
+      <a href="/product-category/custom-retail-boxes-packaging/" class="loc-solution-card">
         <div class="loc-solution-icon">📦</div>
         <h3>Retail & Shelf Packaging</h3>
         <p>Premium custom retail boxes in any size, material, and finish — designed to stand out on shelf and reinforce your brand identity at the point of purchase.</p>
       </a>
-      <a href="/category/custom-corrugated-boxes" class="loc-solution-card">
+      <a href="/product-category/custom-corrugated-boxes/" class="loc-solution-card">
         <div class="loc-solution-icon">✉️</div>
         <h3>E-Commerce & Mailer Boxes</h3>
         <p>Durable, branded mailer boxes and shipping cartons that protect your products in transit and create an unboxing experience your customers will share.</p>
       </a>
-      <a href="/category/custom-gift-packaging-boxes" class="loc-solution-card">
+      <a href="/product-category/custom-gift-packaging-boxes/" class="loc-solution-card">
         <div class="loc-solution-icon">🎁</div>
         <h3>Luxury Gift Boxes</h3>
         <p>Rigid gift boxes, sleeve boxes, and presentation cartons with premium finishes — gold foil, soft-touch, embossing — for gifting, hospitality, and corporate use.</p>
       </a>
-      <a href="/category/custom-food-packaging-boxes" class="loc-solution-card">
+      <a href="/product-category/custom-food-packaging-boxes/" class="loc-solution-card">
         <div class="loc-solution-icon">🥗</div>
         <h3>Food-Safe Packaging</h3>
         <p>Food-safe custom printed boxes, bakery cartons, takeaway packaging, and gourmet food containers — all produced with compliant materials and inks.</p>
       </a>
-      <a href="/category/custom-kraft-boxes-packaging" class="loc-solution-card">
+      <a href="/product-category/custom-kraft-boxes-packaging/" class="loc-solution-card">
         <div class="loc-solution-icon">🌿</div>
         <h3>Eco & Kraft Packaging</h3>
         <p>FSC-certified kraft, recycled cardboard, and soy ink options for {loc.name} businesses with sustainability goals and eco-conscious customers.</p>
       </a>
-      <a href="/category/custom-product-boxes-packaging" class="loc-solution-card">
+      <a href="/product-category/custom-product-boxes-packaging/" class="loc-solution-card">
         <div class="loc-solution-icon">🏆</div>
         <h3>Custom Printed Cartons</h3>
         <p>CMYK and Pantone-matched full-colour printing on every substrate — delivering pixel-perfect brand reproduction on every box we produce.</p>
@@ -232,7 +232,7 @@ const faqSchema = {
     </div>
     <div class="loc-cats-grid">
       {featuredCats.map(cat => (
-        <a href={`/category/${cat.slug}`} class="loc-cat-card">
+        <a href={`/product-category/${cat.slug}/`} class="loc-cat-card">
           <div class="loc-cat-name">{cat.name}</div>
           <div class="loc-cat-arrow">→</div>
         </a>
@@ -273,7 +273,7 @@ const faqSchema = {
         <h2>Why ZEE Custom Boxes AU?</h2>
         <p>ZEE Custom Boxes AU has built a strong reputation across Australia by delivering on three core promises: premium quality, reliable turnaround, and honest pricing. For {loc.name} businesses, we bring those same standards directly to your door.</p>
         <p>Our free design service is genuine — not a marketing claim. Our designers work with you through as many revision rounds as it takes to produce artwork you are proud of, at no extra charge. Your order includes a full 3D digital proof for approval before any printing begins.</p>
-        <p>We back every order with a quality guarantee. If your packaging contains a defect or does not match your approved artwork, we will reprint or refund with no disputes and no bureaucracy. Browse our <a href={`/category/${loc.primaryCategorySlug}`} class="loc-text-link">{loc.primaryCategoryName}</a> range to see what is possible for your {loc.name} business.</p>
+        <p>We back every order with a quality guarantee. If your packaging contains a defect or does not match your approved artwork, we will reprint or refund with no disputes and no bureaucracy. Browse our <a href={`/product-category/${loc.primaryCategorySlug}/`} class="loc-text-link">{loc.primaryCategoryName}</a> range to see what is possible for your {loc.name} business.</p>
         <a href={CTA.quoteUrl} class="btn btn-primary" style="margin-top:1.5rem;">Get a Free Quote for {loc.name} →</a>
       </div>
       <div class="loc-why-features">
