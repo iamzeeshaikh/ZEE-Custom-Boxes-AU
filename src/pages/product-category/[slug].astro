@@ -5,6 +5,7 @@ import QuoteForm from '../../components/QuoteForm.astro';
 import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import categories from '../../data/categories.json';
+import { CATEGORY_SEO } from '../../data/categorySeoContent';
 
 export async function getStaticPaths() {
   return categories.map(cat => ({
@@ -57,6 +58,7 @@ const collectionSchema = {
 
 const seoTitle = `${category.name} - Custom Packaging Australia | ${SITE.name}`;
 const seoDesc = `Order custom ${category.name} in Australia. Premium quality, free design service, fast turnaround, and wholesale pricing. Request your free quote from ZEE Custom Boxes AU today.`;
+const catSeo = CATEGORY_SEO[category.slug] || null;
 ---
 
 <Layout
@@ -147,170 +149,35 @@ const seoDesc = `Order custom ${category.name} in Australia. Premium quality, fr
   <section class="section bg-light">
     <div class="container container-sm">
       <div class="seo-content reveal">
-        <div class="section-label">Your Complete Guide</div>
-        <h2>Custom {category.name} in Australia</h2>
-        <div class="gold-divider gold-divider-left"></div>
-
-        <div class="prose">
-
-          <p>ZEE Custom Boxes AU produces premium <strong>{category.name}</strong> for Australian businesses of every
-          size — from boutique brands ordering their first small run to established wholesalers managing large-volume
-          replenishment cycles. Every order is made entirely to specification: your dimensions, your brand colours,
-          your chosen substrate, your selected finish. Nothing is pre-made or off-the-shelf.</p>
-
-          <p>Packaging is often the first physical interaction a customer has with a brand. That opening moment —
-          lifting a lid, sliding a sleeve, unfolding a carton — communicates something about the product inside before
-          it is even seen. Well-designed custom {category.name} let you control that moment deliberately and precisely,
-          rather than leaving it to chance.</p>
-
-          <h3>Why Custom Packaging Has a Measurable Commercial Impact</h3>
-
-          <p>Consumer research consistently shows that over 70% of purchasing decisions are influenced by packaging
-          design alone. For e-commerce brands, premium packaging directly reduces return rates and drives repeat
-          purchases — customers associate the quality of the box with the quality of what is inside.</p>
-
-          <p>In product categories where multiple competitors sit side by side on shelf or arrive through the same
-          courier network, the packaging is often the only differentiating signal a buyer experiences first. Choosing
-          the right {category.name} is not a cosmetic decision — it is a commercial one with measurable effects on
-          conversion, retention, and word-of-mouth.</p>
-
-          <h3>Materials and Substrates: Choosing the Right Foundation</h3>
-
-          <p>The material you select determines the structural performance, print fidelity, tactile quality, and
-          sustainability profile of your finished packaging. The comparison below covers the four primary substrates
-          we work with and their most appropriate applications.</p>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Material</th>
-                  <th>Best Suited For</th>
-                  <th>Typical Thickness</th>
-                  <th>Compatible Finishes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>SBS Cardboard</td>
-                  <td>Retail, cosmetic, food, pharmaceutical</td>
-                  <td>250 – 450 gsm</td>
-                  <td>All print and surface finishes</td>
-                </tr>
-                <tr>
-                  <td>Kraft Board</td>
-                  <td>Artisan, eco-conscious, bakery, wellness</td>
-                  <td>300 – 400 gsm</td>
-                  <td>Natural finish, aqueous, limited UV</td>
-                </tr>
-                <tr>
-                  <td>Rigid Greyboard</td>
-                  <td>Luxury gift boxes, rigid mailers, premium retail</td>
-                  <td>1 – 3 mm</td>
-                  <td>All finishes including deep embossing</td>
-                </tr>
-                <tr>
-                  <td>Corrugated Board</td>
-                  <td>Shipping cartons, e-commerce mailers, fragile goods</td>
-                  <td>Single to triple wall</td>
-                  <td>Kraft liner to full-colour litho laminate</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p>All substrates are available in FSC-certified and recycled-content variants for brands with environmental
-          commitments. Our team will recommend the most appropriate material grade for your product weight, storage
-          conditions, and shelf-life requirements during the quoting process.</p>
-
-          <h3>Our Range of {category.name}</h3>
-
-          <p>Our catalogue within this category covers a wide variety of structural formats — straight-tuck cartons,
-          reverse-tuck end mailers, rigid shoulder boxes, sleeve-and-tray sets, and fully bespoke die-cut structures
-          with windowing, foam inserts, and magnetic closures. Every format is available in any size, any material
-          grade, and any print specification.</p>
-
-          {linkProduct1 && (
-            <p>One of the most frequently ordered products in this range is our <a href={`/product/${linkProduct1.slug}`}>{linkProduct1.name}</a> —
-            a consistently popular choice for Australian brands seeking a balance of structural quality, precise colour
-            reproduction, and competitive per-unit pricing across medium to large production runs.</p>
-          )}
-
-          {linkProduct2 && (
-            <p>Businesses with more specialised structural or presentation requirements often select our <a href={`/product/${linkProduct2.slug}`}>{linkProduct2.name}</a>
-            for its additional configuration options, which suit both premium retail shelf applications and
-            direct-to-consumer fulfilment contexts equally well.</p>
-          )}
-
-          <p>Every product in this range is manufactured to your exact specified dimensions. There are no
-          predetermined standard sizes — if your product has an unusual footprint or needs a tight structural fit,
-          we engineer the box around it.</p>
-
-          <h3>The Design Process: From Brief to Approved Artwork</h3>
-
-          <p>Our free professional design service covers the entire artwork journey. You do not need existing design
-          files or prior experience to place an order — our in-house team manages everything from initial structural
-          dieline through to production-ready print files.</p>
-
-          <ol>
-            <li><strong>Submit your brief.</strong> Share your product type, approximate dimensions, quantity, preferred
-            materials, and any brand references, colour guides, or logo files you have available.</li>
-            <li><strong>Receive your 3D proof.</strong> Our designers produce a photorealistic 3D digital mockup of
-            your box, typically delivered within 3–5 business days of your brief being confirmed.</li>
-            <li><strong>Review and refine.</strong> Request adjustments to colour, layout, typography, or structure.
-            There is no cap on revision rounds and no charge at this stage, regardless of how many iterations
-            are required.</li>
-            <li><strong>Approve the final artwork.</strong> Once every detail is exactly right, you sign off and
-            we lock in your production run immediately.</li>
-            <li><strong>Production and dispatch.</strong> Your order is manufactured to the approved specification and
-            shipped directly to your address — anywhere across Australia, fully tracked from our facility to your door.</li>
-          </ol>
-
-          <h3>Surface Finishes That Elevate {category.name}</h3>
-
-          <p>The right surface treatment is what separates packaging that photographs well from packaging that genuinely
-          stops customers on shelf. We offer the full range of decorative and protective finishes, which can be layered
-          on a single box for multi-dimensional, premium results.</p>
-
-          <ul>
-            <li><strong>Gloss lamination</strong> — a high-shine surface that intensifies printed colour depth and provides durable, wipe-clean protection in high-contact retail environments</li>
-            <li><strong>Soft-touch matte lamination</strong> — a velvety, tactile surface strongly associated with high-end cosmetic, wellness, and lifestyle brands</li>
-            <li><strong>Spot UV coating</strong> — gloss applied selectively over a matte base, creating visual contrast that draws the eye to logos, brand marks, or key design elements</li>
-            <li><strong>Hot foil stamping</strong> — gold, silver, rose gold, or holographic metallic foil applied with precision heat and pressure for a luxury finish that cannot be replicated digitally</li>
-            <li><strong>Embossing and debossing</strong> — raised or recessed three-dimensional relief adding tactile quality to logos, borders, and typographic elements</li>
-            <li><strong>Aqueous eco-coating</strong> — a water-based protective surface treatment suitable for food-safe applications and brands reducing chemical use across their supply chain</li>
-          </ul>
-
-          <h3>Who Orders {category.name} From ZEE Custom Boxes AU</h3>
-
-          <p>Our clients span a broad cross-section of Australian industry. Cosmetics and personal care brands make up
-          a significant share of our production volume, alongside food and beverage producers, health supplement
-          companies, candle and home fragrance makers, and retail businesses investing in stronger shelf presentation.</p>
-
-          <p>E-commerce businesses order in volume because premium packaging reduces transit damage, cuts return rates,
-          and generates the kind of unboxing content that produces organic word-of-mouth. Corporate gifting companies
-          and businesses supplying the <a href="/about">health and pharmaceutical sectors</a> are also a consistent
-          part of our client base, drawn by precision in structural specification and compliance with relevant
-          packaging standards.</p>
-
-          <h3>Delivery and Production Timelines</h3>
-
-          <p>Standard production runs are completed in 7–14 business days from artwork approval. Express options are
-          available for time-critical requirements — exact lead times depend on order volume and specification
-          complexity, and are confirmed in your quote before any commitment is made.</p>
-
-          <p>We deliver to all Australian states and territories: New South Wales, Victoria, Queensland, Western
-          Australia, South Australia, Tasmania, the Northern Territory, and the Australian Capital Territory.
-          All shipments are tracked from dispatch to delivery.</p>
-
-          <h3>Requesting a Quote for Your {category.name}</h3>
-
-          <p>The most efficient way to receive accurate pricing is through our <a href="/request-quote">free custom
-          packaging quote form</a> — share your requirements and our team will respond with a detailed, itemised
-          proposal within 24 hours during business days. There are no obligations at any stage, no setup fees, and
-          no pressure to proceed.</p>
-
-        </div>
+        {catSeo ? (
+          <>
+            <div class="section-label">Your Complete Guide</div>
+            <p class="cat-seo-intro">{catSeo.intro}</p>
+            <div class="gold-divider gold-divider-left"></div>
+            <div class="prose" set:html={catSeo.body} />
+            {linkProduct1 && (
+              <div class="prose">
+                <p>One of the most frequently ordered products in this range is our <a href={`/product/${linkProduct1.slug}`}>{linkProduct1.name}</a> — popular with Australian brands seeking a combination of structural quality and competitive pricing across medium to large production runs.</p>
+                {linkProduct2 && (
+                  <p>Businesses with more specific structural requirements often select our <a href={`/product/${linkProduct2.slug}`}>{linkProduct2.name}</a> for its configuration options, which suit both premium retail and direct-to-consumer applications.</p>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div class="section-label">Your Complete Guide</div>
+            <h2>Custom {category.name} in Australia</h2>
+            <div class="gold-divider gold-divider-left"></div>
+            <div class="prose">
+              <p>ZEE Custom Boxes AU produces premium <strong>{category.name}</strong> for Australian businesses of every size — from boutique brands ordering their first run to established operators managing large-volume replenishment cycles. Every order is produced to your exact specification: your dimensions, your brand colours, your chosen substrate, your selected finish.</p>
+              {linkProduct1 && (
+                <p>Our range includes products such as the <a href={`/product/${linkProduct1.slug}`}>{linkProduct1.name}</a>, a popular choice for Australian brands seeking structural quality and competitive pricing.{linkProduct2 ? ` Businesses with more specific structural requirements often select our <a href="/product/${linkProduct2.slug}">${linkProduct2.name}</a> for its additional configuration options.` : ''}</p>
+              )}
+              <p>Standard production runs are completed in 7–14 business days from artwork approval, with delivery to all Australian states and territories. Request a free quote through our <a href="/request-quote">quote form</a> — our team responds within 24 business hours with full pricing and a production timeline.</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   </section>
@@ -513,6 +380,14 @@ const seoDesc = `Order custom ${category.name} in Australia. Premium quality, fr
 
 .seo-content .prose {
   margin-top: 1.5rem;
+}
+
+.cat-seo-intro {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin: 1rem 0 0.5rem;
+  max-width: 720px;
 }
 
 .table-wrap {

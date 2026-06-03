@@ -4,6 +4,7 @@ import ProductCard from '../../components/ProductCard.astro';
 import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import { buildRichDescription } from '../../utils/richDescription';
+import { buildProductFaqs } from '../../utils/productFaqs';
 
 export async function getStaticPaths() {
   return products.map(product => ({
@@ -31,6 +32,7 @@ const hasFaqs  = Boolean(product.faqs);
 const images   = product.images as string[];
 
 const richDescription = buildRichDescription(product, primaryCat, primaryCatSlug, related);
+const productFaqs = buildProductFaqs(product, SITE.phone);
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -888,52 +890,7 @@ const productSchema = {
           <div class="prose tab-prose" set:html={product.faqs} />
         ) : (
           <div class="faq-list">
-            {[
-              {
-                q: `What materials are used for ${product.name}?`,
-                a: `Our ${product.name} are crafted from premium materials including high-quality cardboard (300–450gsm), eco-friendly kraft paper, and rigid board. We offer multiple material grades to suit different budgets and use cases, ensuring your packaging is both sturdy and visually impressive. All materials are sourced from certified suppliers and tested for durability, print quality, and where applicable, food-safety compliance.`
-              },
-              {
-                q: 'Is there a minimum order quantity?',
-                a: 'No — we have absolutely no minimum order quantity. Whether you need a short run of 25 units for a product launch, a sample batch of 10, or 100,000 units for a major wholesale campaign, we accommodate all order sizes with the same level of care and quality. Larger quantities benefit from significant volume discounts, so the more you order, the better the per-unit price.'
-              },
-              {
-                q: 'How long does production take?',
-                a: 'Standard production is 7–14 business days from the date your artwork is approved. If you need your boxes faster, we offer express 4–7 business day turnaround options — please contact us before placing your order to confirm express availability. Sample or prototype orders can sometimes be turned around in as little as 3–5 business days. We understand deadlines are critical and work hard to meet every one.'
-              },
-              {
-                q: 'Do you offer custom sizes and shapes?',
-                a: `Yes — every order is made to your exact specifications. We manufacture ${product.name} in any custom dimension; simply provide your product measurements (length × width × height in centimetres or millimetres) and we will engineer a perfect-fit dieline. Custom structural shapes, inserts, and window cut-outs are also available. All custom dielines are prepared by our structural packaging engineers at no extra charge.`
-              },
-              {
-                q: 'What printing and finishing options are available?',
-                a: `We offer a comprehensive range of print and finish options for ${product.name}: full-colour CMYK offset printing, digital printing for short runs, gloss or matte lamination, soft-touch lamination, spot UV coating, flood UV, gold or silver foil stamping, embossing, debossing, aqueous coating, and pearlescent or metallic inks. Our team will help you choose the combination that best represents your brand and stays within your budget.`
-              },
-              {
-                q: 'Is a free design service really included?',
-                a: 'Yes — completely free. Our in-house graphic designers will create a full-colour, print-ready design based on your brand guidelines, logo, and any references you provide. You receive a digital proof before anything goes to print, and you can request unlimited revisions until you are 100% satisfied. There are no hidden design fees, set-up charges, or plate costs for standard orders.'
-              },
-              {
-                q: 'Can I see a physical sample before committing to a full order?',
-                a: 'Absolutely. We offer pre-production samples (also called proofs or dummies) so you can check the size, material, print, and finish before your full order is produced. Sample lead times and costs vary depending on complexity — contact our team for details. For many repeat or standard box styles, digital proofs alone are sufficient and preferred by most clients.'
-              },
-              {
-                q: 'Do you ship Australia-wide?',
-                a: 'Yes — we deliver to every state and territory across Australia, including Sydney, Melbourne, Brisbane, Perth, Adelaide, Canberra, Darwin, Hobart, and all regional areas. Orders are shipped fully tracked with a major carrier and you will receive tracking details as soon as your consignment is dispatched. Delivery times vary by location; your account manager will confirm the expected delivery window when your order is confirmed.'
-              },
-              {
-                q: 'Are your packaging materials eco-friendly?',
-                a: `We take sustainability seriously. Our ${product.name} are available in FSC-certified paperboard, recycled kraft, and post-consumer-waste board options. We use water-based inks as standard and offer soy-based ink alternatives. Biodegradable and compostable material upgrades are also available on request. If sustainability is a priority for your brand, let us know and we will recommend the most eco-responsible option for your product.`
-              },
-              {
-                q: 'What file formats do you accept for artwork?',
-                a: 'We accept PDF (preferred), Adobe Illustrator (AI), EPS, PSD (at least 300 DPI), and high-resolution JPG or PNG files. All artwork should be in CMYK colour mode with a minimum 3mm bleed on all sides and all fonts outlined. If you are unsure whether your files are print-ready, simply send them to us and our prepress team will check them for free and flag any issues before production begins.'
-              },
-              {
-                q: 'How do I get a quote and what information do I need?',
-                a: `Getting a quote is fast and completely free. Click the "Request a Free Quote" button on this page, or call us directly on ${SITE.phone}. To provide you with an accurate quote, it helps to have the following ready: box dimensions (L × W × H), the quantity you need, your preferred material and board weight, any specific printing or finishing requirements, and your required delivery date. We will respond with a detailed quote within 24 business hours.`
-              },
-            ].map((faq, i) => (
+            {productFaqs.map((faq, i) => (
               <div class="faq-item-premium" data-faq={i}>
                 <button class="faq-q-btn" aria-expanded="false">
                   <span class="faq-num">{String(i + 1).padStart(2, '0')}</span>
