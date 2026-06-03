@@ -21,7 +21,7 @@ function detectType(name: string, categories: string[]): ProductType {
   if (n.includes('folder') || c.includes('folder')) return 'folder';
   if (n.includes('candle')) return 'candle';
   if (n.includes('cbd') || n.includes('vape') || n.includes('tincture')) return 'cbd';
-  if (n.includes('medicine') || n.includes('pill') || n.includes('lab box') || c.includes('pharmaceutical')) return 'pharma';
+  if (/\bpill\b/.test(n) || n.includes('medicine') || n.includes('lab box') || c.includes('pharmaceutical')) return 'pharma';
   if (n.includes('pillow box') || c.includes('pillow box')) return 'pillow';
   if (n.includes('corrugated')) return 'corrugated';
   if (n.includes('mailer') || (n.includes('shipping') && n.includes('box')) || n.includes('postal box')) return 'mailer';
