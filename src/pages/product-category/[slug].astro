@@ -5,7 +5,7 @@ import QuoteForm from '../../components/QuoteForm.astro';
 import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import categories from '../../data/categories.json';
-import { CATEGORY_SEO } from '../../data/categorySeoContent';
+import { CATEGORY_SEO, CATEGORY_FAQS } from '../../data/categorySeoContent';
 
 export async function getStaticPaths() {
   return categories.map(cat => ({
@@ -59,6 +59,7 @@ const collectionSchema = {
 const seoTitle = `${category.name} - Custom Packaging Australia | ${SITE.name}`;
 const seoDesc = `Order custom ${category.name} in Australia. Premium quality, free design service, fast turnaround, and wholesale pricing. Request your free quote from ZEE Custom Boxes AU today.`;
 const catSeo = CATEGORY_SEO[category.slug] || null;
+const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
 ---
 
 <Layout
@@ -191,7 +192,7 @@ const catSeo = CATEGORY_SEO[category.slug] || null;
         <div class="gold-divider"></div>
       </div>
       <div class="faq-list">
-        {[
+        {(catFaqs ?? [
           {
             q: `What is the minimum order quantity for ${category.name}?`,
             a: `There is no minimum order quantity. You can order as few units as your current requirements demand — whether that is a short sampling run of 50 boxes or a wholesale replenishment of 10,000. Our pricing scales with volume, and every quote includes a tiered breakdown across multiple quantities so you can make the most informed decision.`,
@@ -236,7 +237,7 @@ const catSeo = CATEGORY_SEO[category.slug] || null;
             q: `Are volume discounts available on ${category.name}?`,
             a: `Volume pricing applies to all orders. Our quotes include a tiered pricing breakdown — typically across quantity levels of 250, 500, 1,000, 2,500, and 5,000 units — so you can identify the run size that delivers the most cost-effective per-unit price for your current budget and demand forecast.`,
           },
-        ].map(faq => (
+        ]).map(faq => (
           <div class="faq-item reveal">
             <button class="faq-question">{faq.q}<div class="faq-icon">+</div></button>
             <div class="faq-answer"><p>{faq.a}</p></div>

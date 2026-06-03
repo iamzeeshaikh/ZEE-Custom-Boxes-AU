@@ -17,7 +17,7 @@ function detectType(name: string, categories: string[]): ProductType {
   if (n.includes('hot chocolate bomb') || (n.includes('chocolate') && !n.includes('kraft')) || n.includes('truffle')) return 'chocolate';
   if ((n.includes('match') && n.includes('box')) || c.includes('match box')) return 'match';
   if (n.includes('business card') || c.includes('business card')) return 'business_card';
-  if (n.includes('sticker') || n.includes(' label') || c.includes('sticker') || c.includes('label')) return 'sticker';
+  if (n.includes('sticker') || (n.includes(' label') && !n.includes('lip balm') && !n.includes('candle label')) || c.includes('sticker') || c.includes('label')) return 'sticker';
   if (n.includes('folder') || c.includes('folder')) return 'folder';
   if (n.includes('candle')) return 'candle';
   if (n.includes('cbd') || n.includes('vape') || n.includes('tincture')) return 'cbd';
@@ -25,18 +25,19 @@ function detectType(name: string, categories: string[]): ProductType {
   if (n.includes('pillow box') || c.includes('pillow box')) return 'pillow';
   if (n.includes('corrugated')) return 'corrugated';
   if (n.includes('mailer') || (n.includes('shipping') && n.includes('box')) || n.includes('postal box')) return 'mailer';
-  if (n.includes('display') && !n.includes('display box')) return 'display';
+  if (n.includes('display')) return 'display';
   if (n.includes('rigid')) return 'rigid';
   if (n.includes('tray') || c.includes('tray')) return 'tray';
   if (n.includes('candy') || c.includes('candy')) return 'candy';
   if (n.includes('coffee') || (n.includes('tea') && n.includes('box')) || c.includes('beverage')) return 'beverage';
+  if (n.includes('brown') || c.includes('brown boxes')) return 'kraft';
   if (n.includes('kraft')) return 'kraft';
   if (n.includes('bakery') || n.includes('pastry') || n.includes('cake') || n.includes('biscotti') || n.includes('bagel') || n.includes('cookie') || c.includes('bakery')) return 'bakery';
   if (n.includes('burger') || n.includes('hot dog') || n.includes('french fry') || n.includes('macaron') || n.includes('pasta') || n.includes('gummy') || n.includes('frozen') || n.includes('fast food') || n.includes('fried chicken') || n.includes('cone sleeve') || (n.includes('food') && (n.includes('box') || n.includes('pack'))) || c.includes('food packaging')) return 'food';
   if (n.includes('soap')) return 'soap';
-  if (n.includes('cream') || n.includes('perfume') || n.includes('lipstick') || n.includes('lip') || n.includes('eyelash') || n.includes('lotion') || n.includes('essential oil') || n.includes('beard oil') || n.includes('hair extension') || n.includes('cosmetic') || c.includes('cosmetic')) return 'cosmetic';
+  if (n.includes('cream') || n.includes('perfume') || n.includes('lipstick') || n.includes('lip') || n.includes('eyelash') || n.includes('lotion') || n.includes('essential oil') || n.includes('beard oil') || n.includes('hair extension') || n.includes('cosmetic') || n.includes('beauty') || c.includes('cosmetic')) return 'cosmetic';
   if (n.includes('gift') || n.includes('scarf') || n.includes('ribbon') || n.includes('flower') || n.includes('necklace') || n.includes('earring') || n.includes('promotional') || n.includes('holiday') || c.includes('gift')) return 'gift';
-  if (n.includes('retail') || c.includes('retail')) return 'retail';
+  if (n.includes('retail') || n.includes('hanger') || c.includes('retail')) return 'retail';
   if (n.includes('cardboard') || c.includes('cardboard')) return 'cardboard';
   return 'general';
 }
