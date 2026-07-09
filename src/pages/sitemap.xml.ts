@@ -4,7 +4,10 @@ import categories from '../data/categories.json';
 import locations from '../data/locations';
 
 const SITE_URL = 'https://zeecustomboxes.com.au';
-const TODAY = new Date().toISOString().split('T')[0];
+// Stable last-modified date. Bump this when content is materially updated. Using
+// a fixed date instead of new Date() stops every URL's lastmod resetting on each
+// build, which Google learns to distrust.
+const TODAY = '2026-07-09';
 
 function url(path: string, priority: string, freq: string, lastmod = TODAY): string {
   return `
