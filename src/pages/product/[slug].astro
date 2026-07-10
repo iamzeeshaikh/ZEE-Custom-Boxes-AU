@@ -5,6 +5,7 @@ import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import { buildRichDescription } from '../../utils/richDescription';
 import { buildProductFaqs } from '../../utils/productFaqs';
+import { buildProductSchema } from '../../utils/productSchema';
 
 export async function getStaticPaths() {
   return products.map(product => ({
@@ -46,26 +47,7 @@ const breadcrumbSchema = {
 
 const productSchema = {
   "@context": "https://schema.org",
-  "@type": "Product",
-  "name": product.name,
-  "description": product.metaDescription,
-  "image": images,
-  "brand": { "@type": "Brand", "name": "ZEE Custom Boxes AU" },
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": "AUD",
-    "price": "0",
-    "priceSpecification": { "@type": "PriceSpecification", "description": "Quote-based pricing" },
-    "seller": { "@type": "Organization", "name": SITE.name },
-    "availability": "https://schema.org/InStock",
-    "areaServed": "AU"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "127",
-    "bestRating": "5"
-  }
+  ...buildProductSchema(product)
 };
 ---
 

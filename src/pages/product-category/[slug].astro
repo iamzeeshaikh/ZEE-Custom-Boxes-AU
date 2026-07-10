@@ -6,6 +6,7 @@ import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import categories from '../../data/categories.json';
 import { CATEGORY_SEO, CATEGORY_FAQS } from '../../data/categorySeoContent';
+import { buildProductSchema } from '../../utils/productSchema';
 
 export async function getStaticPaths() {
   return categories.map(cat => ({
@@ -48,19 +49,11 @@ const collectionSchema = {
   "name": category.name,
   "description": `Custom ${category.name} in Australia. Premium quality, free design, fast turnaround. Order from ZEE Custom Boxes AU.`,
   "url": `${SITE.url}/product-category/${category.slug}/`,
-  // List the products as an ItemList of URLs (the pattern Google recommends for
-  // collection/listing pages). Full Product structured data — with offers — lives
-  // on each product detail page; emitting partial Product objects here (no offers)
-  // is what made Rich Results flag the category page's products as invalid.
-  "mainEntity": {
-    "@type": "ItemList",
-    "itemListElement": catProducts.slice(0, 10).map((p, i) => ({
-      "@type": "ListItem",
-      "position": i + 1,
-      "name": p.name,
-      "url": `${SITE.url}/product/${p.slug}`
-    }))
-  }
+  // Full, valid Product objects (offers + rating + shipping/return) so every
+  // product on the category page is an eligible Product snippet / merchant
+  // listing. Built from the shared helper so it stays identical to the detail
+  // page markup.
+  "hasPart": catProducts.slice(0, 10).map(p => buildProductSchema(p))
 };
 
 const seoTitle = `${category.name} - Custom Packaging Australia | ${SITE.name}`;
