@@ -48,12 +48,19 @@ const collectionSchema = {
   "name": category.name,
   "description": `Custom ${category.name} in Australia. Premium quality, free design, fast turnaround. Order from ZEE Custom Boxes AU.`,
   "url": `${SITE.url}/product-category/${category.slug}/`,
-  "hasPart": catProducts.slice(0, 10).map(p => ({
-    "@type": "Product",
-    "name": p.name,
-    "url": `${SITE.url}/product/${p.slug}`,
-    "image": p.images[0] || ''
-  }))
+  // List the products as an ItemList of URLs (the pattern Google recommends for
+  // collection/listing pages). Full Product structured data — with offers — lives
+  // on each product detail page; emitting partial Product objects here (no offers)
+  // is what made Rich Results flag the category page's products as invalid.
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": catProducts.slice(0, 10).map((p, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": p.name,
+      "url": `${SITE.url}/product/${p.slug}`
+    }))
+  }
 };
 
 const seoTitle = `${category.name} - Custom Packaging Australia | ${SITE.name}`;
