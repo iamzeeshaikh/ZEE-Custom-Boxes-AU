@@ -8,9 +8,9 @@ export const SITE = {
   address: '903/50 Clarence St, Sydney NSW 2000, Australia',
   logo: '/images/logo.svg',
   socialLinks: {
-    facebook: 'https://www.facebook.com/zeecustomboxesau',
-    instagram: 'https://www.instagram.com/zeecustomboxesau',
-    linkedin: '',
+    facebook: 'https://www.facebook.com/zeecustomboxes',
+    instagram: 'https://www.instagram.com/zeecustomboxes',
+    linkedin: 'https://www.linkedin.com/company/85652701',
   },
 };
 
