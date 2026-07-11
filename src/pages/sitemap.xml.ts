@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import products from '../data/products.json';
 import categories from '../data/categories.json';
 import locations from '../data/locations';
+import { blogPosts } from '../data/blogPosts';
 
 const SITE_URL = 'https://zeecustomboxes.com.au';
 // Stable last-modified date. Bump this when content is materially updated. Using
@@ -27,6 +28,7 @@ export const GET: APIRoute = () => {
     url('/about', '0.6', 'monthly'),
     url('/contact', '0.6', 'monthly'),
     url('/request-quote', '0.8', 'monthly'),
+    url('/blog/', '0.7', 'weekly'),
     url('/privacy-policy', '0.3', 'yearly'),
     url('/terms-of-service', '0.3', 'yearly'),
   ];
@@ -43,12 +45,17 @@ export const GET: APIRoute = () => {
     url(`/product/${p.slug}`, '0.8', 'monthly')
   );
 
+  const blogPages = blogPosts.map(p =>
+    url(`/blog/${p.slug}/`, '0.6', 'monthly')
+  );
+
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages.join('')}
 ${locationPages.join('')}
 ${categoryPages.join('')}
 ${productPages.join('')}
+${blogPages.join('')}
 </urlset>`;
 
   return new Response(sitemap, {

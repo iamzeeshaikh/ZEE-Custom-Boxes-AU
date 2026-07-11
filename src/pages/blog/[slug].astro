@@ -1,0 +1,117 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { blogPosts, getBlogPost } from '../../data/blogPosts';
+
+export function getStaticPaths() {
+  return blogPosts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const url = `https://zeecustomboxes.com.au/blog/${post.slug}/`;
+const related = post.related.map((s) => getBlogPost(s)).filter(Boolean);
+const dateFmt = new Intl.DateTimeFormat('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.metaDescription,
+    datePublished: post.date,
+    dateModified: post.date,
+    mainEntityOfPage: url,
+    author: { "@type": "Organization", name: "ZEE Custom Boxes AU" },
+    publisher: { "@type": "Organization", name: "ZEE Custom Boxes AU", url: "https://zeecustomboxes.com.au" },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: post.faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  },
+];
+---
+<Layout title={post.metaTitle} description={post.metaDescription} canonical={url} schema={schema}>
+  <section class="section">
+    <div class="container blog-hero">
+      <span class="section-label">{post.badge}</span>
+      <h1>{post.title}</h1>
+      <p class="blog-intro">{post.intro}</p>
+      <p class="blog-meta">{dateFmt.format(new Date(post.date))} · {post.readTime}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container blog-body">
+      {post.sections.map((section) => (
+        <div class="blog-section">
+          <h2>{section.heading}</h2>
+          <div class="blog-prose" set:html={section.body} />
+          {section.bullets && (
+            <ul class="blog-bullets">
+              {section.bullets.map((b) => <li set:html={b} />)}
+            </ul>
+          )}
+        </div>
+      ))}
+
+      <div class="blog-section">
+        <h2>Frequently asked questions</h2>
+        {post.faq.map((f) => (
+          <div class="blog-faq">
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="blog-cta">
+        <h2>Ready to design your custom boxes?</h2>
+        <p>Free design service, premium materials, and fast turnaround for Australian brands.</p>
+        <a href="/request-quote/" class="btn btn-primary">Request a Free Quote</a>
+      </div>
+
+      {related.length > 0 && (
+        <div class="blog-related">
+          <h2>Keep reading</h2>
+          <div class="blog-related-grid">
+            {related.map((r) => (
+              <a href={`/blog/${r.slug}/`} class="blog-related-card">
+                <span class="section-label">{r.badge}</span>
+                <span class="blog-related-title">{r.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .blog-hero { max-width: 820px; }
+  .blog-intro { font-size: 1.1rem; line-height: 1.7; margin-top: 0.75rem; }
+  .blog-meta { color: var(--muted, #6b7280); font-size: 0.9rem; margin-top: 0.5rem; }
+  .blog-body { max-width: 760px; }
+  .blog-section { margin-bottom: 2.5rem; }
+  .blog-section h2 { font-size: 1.6rem; margin-bottom: 0.8rem; }
+  .blog-prose :global(p) { line-height: 1.85; margin-bottom: 1rem; color: var(--text, #374151); }
+  .blog-prose :global(a) { color: var(--primary, #1a3a5c); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .blog-bullets { margin: 0.25rem 0 0.5rem; padding-left: 1.4rem; }
+  .blog-bullets li { line-height: 1.7; margin-bottom: 0.5rem; color: var(--text, #374151); }
+  .blog-faq { border: 1px solid var(--border, #e5e7eb); border-radius: 14px; padding: 1.1rem 1.25rem; margin-bottom: 0.9rem; }
+  .blog-faq h3 { font-size: 1.02rem; margin-bottom: 0.35rem; }
+  .blog-faq p { color: var(--muted, #4b5563); line-height: 1.7; font-size: 0.97rem; }
+  .blog-cta { background: var(--light, #f6f7f9); border-radius: 20px; padding: 2.5rem; text-align: center; margin: 1rem 0 2.5rem; }
+  .blog-cta h2 { margin-bottom: 0.6rem; }
+  .blog-cta p { color: var(--muted, #4b5563); margin-bottom: 1.25rem; }
+  .blog-related h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+  .blog-related-grid { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+  .blog-related-card { display: flex; flex-direction: column; gap: 0.5rem; border: 1px solid var(--border, #e5e7eb); border-radius: 14px; padding: 1.1rem; text-decoration: none; transition: border-color .2s; }
+  .blog-related-card:hover { border-color: var(--primary, #1a3a5c); }
+  .blog-related-title { font-weight: 600; color: var(--text, #1f2937); }
+  @media (max-width: 640px) { .blog-related-grid { grid-template-columns: 1fr; } }
+</style>

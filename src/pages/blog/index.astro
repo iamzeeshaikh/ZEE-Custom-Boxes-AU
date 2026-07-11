@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { blogPosts } from '../../data/blogPosts';
+
+const posts = [...blogPosts].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+);
+const dateFmt = new Intl.DateTimeFormat('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "ZEE Custom Boxes AU Blog",
+  url: "https://zeecustomboxes.com.au/blog",
+};
+---
+<Layout
+  title="Custom Packaging Blog | Boxes, Materials & Design | ZEE Custom Boxes AU"
+  description="Practical custom packaging guides for Australian brands — choosing box materials, rigid and cosmetic packaging, eco-friendly boxes, retail displays, and finishes."
+  canonical="https://zeecustomboxes.com.au/blog/"
+  schema={schema}
+>
+  <section class="section">
+    <div class="container">
+      <span class="section-label">Packaging Guides</span>
+      <h1>ZEE Custom Boxes Blog</h1>
+      <p class="blog-lead">No-fluff guides for Australian brands on choosing materials, structures, and finishes that protect your product and lift your brand.</p>
+      <div class="blog-grid">
+        {posts.map((post) => (
+          <a href={`/blog/${post.slug}/`} class="blog-card">
+            <span class="section-label">{post.badge}</span>
+            <h2>{post.title}</h2>
+            <p>{post.excerpt}</p>
+            <span class="blog-card-meta">{dateFmt.format(new Date(post.date))} · {post.readTime}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .blog-lead { max-width: 640px; margin-bottom: 2rem; color: var(--muted, #4b5563); line-height: 1.7; }
+  .blog-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .blog-card { display: flex; flex-direction: column; gap: 0.65rem; border: 1px solid var(--border, #e5e7eb); border-radius: 18px; padding: 1.6rem; text-decoration: none; background: #fff; transition: border-color .2s, transform .2s, box-shadow .2s; }
+  .blog-card:hover { border-color: var(--primary, #1a3a5c); transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.06); }
+  .blog-card h2 { font-size: 1.18rem; line-height: 1.35; margin: 0; }
+  .blog-card p { color: var(--muted, #4b5563); line-height: 1.6; font-size: 0.95rem; margin: 0; flex: 1; }
+  .blog-card-meta { color: var(--muted, #9ca3af); font-size: 0.82rem; }
+</style>
