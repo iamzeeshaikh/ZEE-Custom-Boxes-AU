@@ -48,7 +48,7 @@ const cityPages   = locations.filter(l => l.type === 'city').slice(0, 10);
             <li><a href="/">Home</a></li>
             <li><a href="/products">All Products</a></li>
             <li><a href="/about">About Us</a></li>
-            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/blog">Blog</a></li>
             <li><a href="/contact">Contact Us</a></li>
             <li><a href={CTA.quoteUrl}>Request a Quote</a></li>
           </ul>
@@ -58,7 +58,7 @@ const cityPages   = locations.filter(l => l.type === 'city').slice(0, 10);
           <h3 class="footer-heading">Top Categories</h3>
           <ul class="footer-links">
             {categories.slice(0, 10).map(cat => (
-              <li><a href={`/product-category/${cat.slug}/`}>{cat.name}</a></li>
+              <li><a href={`/product-category/${cat.slug}`}>{cat.name}</a></li>
             ))}
           </ul>
         </div>

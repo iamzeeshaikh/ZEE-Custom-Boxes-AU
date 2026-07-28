@@ -28,7 +28,7 @@ export const GET: APIRoute = () => {
     url('/about', '0.6', 'monthly'),
     url('/contact', '0.6', 'monthly'),
     url('/request-quote', '0.8', 'monthly'),
-    url('/blog/', '0.7', 'weekly'),
+    url('/blog', '0.7', 'weekly'),
     url('/privacy-policy', '0.3', 'yearly'),
     url('/terms-of-service', '0.3', 'yearly'),
   ];
@@ -38,7 +38,7 @@ export const GET: APIRoute = () => {
   );
 
   const categoryPages = categories.map(cat =>
-    url(`/product-category/${cat.slug}/`, '0.85', 'weekly')
+    url(`/product-category/${cat.slug}`, '0.85', 'weekly')
   );
 
   const productPages = products.map(p =>
@@ -46,7 +46,7 @@ export const GET: APIRoute = () => {
   );
 
   const blogPages = blogPosts.map(p =>
-    url(`/blog/${p.slug}/`, '0.6', 'monthly')
+    url(`/blog/${p.slug}`, '0.6', 'monthly')
   );
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

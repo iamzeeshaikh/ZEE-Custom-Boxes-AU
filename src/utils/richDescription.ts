@@ -952,7 +952,7 @@ export function buildRichDescription(
     .replace(/\s+(?:Wholesale|Packaging)\s*$/i, '')
     .trim();
 
-  const catUrl   = `/product-category/${primaryCatSlug}/`;
+  const catUrl   = `/product-category/${primaryCatSlug}`;
   const catLink  = `<a href="${catUrl}" class="desc-link">${primaryCat || 'Custom Packaging'}</a>`;
   const rel0     = related[0];
   const rel1     = related[1];

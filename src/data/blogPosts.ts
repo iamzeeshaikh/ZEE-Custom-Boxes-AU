@@ -18,8 +18,8 @@ export type BlogPost = {
   related: string[];
 };
 
-const cat = (slug: string, text: string) => `<a href="/product-category/${slug}/">${text}</a>`;
-const post = (slug: string, text: string) => `<a href="/blog/${slug}/">${text}</a>`;
+const cat = (slug: string, text: string) => `<a href="/product-category/${slug}">${text}</a>`;
+const post = (slug: string, text: string) => `<a href="/blog/${slug}">${text}</a>`;
 
 export const blogPosts: BlogPost[] = [
   {

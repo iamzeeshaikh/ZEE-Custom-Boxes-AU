@@ -17,7 +17,7 @@ const schema = {
 <Layout
   title="Custom Packaging Blog | Boxes, Materials & Design | ZEE Custom Boxes AU"
   description="Practical custom packaging guides for Australian brands — choosing box materials, rigid and cosmetic packaging, eco-friendly boxes, retail displays, and finishes."
-  canonical="https://zeecustomboxes.com.au/blog/"
+  canonical="https://zeecustomboxes.com.au/blog"
   schema={schema}
 >
   <section class="section">
@@ -27,7 +27,7 @@ const schema = {
       <p class="blog-lead">No-fluff guides for Australian brands on choosing materials, structures, and finishes that protect your product and lift your brand.</p>
       <div class="blog-grid">
         {posts.map((post) => (
-          <a href={`/blog/${post.slug}/`} class="blog-card">
+          <a href={`/blog/${post.slug}`} class="blog-card">
             <span class="section-label">{post.badge}</span>
             <h2>{post.title}</h2>
             <p>{post.excerpt}</p>

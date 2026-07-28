@@ -7,7 +7,7 @@ export function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const url = `https://zeecustomboxes.com.au/blog/${post.slug}/`;
+const url = `https://zeecustomboxes.com.au/blog/${post.slug}`;
 const related = post.related.map((s) => getBlogPost(s)).filter(Boolean);
 const dateFmt = new Intl.DateTimeFormat('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -79,7 +79,7 @@ const schema = [
           <h2>Keep reading</h2>
           <div class="blog-related-grid">
             {related.map((r) => (
-              <a href={`/blog/${r.slug}/`} class="blog-related-card">
+              <a href={`/blog/${r.slug}`} class="blog-related-card">
                 <span class="section-label">{r.badge}</span>
                 <span class="blog-related-title">{r.title}</span>
               </a>
