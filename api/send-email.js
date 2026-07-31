@@ -61,11 +61,17 @@ export default async function handler(req, res) {
   }
 
   const formName = data._formName || 'Website Enquiry';
-  const replyTo = data.email || data.Email || process.env.SMTP_FROM_EMAIL;
+
+  // Sending as the authenticated mailbox keeps the DKIM signature aligned with
+  // the From domain, so Gmail stops appending "via <other domain>".
+  const fromName = process.env.SMTP_FROM_NAME || 'ZEE Custom Boxes AU';
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER;
+  const from = `"${fromName}" <${fromEmail}>`;
+  const replyTo = data.email || data.Email || fromEmail;
 
   try {
     await transporter.sendMail({
-      from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`,
+      from,
       to: process.env.SMTP_TO,
       replyTo,
       subject: `New ${formName} — ZEE Custom Boxes AU`,
@@ -73,10 +79,10 @@ export default async function handler(req, res) {
     });
 
     // Send auto-reply to customer if they provided an email
-    if (replyTo && replyTo !== process.env.SMTP_FROM_EMAIL) {
+    if (replyTo && replyTo !== fromEmail) {
       const customerName = data.firstName || data.name || 'there';
       await transporter.sendMail({
-        from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`,
+        from,
         to: replyTo,
         subject: `We received your enquiry — ZEE Custom Boxes AU`,
         html: `
