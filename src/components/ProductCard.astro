@@ -1,4 +1,6 @@
 ---
+import { imgThumb, imgSrcset } from '../utils/img';
+
 interface Props {
   product: {
     name: string;
@@ -30,13 +32,16 @@ const excerpt = stripHtml(product.shortDescription || product.metaDescription ||
   <a href={`/product/${product.slug}`} class="product-card-link" aria-label={product.name}>
     <div class="product-card-img">
       <img
-        src={image}
+        src={imgThumb(image)}
+        srcset={imgSrcset(image)}
+        sizes="(max-width: 600px) 92vw, (max-width: 1000px) 45vw, 300px"
         alt={`${product.name} - ZEE Custom Boxes AU`}
         width="400"
         height="300"
         loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
         decoding="async"
-        onerror="this.src='/images/placeholder.webp'"
+        onerror="this.onerror=null;this.srcset='';this.src='/images/placeholder.webp'"
       />
       <div class="product-card-overlay">
         <span class="product-card-cta">View Details →</span>
@@ -60,6 +65,9 @@ const excerpt = stripHtml(product.shortDescription || product.metaDescription ||
 
 <style>
 .product-card {
+  /* Off-screen cards skip layout/paint until they scroll near the viewport */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 380px;
   background: var(--color-white);
   border-radius: var(--radius-md);
   overflow: hidden;

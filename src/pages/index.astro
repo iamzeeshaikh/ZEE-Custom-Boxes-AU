@@ -5,6 +5,7 @@ import QuoteForm from '../components/QuoteForm.astro';
 import { SITE } from '../config/site';
 import products from '../data/products.json';
 import categories from '../data/categories.json';
+import { imgFull, imgThumb } from '../utils/img';
 
 const featuredProducts = products.filter(p => p.images.length > 0).slice(0, 8);
 
@@ -13,10 +14,10 @@ products.forEach(p => { productMap[p.slug] = p; });
 
 const topCategories = categories.slice(0, 12).map(cat => ({
   ...cat,
-  thumb: productMap[cat.products[0]]?.images?.[0] || '/images/placeholder.webp',
+  thumb: imgThumb(productMap[cat.products[0]]?.images?.[0]),
 }));
 
-const heroImages = products.filter(p => p.images.length > 0).slice(0, 3).map(p => p.images[0]);
+const heroImages = products.filter(p => p.images.length > 0).slice(0, 3).map(p => imgFull(p.images[0]));
 
 const trustItems = [
   'Free Design Service', 'No Minimum Order', '7–14 Day Turnaround',
@@ -60,6 +61,8 @@ const faqSchema = {
   title="Custom Packaging Boxes Australia | ZEE Custom Boxes AU"
   description="Australia's premium custom packaging supplier. Order custom boxes for cosmetics, food, retail & gifts. Free design, fast turnaround, wholesale prices. Get your free quote today."
   schema={[homeSchema, faqSchema]}
+  preloadImage={heroImages[0]}
+  preloadImageMedia="(min-width: 901px)"
 >
 
   <!-- ===================== HERO ===================== -->
@@ -105,16 +108,25 @@ const faqSchema = {
         <div class="hero-visual" aria-hidden="true">
           <div class="hero-mosaic">
             <div class="hm-card hm-main">
-              <img src={heroImages[0] || '/images/placeholder.webp'} alt="Custom Packaging Australia" loading="eager" />
+              <picture>
+                <source media="(min-width: 901px)" srcset={heroImages[0] || '/images/placeholder.webp'} />
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Custom Packaging Australia" width="255" height="420" fetchpriority="high" decoding="async" />
+              </picture>
               <div class="hm-tag">Cosmetic Boxes</div>
             </div>
             <div class="hm-col-right">
               <div class="hm-card hm-sm">
-                <img src={heroImages[1] || '/images/placeholder.webp'} alt="Gift Packaging" loading="eager" />
+                <picture>
+                  <source media="(min-width: 901px)" srcset={heroImages[1] || '/images/placeholder.webp'} />
+                  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Gift Packaging" width="170" height="200" decoding="async" />
+                </picture>
                 <div class="hm-tag">Gift Boxes</div>
               </div>
               <div class="hm-card hm-sm">
-                <img src={heroImages[2] || '/images/placeholder.webp'} alt="Food Packaging" loading="eager" />
+                <picture>
+                  <source media="(min-width: 901px)" srcset={heroImages[2] || '/images/placeholder.webp'} />
+                  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Food Packaging" width="170" height="200" decoding="async" />
+                </picture>
               </div>
             </div>
             <div class="hm-float hm-float-design">
@@ -160,7 +172,7 @@ const faqSchema = {
         {topCategories.map((cat, i) => (
           <a href={`/product-category/${cat.slug}`} class="cat-card-prem reveal" style={`animation-delay: ${i * 0.04}s`}>
             <div class="cat-img-wrap-prem">
-              <img src={cat.thumb} alt={`Custom ${cat.name} Australia`} loading={i < 4 ? 'eager' : 'lazy'} />
+              <img src={cat.thumb} alt={`Custom ${cat.name} Australia`} width="400" height="400" loading="lazy" decoding="async" />
               <div class="cat-grad"></div>
               <div class="cat-overlay-content">
                 <h3>{cat.name}</h3>
@@ -691,6 +703,8 @@ const faqSchema = {
   flex-shrink: 0;
 }
 
+.hm-card picture { display: block; width: 100%; height: 100%; }
+
 .hm-card img {
   width: 100%;
   height: 100%;
@@ -818,7 +832,7 @@ const faqSchema = {
 ============================== */
 .cat-grid-prem {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.25rem;
 }
 
@@ -921,7 +935,7 @@ const faqSchema = {
 
 .stats-inner {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 2rem;
   position: relative;
   z-index: 1;
@@ -967,7 +981,7 @@ const faqSchema = {
 
 .why-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
 }
 
@@ -1042,7 +1056,7 @@ const faqSchema = {
 ============================== */
 .process-wrap {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
   position: relative;
 }
@@ -1117,7 +1131,7 @@ const faqSchema = {
 ============================== */
 .industries-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.25rem;
 }
 
@@ -1196,7 +1210,7 @@ const faqSchema = {
 
 .testimonials-grid-new {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
   position: relative;
   z-index: 1;
@@ -1328,21 +1342,21 @@ const faqSchema = {
    RESPONSIVE
 ============================== */
 @media (max-width: 1100px) {
-  .cat-grid-prem { grid-template-columns: repeat(3, 1fr); }
-  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .cat-grid-prem { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stats-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat-block { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .stat-block:nth-child(3), .stat-block:last-child { border-bottom: none; }
-  .why-cards-grid { grid-template-columns: repeat(2, 1fr); }
-  .process-wrap { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .why-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .process-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
   .process-connector { display: none; }
-  .industries-grid { grid-template-columns: repeat(2, 1fr); }
+  .industries-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
   .hero { padding: 5rem 0 4rem; }
   .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
   .hero-visual { display: none; }
-  .cat-grid-prem { grid-template-columns: repeat(2, 1fr); }
+  .cat-grid-prem { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .testimonials-grid-new { grid-template-columns: 1fr; }
   .testi-bottom { flex-direction: column; text-align: center; }
   .testi-summary { justify-content: center; }
@@ -1353,8 +1367,8 @@ const faqSchema = {
   .hero-actions { flex-direction: column; }
   .hero-trust-row { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
   .hero-trust-sep { display: none; }
-  .cat-grid-prem { grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
-  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .cat-grid-prem { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.875rem; }
+  .stats-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .why-cards-grid { grid-template-columns: 1fr; }
   .process-wrap { grid-template-columns: 1fr; gap: 2rem; }
   .industries-grid { grid-template-columns: 1fr; }

@@ -6,6 +6,7 @@ import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import categories from '../../data/categories.json';
 import { CATEGORY_SEO, CATEGORY_FAQS } from '../../data/categorySeoContent';
+import { imgThumb } from '../../utils/img';
 import { buildProductSchema } from '../../utils/productSchema';
 
 export async function getStaticPaths() {
@@ -30,7 +31,7 @@ const relatedCategories = categories
   .slice(0, 6)
   .map(cat => ({
     ...cat,
-    thumb: productMap[cat.products[0]]?.images?.[0] || '/images/placeholder.webp',
+    thumb: imgThumb(productMap[cat.products[0]]?.images?.[0]),
   }));
 
 const breadcrumbSchema = {
@@ -263,7 +264,7 @@ const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
           {relatedCategories.map((cat, i) => (
             <a href={`/product-category/${cat.slug}`} class="related-cat-card reveal" style={`animation-delay:${i * 0.06}s`}>
               <div class="related-cat-img">
-                <img src={cat.thumb} alt={`Custom ${cat.name} Australia`} loading="lazy" />
+                <img src={cat.thumb} alt={`Custom ${cat.name} Australia`} width="400" height="400" loading="lazy" decoding="async" />
                 <div class="related-cat-overlay"></div>
               </div>
               <div class="related-cat-body">
@@ -414,7 +415,7 @@ const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
 
 .related-cats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.25rem;
 }
 
@@ -501,7 +502,7 @@ const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
 @media (max-width: 900px) {
   .cat-hero-inner { grid-template-columns: 1fr; }
   .cat-hero-stats { flex-direction: row; }
-  .related-cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .related-cats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 640px) {

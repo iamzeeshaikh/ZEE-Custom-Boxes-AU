@@ -6,6 +6,7 @@ import products from '../../data/products.json';
 import { buildRichDescription } from '../../utils/richDescription';
 import { buildProductFaqs } from '../../utils/productFaqs';
 import { buildProductSchema } from '../../utils/productSchema';
+import { imgFull, imgThumb, imgSrcset } from '../../utils/img';
 
 export async function getStaticPaths() {
   return products.map(product => ({
@@ -30,7 +31,7 @@ const primaryCatSlug = primaryCat ? catSlug(primaryCat) : '';
 const hasDesc  = Boolean(product.description);
 const hasSpecs = Boolean(product.specifications);
 const hasFaqs  = Boolean(product.faqs);
-const images   = product.images as string[];
+const images   = (product.images as string[]).map(imgFull);
 
 const richDescription = buildRichDescription(product, primaryCat, primaryCatSlug, related);
 const productFaqs = buildProductFaqs(product, SITE.phone);
@@ -55,7 +56,10 @@ const productSchema = {
   title={product.seoTitle || `${product.name} | ${SITE.name}`}
   description={product.metaDescription}
   canonical={`${SITE.url}/product/${product.slug}`}
-  image={images[0] || '/images/og-default.jpg'}
+  image={images[0] || '/images/og-default.svg'}
+  preloadImage={images[0]}
+  preloadImageSrcset={imgSrcset(product.images[0])}
+  preloadImageSizes="(max-width: 900px) 92vw, 700px"
   schema={[productSchema, breadcrumbSchema]}
 >
 
@@ -92,9 +96,11 @@ const productSchema = {
             <img
               id="main-img"
               src={images[0]}
+              srcset={imgSrcset(product.images[0])}
+              sizes="(max-width: 900px) 92vw, 700px"
               alt={`${product.name} - ZEE Custom Boxes AU`}
               width="700" height="580"
-              loading="eager" decoding="async"
+              loading="eager" fetchpriority="high" decoding="async"
               class="gallery-main-img"
               onerror="this.src='/images/placeholder.webp'"
             />
@@ -131,7 +137,7 @@ const productSchema = {
                 aria-label={`View image ${i + 1}`}
               >
                 <img
-                  src={img}
+                  src={imgThumb(img)}
                   alt={`${product.name} view ${i + 1}`}
                   width="120" height="90"
                   loading="lazy" decoding="async"
@@ -1935,7 +1941,7 @@ const productSchema = {
 
 .artwork-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.25rem;
 }
 
@@ -2063,7 +2069,7 @@ const productSchema = {
 
 .why-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
 }
 
@@ -2162,7 +2168,7 @@ const productSchema = {
 
 .testimonials-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
   margin-bottom: 3rem;
 }
@@ -2613,8 +2619,8 @@ const productSchema = {
 /* ── Responsive ── */
 @media (max-width: 1100px) {
   .product-layout { grid-template-columns: 55% 1fr; gap: 2.5rem; }
-  .artwork-grid { grid-template-columns: repeat(2, 1fr); }
-  .why-grid { grid-template-columns: repeat(2, 1fr); }
+  .artwork-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
@@ -2734,7 +2740,7 @@ const productSchema = {
 /* Card grid */
 .cfg-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
 }
 .cfg-cards.cfg-multi .cfg-card[aria-pressed="true"] {
@@ -3175,7 +3181,7 @@ const productSchema = {
 /* Responsive */
 @media (max-width: 1100px) {
   .cfg-layout { grid-template-columns: 1fr 300px; }
-  .cfg-cards { grid-template-columns: repeat(3, 1fr); }
+  .cfg-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
   .cfg-layout { grid-template-columns: 1fr; }
@@ -3184,7 +3190,7 @@ const productSchema = {
   .preview-stage { min-height: 140px; }
 }
 @media (max-width: 600px) {
-  .cfg-cards { grid-template-columns: repeat(2, 1fr); }
+  .cfg-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cfg-step { padding: 1.25rem; }
   .cfg-cta-bar { flex-direction: column; }
   .cfg-cta-primary, .cfg-cta-secondary { flex: auto; width: 100%; }

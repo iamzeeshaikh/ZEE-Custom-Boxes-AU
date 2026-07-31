@@ -11,6 +11,13 @@ interface Props {
   image?: string;
   noIndex?: boolean;
   schema?: object | object[];
+  /** LCP image for this page — preloaded so it starts downloading with the HTML. */
+  preloadImage?: string;
+  /** Restrict the preload to a viewport range, e.g. '(min-width: 901px)'. */
+  preloadImageMedia?: string;
+  /** Match the LCP image's own srcset/sizes so the preload picks the same file. */
+  preloadImageSrcset?: string;
+  preloadImageSizes?: string;
 }
 
 const {
@@ -20,6 +27,10 @@ const {
   image = '/images/og-default.svg',
   noIndex = false,
   schema,
+  preloadImage,
+  preloadImageMedia,
+  preloadImageSrcset,
+  preloadImageSizes,
 } = Astro.props;
 
 const canonicalUrl = canonical || Astro.url.href;
@@ -32,6 +43,7 @@ const schemaArr = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script is:inline>document.documentElement.classList.add('js');</script>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="google-site-verification" content="KLkQcMlBpSLaHqMg1_TMn6vM8uUbr6z-92dAZeZTZjY" />
 
@@ -63,18 +75,44 @@ const schemaArr = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
   <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
 
-  <!-- Preconnect -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Fonts are self-hosted; preload only the faces used above the fold -->
+  <link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/playfair-display-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+  {preloadImage && (
+    <link
+      rel="preload"
+      href={preloadImage}
+      as="image"
+      fetchpriority="high"
+      media={preloadImageMedia}
+      imagesrcset={preloadImageSrcset}
+      imagesizes={preloadImageSizes}
+    />
+  )}
 
-  <!-- Zendesk Chat -->
+  <!-- Zendesk Chat — loaded after first interaction so it never competes with LCP -->
   <script type="text/javascript">
-    window.$zopim||(function(d,s){var z=$zopim=function(c){
-    z._.push(c)},$=z.s=
-    d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
-    _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');
-    $.src='https://v2.zopim.com/?4h3lbyJihoT1mCOqDA0VoQOaVQE9qTOP';z.t=+new Date;$.
-    type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+    (function () {
+      var loaded = false;
+      function loadZopim() {
+        if (loaded) return;
+        loaded = true;
+        window.$zopim||(function(d,s){var z=$zopim=function(c){
+        z._.push(c)},$=z.s=
+        d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+        _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');
+        $.src='https://v2.zopim.com/?4h3lbyJihoT1mCOqDA0VoQOaVQE9qTOP';z.t=+new Date;$.
+        type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+      }
+      var events = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+      events.forEach(function (evt) {
+        window.addEventListener(evt, loadZopim, { once: true, passive: true });
+      });
+      // Fallback for visitors who never interact
+      window.addEventListener('load', function () {
+        setTimeout(loadZopim, 6000);
+      });
+    })();
   </script>
 
   <!-- Schema markup -->
