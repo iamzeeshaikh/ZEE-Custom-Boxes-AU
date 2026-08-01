@@ -3222,12 +3222,34 @@ const productSchema = {
       mainImg!.srcset = thumbs[idx]?.dataset.srcset || '';
       mainImg!.src = images[idx];
       mainImg!.style.opacity = '1';
-    }, 200);
+    }, 90);
     thumbs.forEach((t, i) => t.classList.toggle('active', i === idx));
     if (counter) counter.textContent = `${idx + 1} / ${images.length}`;
   }
 
+  /* Warm the other gallery images so a thumbnail click swaps instantly instead
+     of waiting on the network. Low priority, at idle, so the first paint is
+     never held up. */
+  function warm(thumb: HTMLButtonElement) {
+    if (!thumb.dataset.src || thumb.dataset.warmed) return;
+    thumb.dataset.warmed = '1';
+    const image = new Image();
+    image.fetchPriority = 'low';
+    image.sizes = mainImg?.sizes || '';
+    if (thumb.dataset.srcset) image.srcset = thumb.dataset.srcset;
+    image.src = thumb.dataset.src;
+  }
+
+  const warmAll = () => thumbs.forEach(warm);
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(warmAll, { timeout: 2500 });
+  } else {
+    window.addEventListener('load', () => setTimeout(warmAll, 1200), { once: true });
+  }
+
   thumbs.forEach((thumb, i) => {
+    thumb.addEventListener('pointerenter', () => warm(thumb), { once: true });
+    thumb.addEventListener('touchstart', () => warm(thumb), { once: true, passive: true });
     thumb.addEventListener('click', () => setImage(i));
   });
 
