@@ -133,6 +133,7 @@ const productSchema = {
               <button
                 class={`gallery-thumb ${i === 0 ? 'active' : ''}`}
                 data-src={img}
+                data-srcset={imgSrcset(product.images[i])}
                 data-index={i}
                 aria-label={`View image ${i + 1}`}
               >
@@ -3216,6 +3217,9 @@ const productSchema = {
     currentIdx = idx;
     mainImg.style.opacity = '0';
     setTimeout(() => {
+      // The main image carries a srcset, which wins over src — swap both or the
+      // picture never changes.
+      mainImg!.srcset = thumbs[idx]?.dataset.srcset || '';
       mainImg!.src = images[idx];
       mainImg!.style.opacity = '1';
     }, 200);
