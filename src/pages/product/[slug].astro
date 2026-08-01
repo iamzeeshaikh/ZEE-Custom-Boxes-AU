@@ -585,7 +585,7 @@ const productSchema = {
               { id:'xl',  label:'Extra Large',  dims:'30 × 25 × 15 cm' },
               { id:'cus', label:'Custom Size',  dims:'Enter below ↓'  },
             ].map(s => (
-              <button class="cfg-card" data-group="size" data-val={s.id} aria-pressed="false">
+              <button type="button" class="cfg-card" data-group="size" data-val={s.id} aria-pressed="false">
                 <span class="cfg-card-title">{s.label}</span>
                 <span class="cfg-card-sub">{s.dims}</span>
               </button>
@@ -630,7 +630,7 @@ const productSchema = {
               { id:'rigid',       label:'Rigid Board',  sub:'Premium luxury feel', icon:'💎', color:'#8090a0' },
               { id:'eco',         label:'Eco-Friendly', sub:'FSC certified',       icon:'♻️', color:'#a8c080' },
             ].map(m => (
-              <button class="cfg-card cfg-card-mat" data-group="material" data-val={m.id} data-color={m.color} aria-pressed="false">
+              <button type="button" class="cfg-card cfg-card-mat" data-group="material" data-val={m.id} data-color={m.color} aria-pressed="false">
                 <span class="cfg-mat-icon">{m.icon}</span>
                 <span class="cfg-card-title">{m.label}</span>
                 <span class="cfg-card-sub">{m.sub}</span>
@@ -654,7 +654,7 @@ const productSchema = {
               { id:'outside',  label:'Outside Printing',  sub:'Exterior design' },
               { id:'both',     label:'Both Sides',        sub:'In & out printed' },
             ].map(p => (
-              <button class="cfg-card" data-group="printing" data-val={p.id} aria-pressed="false">
+              <button type="button" class="cfg-card" data-group="printing" data-val={p.id} aria-pressed="false">
                 <span class="cfg-card-title">{p.label}</span>
                 <span class="cfg-card-sub">{p.sub}</span>
               </button>
@@ -679,7 +679,7 @@ const productSchema = {
               { id:'deboss',  label:'Debossing',         sub:'Pressed-in texture' },
               { id:'softTch', label:'Soft-Touch',        sub:'Velvet-like finish' },
             ].map(f => (
-              <button class="cfg-card" data-group="finish" data-val={f.id} aria-pressed="false">
+              <button type="button" class="cfg-card" data-group="finish" data-val={f.id} aria-pressed="false">
                 <span class="cfg-card-title">{f.label}</span>
                 <span class="cfg-card-sub">{f.sub}</span>
               </button>
@@ -695,7 +695,7 @@ const productSchema = {
           </div>
           <div class="qty-presets" id="qty-cards">
             {[100, 250, 500, 1000, 2500, 5000, 10000].map(q => (
-              <button class="qty-btn" data-group="qty" data-val={q} aria-pressed="false">
+              <button type="button" class="qty-btn" data-group="qty" data-val={q} aria-pressed="false">
                 {q.toLocaleString()}{q === 10000 ? '+' : ''}
               </button>
             ))}
@@ -721,7 +721,7 @@ const productSchema = {
               { id:'handles',  label:'Handles',          sub:'Die-cut carry handles' },
               { id:'sleeves',  label:'Sleeves',          sub:'Outer paper sleeve' },
             ].map(a => (
-              <button class="cfg-card" data-group="addon" data-val={a.id} aria-pressed="false">
+              <button type="button" class="cfg-card" data-group="addon" data-val={a.id} aria-pressed="false">
                 <span class="cfg-card-title">{a.label}</span>
                 <span class="cfg-card-sub">{a.sub}</span>
               </button>
