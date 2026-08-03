@@ -277,6 +277,16 @@ const currentPath = Astro.url.pathname;
 }
 
 /* ── MEGA PANEL base ────────────────────────────────── */
+/* The panel renders 18px below the nav item, and the 150ms close timer is not
+   long enough for an unhurried cursor to cross that dead zone. This invisible
+   strip spans it so the pointer stays over the panel the whole way down. */
+.mega-panel::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: 0; right: 0;
+  height: 20px;
+}
+
 .mega-panel {
   position: absolute;
   top: 100%; left: 0; right: 0;
