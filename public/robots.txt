@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://zeecustomboxes.com.au/sitemap.xml
+Sitemap: https://zeecustomboxes.com.au/sitemap-removed.xml
 
 Disallow: /thank-you

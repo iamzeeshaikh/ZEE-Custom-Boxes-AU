@@ -1304,7 +1304,7 @@ const productSchema = {
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <img id="lb-img" src={images[0]} alt={product.name} loading="lazy" onerror="this.src='/images/placeholder.webp'" />
+      <img id="lb-img" src={images[0]} alt={`${product.name} - full size view`} width="1000" height="830" loading="lazy" decoding="async" onerror="this.src='/images/placeholder.webp'" />
       <button class="lb-next" id="lb-next" aria-label="Next image">
         <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <polyline points="9 18 15 12 9 6"/>
