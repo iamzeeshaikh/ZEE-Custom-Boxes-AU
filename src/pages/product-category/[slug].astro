@@ -6,6 +6,7 @@ import { SITE } from '../../config/site';
 import products from '../../data/products.json';
 import categories from '../../data/categories.json';
 import { CATEGORY_SEO, CATEGORY_FAQS } from '../../data/categorySeoContent';
+import { CATEGORY_META } from '../../data/categoryMeta';
 import { imgThumb } from '../../utils/img';
 import { buildProductSchema } from '../../utils/productSchema';
 
@@ -17,6 +18,10 @@ export async function getStaticPaths() {
 }
 
 const { category } = Astro.props;
+
+// Display-only spelling fix — the underlying name string is a matching key
+// (products.json categories arrays) and feeds JSON-LD, so it stays untouched.
+const displayName = category.slug === 'custom-stickers-and-lablels' ? 'Custom Stickers And Labels' : category.name;
 
 const catProducts = products.filter(p => p.categories.includes(category.name));
 
@@ -57,8 +62,9 @@ const collectionSchema = {
   "hasPart": catProducts.slice(0, 10).map(p => buildProductSchema(p))
 };
 
-const seoTitle = `${category.name} - Custom Packaging Australia | ${SITE.name}`;
-const seoDesc = `Order custom ${category.name} in Australia. Premium quality, free design service, fast turnaround, and wholesale pricing. Request your free quote from ZEE Custom Boxes AU today.`;
+const catMeta = CATEGORY_META[category.slug];
+const seoTitle = catMeta?.metaTitle ?? `${category.name} - Custom Packaging Australia | ${SITE.name}`;
+const seoDesc = catMeta?.metaDescription ?? `Order custom ${category.name} in Australia. Premium quality, free design service, fast turnaround, and wholesale pricing. Request your free quote from ZEE Custom Boxes AU today.`;
 const catSeo = CATEGORY_SEO[category.slug] || null;
 const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
 ---
@@ -78,7 +84,7 @@ const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
         <span class="sep">›</span>
         <a href="/products">Products</a>
         <span class="sep">›</span>
-        <span aria-current="page">{category.name}</span>
+        <span aria-current="page">{displayName}</span>
       </nav>
     </div>
   </div>
@@ -89,10 +95,10 @@ const catFaqs = CATEGORY_FAQS[category.slug] ?? null;
       <div class="cat-hero-inner">
         <div class="cat-hero-content">
           <div class="section-label">Category</div>
-          <h1 class="cat-hero-title">{category.name}</h1>
+          <h1 class="cat-hero-title">{displayName}</h1>
           <div class="gold-divider gold-divider-left"></div>
           <p class="cat-hero-desc">
-            Discover our premium range of <strong>{category.name}</strong> at ZEE Custom Boxes AU.
+            Discover our premium range of <strong>{displayName}</strong> at ZEE Custom Boxes AU.
             All packaging comes with free design service, competitive wholesale pricing,
             and fast delivery across Australia.
           </p>

@@ -24,7 +24,7 @@ const {
   title,
   description = SITE.description,
   canonical,
-  image = '/images/og-default.svg',
+  image = '/images/og-default.png',
   noIndex = false,
   schema,
   preloadImage,
@@ -34,7 +34,7 @@ const {
 } = Astro.props;
 
 const canonicalUrl = canonical || Astro.url.href;
-const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const fullTitle = title.toLowerCase().includes(SITE.name.toLowerCase()) ? title : `${title} | ${SITE.name}`;
 const schemaArr = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 ---
 
