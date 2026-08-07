@@ -172,7 +172,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "custom-cosmetic-packaging-that-builds-brand-trust",
     title: "Custom Cosmetic Packaging That Builds Brand Trust",
-    metaTitle: "Custom Cosmetic Packaging That Builds Brand Trust | ZEE Custom Boxes AU",
+    metaTitle: "Custom Cosmetic Packaging That Builds Trust",
     metaDescription:
       "How custom cosmetic packaging — structure, finish, inserts, and compliance — builds trust, protects product, and lifts perceived value for beauty brands.",
     excerpt:
@@ -269,8 +269,8 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: "eco-friendly-custom-packaging-for-australian-brands",
-    title: "Eco-Friendly Custom Packaging for Australian Brands",
-    metaTitle: "Eco-Friendly Custom Packaging for Australian Brands",
+    title: "Eco-Friendly Packaging for Australian Brands",
+    metaTitle: "Eco-Friendly Packaging for Australian Brands",
     metaDescription:
       "Recyclable board, soy inks, and mono-materials let Australian brands build eco-friendly custom packaging that still looks premium. Here is how to do it.",
     excerpt:
@@ -319,7 +319,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "custom-soap-box-packaging-guide",
     title: "Custom Soap Box Packaging: Design & Practical Guide",
-    metaTitle: "Custom Soap Box Packaging Guide | Design & Materials",
+    metaTitle: "Custom Soap Box Packaging Guide",
     metaDescription:
       "How to design custom soap box packaging — materials, windows, labelling, and eco options — that protects handmade soap and sells it on the shelf.",
     excerpt:
@@ -368,7 +368,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "custom-candle-box-packaging-guide",
     title: "Custom Candle Box Packaging: A Practical Guide",
-    metaTitle: "Custom Candle Box Packaging Guide | Materials & Design",
+    metaTitle: "Custom Candle Box Packaging Guide",
     metaDescription:
       "How to design custom candle box packaging that protects fragile vessels, elevates the brand, and sells — materials, structure, windows, and finishes.",
     excerpt:
@@ -466,7 +466,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "packaging-finishes-foil-emboss-and-spot-uv",
     title: "Packaging Finishes: Foil, Emboss & Spot UV Explained",
-    metaTitle: "Packaging Finishes Explained | Foil, Emboss & Spot UV",
+    metaTitle: "Packaging Finishes: Foil, Emboss & Spot UV",
     metaDescription:
       "Foil stamping, embossing, spot UV, and soft-touch finishes each change how packaging looks and feels. Compare them and choose the right finish for your brand.",
     excerpt:
