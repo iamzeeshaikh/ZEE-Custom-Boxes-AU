@@ -3,7 +3,7 @@ export const SITE = {
   tagline: 'Premium Custom Packaging Australia',
   url: 'https://zeecustomboxes.com.au',
   description: 'Premium custom packaging boxes in Australia. Free design, fast turnaround, wholesale prices. Custom boxes for cosmetics, food, retail, gifts and more.',
-  phone: '+61 2 9099 5643',
+  phone: '+61 488 860 926',
   email: 'info@zeecustomboxes.com.au',
   address: '903/50 Clarence St, Sydney NSW 2000, Australia',
   logo: '/images/logo.svg',

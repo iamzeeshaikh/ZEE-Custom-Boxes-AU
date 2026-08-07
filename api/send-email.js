@@ -100,7 +100,7 @@ export default async function handler(req, res) {
                 <p style="color:#374151;line-height:1.7;margin:0 0 24px;">In the meantime, feel free to browse our full range of custom packaging at <a href="https://zeecustomboxes.com.au" style="color:#1a3a5c;font-weight:600;">zeecustomboxes.com.au</a>.</p>
                 <div style="background:#f8f9fa;border-radius:8px;padding:20px 24px;border-left:4px solid #c9a84c;">
                   <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#1a3a5c;text-transform:uppercase;letter-spacing:0.08em;">Contact Us Directly</p>
-                  <p style="margin:0 0 4px;font-size:14px;color:#374151;">📞 <a href="tel:+61290995643" style="color:#1a3a5c;">+61 2 9099 5643</a></p>
+                  <p style="margin:0 0 4px;font-size:14px;color:#374151;">📞 <a href="tel:+61488860926" style="color:#1a3a5c;">+61 488 860 926</a></p>
                   <p style="margin:0;font-size:14px;color:#374151;">✉️ <a href="mailto:info@zeecustomboxes.com.au" style="color:#1a3a5c;">info@zeecustomboxes.com.au</a></p>
                 </div>
               </div>
